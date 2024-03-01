@@ -2,3 +2,4 @@
 
 #medlemmer:
 Andreas Klæboe
+Shanza Ehsan
