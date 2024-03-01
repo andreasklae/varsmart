@@ -3,3 +3,4 @@
 #medlemmer:
 Andreas Klæboe
 Shanza Ehsan
+Hanan Mohamud
