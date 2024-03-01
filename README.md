@@ -1,5 +1,5 @@
 # team-13
 
 #medlemmer:
-Andreas Klæboe
+Andreas Klæboe 
 Shanza Ehsan
