@@ -4,3 +4,4 @@
 Andreas Klæboe 
 Shanza Ehsan
 Christian Fjeld Thorkildsen
+Hanan Mohamud
