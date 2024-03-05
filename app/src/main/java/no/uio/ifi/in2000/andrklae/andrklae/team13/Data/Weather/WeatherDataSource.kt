@@ -8,6 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
 
 suspend fun fetchWeather(loc: Location, dateTime: DateTime): WeatherTimeForecast {
     // finds latitude and longitude

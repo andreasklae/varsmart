@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+
 /*
 * This data class holds weather variables for a given location and time
 *
