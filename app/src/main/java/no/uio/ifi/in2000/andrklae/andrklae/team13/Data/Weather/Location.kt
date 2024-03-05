@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.apiTesting
+package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
 // a data class describing a location.
 data class Location (

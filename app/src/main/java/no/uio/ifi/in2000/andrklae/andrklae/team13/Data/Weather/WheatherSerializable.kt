@@ -1,3 +1,5 @@
+package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
+
 import kotlinx.serialization.Serializable
 
 // Serializable class to hold information from the JSON file

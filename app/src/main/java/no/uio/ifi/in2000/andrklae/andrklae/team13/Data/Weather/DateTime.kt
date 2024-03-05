@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.apiTesting
+package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
 data class DateTime(
     val year: String,

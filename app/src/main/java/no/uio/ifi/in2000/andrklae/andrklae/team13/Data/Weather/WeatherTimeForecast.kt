@@ -1,7 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.apiTesting
-
-import TimeSeries
-import WeatherForecast
+package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
 /*
 * This data class holds weather variables for a given location and time
