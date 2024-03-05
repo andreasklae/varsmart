@@ -1,13 +1,13 @@
+package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
+
 import io.ktor.client.*
 import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import no.uio.ifi.in2000.andrklae.andrklae.team13.apiTesting.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.apiTesting.Location
-import no.uio.ifi.in2000.andrklae.andrklae.team13.apiTesting.WeatherTimeForecast
 
 suspend fun fetchWeather(loc: Location, dateTime: DateTime): WeatherTimeForecast {
     // finds latitude and longitude
@@ -16,6 +16,10 @@ suspend fun fetchWeather(loc: Location, dateTime: DateTime): WeatherTimeForecast
 
     // starts a client
     val client = HttpClient(CIO) {
+        defaultRequest {
+            url("https://gw-uio.intark.uh-it.no/in2000/")
+            header("X-Gravitee-API-Key", "5bf87cd2-0fb4-498a-8dae-9cd509071bf8")
+        }
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true
@@ -24,10 +28,14 @@ suspend fun fetchWeather(loc: Location, dateTime: DateTime): WeatherTimeForecast
     }
 
     // sets the url based on location
-    val url = "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=$lat&lon=$lon"
+    val source = "weatherapi/locationforecast/2.0/compact?lat=$lat&lon=$lon"
+
+
+
+
 
     // returns WeatherTimeForecast object
-    val weatherForecast: WeatherForecast = client.get(url).body()
+    val weatherForecast: WeatherForecast = client.get(source).body()
     return WeatherTimeForecast(weatherForecast, dateTime, loc)
 }
 

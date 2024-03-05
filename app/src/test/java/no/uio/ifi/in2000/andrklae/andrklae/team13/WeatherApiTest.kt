@@ -1,7 +1,8 @@
-import kotlinx.coroutines.runBlocking
-import no.uio.ifi.in2000.andrklae.andrklae.team13.apiTesting.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.apiTesting.Location
-import no.uio.ifi.in2000.andrklae.andrklae.team13.apiTesting.WeatherTimeForecast
+package no.uio.ifi.in2000.andrklae.andrklae.team13
+
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.fetchWeather
 
 // function to test api
 suspend fun main() {
@@ -15,8 +16,8 @@ suspend fun main() {
 
     val year = "2024"
     val month = "03"
-    val day = "03"
-    val hour = "19"
+    val day = "05"
+    val hour = "13"
 
     val dateTime = DateTime(year, month, day, hour)
 
