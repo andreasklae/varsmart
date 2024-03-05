@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13
 
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -12,6 +13,9 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        val location = Location("",0.0,0.1)
+
+        assertTrue(location.name == "")
+
     }
 }

@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
+package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata
 
 // a data class describing a location.
 data class Location (
