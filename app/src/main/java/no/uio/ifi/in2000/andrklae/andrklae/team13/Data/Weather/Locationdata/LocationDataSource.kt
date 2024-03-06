@@ -20,7 +20,7 @@ class LocationDataSource() {
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
-            json()
+            json(Json{ignoreUnknownKeys = true})
         }
     }
 
@@ -30,7 +30,7 @@ class LocationDataSource() {
         val response: ApiResponse = client.get(path).body()
         return response.adresser.map { address ->
             Location(
-                name = address.adressenavn,
+                name = address.adressetekst,
                 lat = address.representasjonspunkt.lat,
                 lon = address.representasjonspunkt.lon
             )
