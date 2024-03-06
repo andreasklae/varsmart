@@ -18,4 +18,5 @@ class ExampleUnitTest {
         assertTrue(location.name == "")
 
     }
+
 }

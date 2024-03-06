@@ -7,6 +7,9 @@ data class Location (
     val lat: Double
 ){
     override fun toString(): String {
-        return name
+        return "\n" +
+                "City = $name \n" +
+                "Lat = $lat \n" +
+                "Lon = $lon"
     }
 }

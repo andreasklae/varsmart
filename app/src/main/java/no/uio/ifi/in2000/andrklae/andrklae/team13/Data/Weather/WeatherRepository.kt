@@ -2,7 +2,7 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
 
-class WeatherRepository {
+/*lass WeatherRepository {
 
     fun getWeather(time: DateTime, location: Location): WeatherTimeForecast{
 
@@ -13,4 +13,4 @@ class WeatherRepository {
     }
 
 
-}
+}*/
