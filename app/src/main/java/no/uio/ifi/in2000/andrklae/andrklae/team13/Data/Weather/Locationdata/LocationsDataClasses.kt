@@ -39,7 +39,7 @@ data class Metadata(
 )
 
 
-/* @Serializable
+ @Serializable
 data class Address(
     val adressenavn: String,
     val adressetekst: String,
@@ -61,7 +61,7 @@ data class Address(
     val stedfestingverifisert: Boolean,
     val representasjonspunkt: Representasjonspunkt,
     val oppdateringsdato: String
-) */
+)
 
 @Serializable
 data class Representasjonspunkt(
@@ -73,12 +73,6 @@ data class Representasjonspunkt(
 @Serializable
 data class ApiResponse(
     val adresser: List<Address>
-)
-
-@Serializable
-data class Address(
-    val adressenavn: String,
-    val representasjonspunkt: Coordinate
 )
 
 @Serializable

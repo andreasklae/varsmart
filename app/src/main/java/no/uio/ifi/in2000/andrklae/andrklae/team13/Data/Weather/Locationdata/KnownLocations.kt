@@ -2,9 +2,8 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata
 
 import okhttp3.internal.threadName
 
-
-fun getKnownLocations(): List<Location>{
-   return listOf(
+class KnownLocations{
+    val locations = listOf(
         Location(
             name = "Oslo",
             lon= 59.91,
@@ -49,4 +48,8 @@ fun getKnownLocations(): List<Location>{
             lat = 11.11)
 
     )
+
+    fun returnFiltered(search: String): List<Location>{
+        return locations.filter { it.name.lowercase() == search.lowercase() }
+    }
 }
