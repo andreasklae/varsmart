@@ -5,11 +5,18 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Loca
 
 val locationRepo = LocationRepository()
 suspend fun main(){
-    println("Testing APIs")
-    testAPI()
+    println("Testing location Repository")
     println()
+
     println("Testing searchKnownCities")
     searchKnownCities()
+    println()
+
+    println("Testing Api-call")
+    testAPI()
+    println()
+
+
 }
 
 suspend fun testAPI(){
