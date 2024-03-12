@@ -7,13 +7,16 @@ import kotlinx.serialization.Serializable
 data class Location (
     val name: String,
     val lon: Double,
-    val lat: Double
-){
+    val lat: Double,
+    val type: String, // By / Bydel / fylke osv.
+    val fylke: String
+) {
     override fun toString(): String {
-        return "\n" +
-                "City = $name \n" +
+        return "Location = $name \n" +
                 "Lat = $lat \n" +
-                "Lon = $lon"
+                "Lon = $lon \n" +
+                "Type = $type \n" +
+                "Fylke = $fylke"
     }
 }
 
@@ -22,61 +25,50 @@ data class Location (
 
 
 @Serializable
-data class AddressResponse(
+data class ApiResponse(
     val metadata: Metadata,
-    val adresser: List<Address>
+    val navn: List<Navn>
 )
 
 @Serializable
 data class Metadata(
-    val totaltAntallTreff: Int,
+    val side: Int,
     val sokeStreng: String,
-    val asciiKompatibel: Boolean,
+    val totaltAntallTreff: Int,
     val treffPerSide: Int,
     val viserFra: Int,
-    val side: Int,
     val viserTil: Int
 )
 
-
- @Serializable
-data class Address(
-    val adressenavn: String,
-    val adressetekst: String,
-    val adressetilleggsnavn: String?,
-    val adressekode: Int,
-    val nummer: Int,
-    val bokstav: String,
-    val kommunenummer: String,
-    val kommunenavn: String,
-    val gardsnummer: Int,
-    val bruksnummer: Int,
-    val festenummer: Int,
-    val undernummer: String?,
-    val bruksenhetsnummer: List<String>,
-    val objtype: String,
-    val poststed: String,
-    val postnummer: String,
-    val adressetekstutenadressetilleggsnavn: String,
-    val stedfestingverifisert: Boolean,
+@Serializable
+data class Navn(
+    val fylker: List<Fylke>,
+    val kommuner: List<Kommune>,
+    val navneobjekttype: String,
+    val navnestatus: String,
     val representasjonspunkt: Representasjonspunkt,
-    val oppdateringsdato: String
+    val skrivemåte: String,
+    val skrivemåtestatus: String,
+    val språk: String,
+    val stedsnummer: Long,
+    val stedstatus: String
+)
+
+@Serializable
+data class Fylke(
+    val fylkesnavn: String,
+    val fylkesnummer: String
+)
+
+@Serializable
+data class Kommune(
+    val kommunenavn: String,
+    val kommunenummer: String
 )
 
 @Serializable
 data class Representasjonspunkt(
-    val epsg: String,
-    val lat: Double,
-    val lon: Double
-)
-
-@Serializable
-data class ApiResponse(
-    val adresser: List<Address>
-)
-
-@Serializable
-data class Coordinate(
-    val lat: Double,
-    val lon: Double
+    val koordsys: Int,
+    val nord: Double,
+    val øst: Double
 )

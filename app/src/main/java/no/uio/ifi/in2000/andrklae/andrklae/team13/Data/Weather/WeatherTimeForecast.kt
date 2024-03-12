@@ -29,7 +29,7 @@ data class WeatherTimeForecast(
 
     override fun toString(): String {
         return if (timeSeries != null) {
-            "Weather Forecast for ${location.name} at ${time.day}/${time.month}/${time.year} ${time.hour}:00\n" +
+            "Weather Forecast for ${location.name} at ${time}:\n" +
                     "Air Pressure: $airPressure hPa\n" +
                     "Temperature: $temperature °C\n" +
                     "Cloud Coverage: $cloudCoverage%\n" +

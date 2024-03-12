@@ -26,13 +26,15 @@ class LocationDataSource() {
 
     suspend fun fetchAddresses(search:String): List<Location> {
 
-        val path="https://ws.geonorge.no/adresser/v1/sok?sok=$search&fuzzy=false&sokemodus=OR&utkoordsys=4258&treffPerSide=10&side=0&asciiKompatibel=true"
+        val path="https://api.kartverket.no/stedsnavn/v1/navn?sok=$search&utkoordsys=4258&treffPerSide=10&side=1"
         val response: ApiResponse = client.get(path).body()
-        return response.adresser.map { address ->
+        return response.navn.map { navnItem ->
             Location(
-                name = address.adressetekst,
-                lat = address.representasjonspunkt.lat,
-                lon = address.representasjonspunkt.lon
+                name = navnItem.skrivemåte,
+                lon = navnItem.representasjonspunkt.øst,
+                lat = navnItem.representasjonspunkt.nord,
+                type = navnItem.navneobjekttype,
+                fylke = navnItem.fylker.joinToString(separator = ", ") { it.fylkesnavn } // Assumes there can be more than one fylke; adjust as needed
             )
         }
     }
