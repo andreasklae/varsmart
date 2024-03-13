@@ -23,7 +23,7 @@ suspend fun main(){
         val hour = "16"
 
         val dateTime = DateTime(year, month, day, hour)
-        val weather = Wrepo.getWeather(dateTime, location)
+        val weather = Wrepo.getCurrentWeather(dateTime, location)
         println("Success, Printing info...")
         println()
         println(weather)
