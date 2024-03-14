@@ -1,20 +1,14 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings
 
-import kotlinx.serialization.Serializable
 
 
-
-
-
-
-//@Serializable
 data class Geometry(
     val coordinates: List<Any>,
     val type: String
 )
 
 
-//@Serializable
+
 data class Properties(
     val altitude_above_sea_level: Int,
     val area: String, //
@@ -34,6 +28,7 @@ data class Properties(
     val geographicDomain: String,
     val id: String,
     val instruction: String, //
+    val municipality: List<String>,
     val resources: List<Resource>,
     val riskMatrixColor: String, //
     val severity: String, //
@@ -43,7 +38,7 @@ data class Properties(
     val type: String,
     val web: String
 )
-//@Serializable
+
 data class Resource(
     val description: String,
     val mimeType: String,
@@ -51,7 +46,7 @@ data class Resource(
 )
 
 
-//@Serializable
+
 data class When(
     val interval: List<String>
 )

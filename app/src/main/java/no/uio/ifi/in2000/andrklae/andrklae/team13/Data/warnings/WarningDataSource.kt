@@ -33,13 +33,10 @@ class WarningDataSource{
 
 
 
-    suspend fun fetchWarnings(/*loc: Location*/): Warning{
+    suspend fun fetchAllWarnings(): Warning{
 
     //Coordinates API-call
-
         val source = "weatherapi/metalerts/2.0/current.json"
-
-
 
         val alerts: AlertResponse= client.get(source).body()
 
@@ -48,12 +45,12 @@ class WarningDataSource{
     }
 
 
-    fun fetchAllWarnings(){
+    suspend fun fetchWarningCoordinates(loc: Location): Warning{
+        val source = "weatherapi/metalerts/2.0/all.json?lat=${loc.lat}&lon=${loc.lon}"
+        val alerts: AlertResponse= client.get(source).body()
+        return Warning(weatherAlert = alerts)
 
     }
-
-
-
 
 
 

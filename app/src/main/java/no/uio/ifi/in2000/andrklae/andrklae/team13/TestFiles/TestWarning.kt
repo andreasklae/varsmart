@@ -1,13 +1,11 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningDataSource
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 
 
-
-
-    suspend fun main(){
+suspend fun main(){
         testWarning()
 
     }
@@ -18,15 +16,43 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningDataSourc
        val lon= 14.3706
        val lat= 67.2832
 
-       val location: Location= Location(name = "Oslo", lon=lon, lat=lat, type = "By", fylke = "Oslo")
 
-       val warning: Warning = warningData.fetchWarnings()
+       val warning: Warning = warningData.fetchAllWarnings()
 
-        println(warning.properties.size)
+       val warningRepo: WarningRepository= WarningRepository()
+
+       val myCoordinate: WarningRepository.Coordinate2 = WarningRepository.Coordinate2(lat = lat, lon = lon)
+
+       for()
+        
+
+        warning.features.forEach { it ->
+
+            val coordinates: List<Any> =  it.geometry.coordinates
+
+            warningRepo.findClosestCoordinate(myCoordinate = myCoordinate, coordinates = coordinates)
+
+
+            }
+
+          println(it.geometry.coordinates)
+          println(it::class.java.typeName)
+          println(it.properties.description)
 
 
 
-    }
+ }
 
 
+fun containsNumber(list: List<Any>, number: Int): Boolean {
+    for (element in list) {
+        when (element) {
+            is Int -> {
+                if (element == number) {
+                    return true
+                }
+            }
+            is List<*> -> {
+                if (containsNumber(element as List<Any>, number)) {
 
+                }

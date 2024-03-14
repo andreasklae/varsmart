@@ -8,13 +8,13 @@ data class Warning(
     val weatherAlert: AlertResponse
 ) {
 
-    val properties: List<Feature> = weatherAlert.features
+    val features: List<Feature> = weatherAlert.features
 
 
 
 
     override fun toString(): String{
-        return properties.toString()
+        return features.toString()
     }
 
 
