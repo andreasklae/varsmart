@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings
 
+import kotlin.reflect.jvm.internal.impl.util.EmptyArrayMap
 
 
 data class Geometry(

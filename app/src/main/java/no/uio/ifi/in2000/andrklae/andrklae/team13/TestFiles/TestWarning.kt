@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
+import io.ktor.util.reflect.instanceOf
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningDataSource
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
@@ -13,46 +15,18 @@ suspend fun main(){
     suspend fun testWarning(){
         val warningData= WarningDataSource()
 
-       val lon= 14.3706
-       val lat= 67.2832
+        val name = "Oslo"
+        val type = "By"
+        val fylke = "Oslo"
+        val lat = 59.91
+        val lon = 10.71
+
+        val location = Location(name, lon, lat, type, fylke)
 
 
        val warning: Warning = warningData.fetchAllWarnings()
 
-       val warningRepo: WarningRepository= WarningRepository()
+       val warningRepo = WarningRepository()
 
-       val myCoordinate: WarningRepository.Coordinate2 = WarningRepository.Coordinate2(lat = lat, lon = lon)
-
-       for()
-        
-
-        warning.features.forEach { it ->
-
-            val coordinates: List<Any> =  it.geometry.coordinates
-
-            warningRepo.findClosestCoordinate(myCoordinate = myCoordinate, coordinates = coordinates)
-
-
-            }
-
-          println(it.geometry.coordinates)
-          println(it::class.java.typeName)
-          println(it.properties.description)
-
-
-
+    println("Most nearby alert found at: ${warningRepo.findClosestCoordinate(location, warning.features)}")
  }
-
-
-fun containsNumber(list: List<Any>, number: Int): Boolean {
-    for (element in list) {
-        when (element) {
-            is Int -> {
-                if (element == number) {
-                    return true
-                }
-            }
-            is List<*> -> {
-                if (containsNumber(element as List<Any>, number)) {
-
-                }
