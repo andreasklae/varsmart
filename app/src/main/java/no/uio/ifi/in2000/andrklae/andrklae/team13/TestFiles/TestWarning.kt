@@ -1,33 +1,25 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
-import io.ktor.util.reflect.instanceOf
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningDataSource
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 
 
 suspend fun main(){
         testWarning()
-
     }
 
-    suspend fun testWarning(){
-        val warningData= WarningDataSource()
+suspend fun testWarning(){
 
-        val name = "Oslo"
-        val type = "By"
-        val fylke = "Oslo"
-        val lat = 59.91
-        val lon = 10.71
+    val name = "Oslo"
+    val type = "By"
+    val fylke = "Oslo"
+    val lat = 59.91
+    val lon = 10.71
 
-        val location = Location(name, lon, lat, type, fylke)
+    val location = Location(name, lon, lat, type, fylke)
 
-
-       val warning: Warning = warningData.fetchAllWarnings()
-
-       val warningRepo = WarningRepository()
-
-    println("Most nearby alert found at area: ${warningRepo.findClosestCoordinate(location, warningRepo.fetchAllWarnings().features).properties.area} Title: ${warningRepo.findClosestCoordinate(location, warningRepo.fetchAllWarnings().features).properties.title}")
-    //println("Most nearby alert found at: ${warningRepo.findClosestCoordinate(location, warning.features)}")
-    }
+    val warningRepo = WarningRepository()
+    val result = warningRepo.findClosestCoordinate(location, warningRepo.fetchAllWarnings().features)
+    println("Most nearby alert found at area: ${result.properties.area} Title: ${result.properties.title}")
+}
