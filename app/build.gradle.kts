@@ -81,4 +81,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.3.8")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.2")
     implementation ("io.coil-kt:coil-compose:2.1.0")
+
+    //Implementation for gson deserialization
+    implementation("io.ktor:ktor-serialization-gson:2.3.8")
 }
