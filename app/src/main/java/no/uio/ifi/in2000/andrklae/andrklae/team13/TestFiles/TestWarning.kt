@@ -28,5 +28,6 @@ suspend fun main(){
 
        val warningRepo = WarningRepository()
 
-    println("Most nearby alert found at: ${warningRepo.findClosestCoordinate(location, warning.features)}")
- }
+    println("Most nearby alert found at area: ${warningRepo.findClosestCoordinate(location, warningRepo.fetchAllWarnings().features).properties.area} Title: ${warningRepo.findClosestCoordinate(location, warningRepo.fetchAllWarnings().features).properties.title}")
+    //println("Most nearby alert found at: ${warningRepo.findClosestCoordinate(location, warning.features)}")
+    }

@@ -6,7 +6,8 @@ class WarningRepository {
 
 
     private val warningDataSource: WarningDataSource= WarningDataSource()
-
+    // TO-DO
+    // Initialize variable with List<Features>
     suspend fun fetchAllWarnings(): Warning {
         return warningDataSource.fetchAllWarnings()
     }
@@ -15,12 +16,12 @@ class WarningRepository {
     data class Coordinate2(val lat: Double, val lon: Double)
 
 
-    fun findClosestCoordinate(loc: Location, coordinates: List<Feature>): Coordinate2? {
+    fun findClosestCoordinate(loc: Location, coordinates: List<Feature>): Feature {
         val myCoordinate = Coordinate2(loc.lat, loc.lon)
-        println("Looking for alerts near ${loc.lat}, ${loc.lon}...")
+        println("Looking for alerts near ${loc.name} (${loc.lat}, ${loc.lon})...")
         var closestCoordinate: Coordinate2? = null
+        var test: Feature = coordinates[0]
         var minDistance = Double.MAX_VALUE
-        println("Running test")
 
         // First get all lists of warnings, including clusters
         // Coords is here I.E a size of 45
@@ -39,14 +40,12 @@ class WarningRepository {
                                     // Yes this is an absolute mess but it works
                                     val distance = calculateDistance(myCoordinate, Coordinate2(x[1].toString().toDouble(), x[0].toString().toDouble()))
                                     if (distance < minDistance) {
+                                        test = it
                                         minDistance = distance
                                         closestCoordinate = Coordinate2(x[1].toString().toDouble(), x[0].toString().toDouble())
                                     }
                                 }
-
-
                             }
-
                         }
                     }
                 }
@@ -67,6 +66,7 @@ class WarningRepository {
                                             val distance = calculateDistance(myCoordinate, Coordinate2(coords[1].toString().toDouble(), coords[0].toString().toDouble()))
                                             if (distance < minDistance) {
                                                 minDistance = distance
+                                                test = it
                                                 closestCoordinate = Coordinate2(coords[1].toString().toDouble(), coords[0].toString().toDouble())
                                             }
                                         }
@@ -78,7 +78,7 @@ class WarningRepository {
                 }
             }
         }
-        return closestCoordinate
+        return test
     }
 
 
@@ -92,5 +92,12 @@ class WarningRepository {
                 Math.sin(dLon / 2) * Math.sin(dLon / 2)
         val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
         return earthRadius * c
+    }/*
+    fun checkArrayList(coordinate: Coordinate2, liste: ArrayList<*>): Coordinate2{
+
+
+
+
     }
+    */
 }
