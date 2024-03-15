@@ -11,13 +11,19 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseAn
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
+import no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles.dateTime
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class HomeViewModel: ViewModel() {
+class HomeViewModel(dateTime: DateTime, location: Location): ViewModel() {
+    val loc = location
+    val dt = dateTime
+    val statusStates: List<String> = listOf("Loading", "Success", "Failed")
+
+
+
     val wRepo = WeatherRepository()
     
-    val statusStates = listOf("Loading", "Sucess", "Failed")
     val currentDateTime = LocalDateTime.now()
     //val currentDateTime = _currentDateTime.asStateFlow()
     val _currentTime = MutableStateFlow<DateTime>(DateTime(
@@ -30,7 +36,7 @@ class HomeViewModel: ViewModel() {
 
 
     // Variables for currentWeather
-    val _wStatus = MutableStateFlow("")
+    val _wStatus = MutableStateFlow(statusStates[0])
     val wStatus = _wStatus.asStateFlow()
     val _temp = MutableStateFlow("")
     val temp = _temp.asStateFlow()
@@ -42,10 +48,31 @@ class HomeViewModel: ViewModel() {
     val humidity = _humidity.asStateFlow()
     val _windSpeed = MutableStateFlow("")
     val windSpeed = _windSpeed.asStateFlow()
-    fun updateCurrentWeather(time: DateTime, loc: Location){
+
+    // Variables for next 24Hours
+    val _dayWeatherStatus = MutableStateFlow(statusStates[0])
+    val dayWeatherStatus = _wStatus.asStateFlow()
+    val _next24 = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
+    val next24 = _next24.asStateFlow()
+
+    // Variables for the week
+    val _weekWeatherStatus = MutableStateFlow(statusStates[0])
+    val weekWeatherStatus = _wStatus.asStateFlow()
+    val _week = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
+    val week = _week.asStateFlow()
+
+    init {
+        println("init")
+        updateCurrentWeather()
+        updateWeek()
+        updateNext24h()
+    }
+    fun updateCurrentWeather(){
         viewModelScope.launch {
+            println("Fetching weather")
             _wStatus.value = statusStates[0]
-            val weather = wRepo.getCurrentWeather(time, loc)
+            val weather = wRepo.getCurrentWeather(dt, loc)
+
             if (weather != null){
                 _temp.value = weather.temperature.toString()
                 _airPressure.value = weather.airPressure.toString()
@@ -58,19 +85,15 @@ class HomeViewModel: ViewModel() {
 
             else{
                 _wStatus.value = statusStates[2]
-
             }
         }
     }
 
-    // Variables for next 24Hours
-    val _dayWeatherStatus = MutableStateFlow("Loading")
-    val dayWeatherStatus = _wStatus.asStateFlow()
-    val _next24 = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
-    fun updateNext24h(dateTime: DateTime, location: Location){
+
+    fun updateNext24h(){
         viewModelScope.launch {
             _dayWeatherStatus.value = statusStates[0]
-            val list = wRepo.getWeather24h(dateTime, location)
+            val list = wRepo.getWeather24h(dt, loc)
             if (list.isNotEmpty()){
                 _next24.value = list
                 _dayWeatherStatus.value = statusStates[1]
@@ -81,14 +104,11 @@ class HomeViewModel: ViewModel() {
         }
         
     }
-    // Variables for the week
-    val _weekWeatherStatus = MutableStateFlow("Loading")
-    val weekWeatherStatus = _wStatus.asStateFlow()
-    val _week = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
-    fun updateWeek(dateTime: DateTime, location: Location){
+
+    fun updateWeek(){
         viewModelScope.launch {
             _weekWeatherStatus.value = statusStates[0]
-            val list = wRepo.getWeatherWeek(dateTime, location)
+            val list = wRepo.getWeatherWeek(dt, loc)
             if (list.isNotEmpty()){
                 _week.value = list
                 _dayWeatherStatus.value = statusStates[1]
@@ -99,9 +119,9 @@ class HomeViewModel: ViewModel() {
         }
 
     }
-     fun updateSunriseAndSunset(dateTime: DateTime, location: Location) {
+     fun updateSunriseAndSunset() {
         viewModelScope.launch{
-            wRepo.getRiseAndSet(location, dateTime)
+            wRepo.getRiseAndSet(loc, dt)
         }
     }
     fun updateTime(){

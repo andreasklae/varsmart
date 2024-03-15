@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeScreen
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MVP
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeScreen()
+                    MVP()
                 }
             }
         }

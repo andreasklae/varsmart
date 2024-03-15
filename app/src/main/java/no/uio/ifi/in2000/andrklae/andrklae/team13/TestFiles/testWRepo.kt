@@ -17,7 +17,7 @@ val location = Location(name, lon, lat, type, fylke)
 
 val year = "2024"
 val month = "03"
-val day = "14"
+val day = "16"
 val hour = "16"
 
 val dateTime = DateTime(year, month, day, hour)
