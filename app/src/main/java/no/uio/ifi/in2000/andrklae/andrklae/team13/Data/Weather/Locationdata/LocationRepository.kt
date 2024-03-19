@@ -1,4 +1,9 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata
+
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+
 class LocationRepository{
     suspend fun getLocations(search: String): List<CustomLocation>{
         val knownLocations = KnownLocations()
@@ -23,6 +28,7 @@ class LocationRepository{
             dataSource.fetchAddresses(newString)
         }
     }
+
 
 
 }

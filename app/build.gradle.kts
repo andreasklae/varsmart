@@ -83,6 +83,7 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:2.3.8")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
     implementation("io.ktor:ktor-client-core:2.3.8")
+    implementation("io.ktor:ktor-client-cio:2.3.8")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.2")
     implementation ("io.coil-kt:coil-compose:2.1.0")
 
