@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseAndSunset
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
@@ -15,10 +15,11 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles.dateTime
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class HomeViewModel(dateTime: DateTime, location: Location): ViewModel() {
+class HomeViewModel(dateTime: DateTime, location: CustomLocation): ViewModel() {
     val loc = location
     val dt = dateTime
     val statusStates: List<String> = listOf("Loading", "Success", "Failed")
+
 
 
 

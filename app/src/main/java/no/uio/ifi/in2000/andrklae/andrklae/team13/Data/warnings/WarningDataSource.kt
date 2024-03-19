@@ -8,10 +8,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.json.Json
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 
 
 class WarningDataSource{
@@ -45,7 +42,7 @@ class WarningDataSource{
     }
 
 
-    suspend fun fetchWarningCoordinates(loc: Location): Warning{
+    suspend fun fetchWarningCoordinates(loc: CustomLocation): Warning{
         val source = "weatherapi/metalerts/2.0/all.json?lat=${loc.lat}&lon=${loc.lon}"
         val alerts: AlertResponse= client.get(source).body()
         return Warning(weatherAlert = alerts)

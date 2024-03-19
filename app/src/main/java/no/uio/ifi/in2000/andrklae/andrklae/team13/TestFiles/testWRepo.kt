@@ -1,7 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherDataSource
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 
@@ -13,7 +13,7 @@ val fylke = "Oslo"
 val lat = 59.91
 val lon = 10.71
 
-val location = Location(name, lon, lat, type, fylke)
+val location = CustomLocation(name, lon, lat, type, fylke)
 
 val year = "2024"
 val month = "03"

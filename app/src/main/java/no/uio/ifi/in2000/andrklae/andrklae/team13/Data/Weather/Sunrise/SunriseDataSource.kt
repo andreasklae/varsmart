@@ -9,7 +9,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 
 /* Dette er KUN for å teste at selve API-kallet fungerer og må flyttes til en egen klasse etter
 merge til main
@@ -58,7 +58,7 @@ class SunriseDataSource {
         }
     }
 
-    suspend fun fetchSunriseandSunset(loc: Location, dateTime: DateTime): SunriseAndSunset {
+    suspend fun fetchSunriseandSunset(loc: CustomLocation, dateTime: DateTime): SunriseAndSunset {
         // finds latitude and longitude
         val lat = loc.lat
         val lon = loc.lon

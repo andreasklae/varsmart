@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.LocationRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseAndSunset
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseDataSource
@@ -10,10 +10,10 @@ class WeatherRepository {
     val locRepo = LocationRepository()
     val sunrisesunsetData = SunriseDataSource()
 
-    suspend fun getLocation(search: String): Location{
+    suspend fun getLocation(search: String): CustomLocation{
         return locRepo.getLocations(search).first()
     }
-    suspend fun getCurrentWeather(time: DateTime, location: Location): WeatherTimeForecast? {
+    suspend fun getCurrentWeather(time: DateTime, location: CustomLocation): WeatherTimeForecast? {
         try {
             return wDataSource.fetchWeather(location, time)
         }
@@ -23,7 +23,7 @@ class WeatherRepository {
         
     }
 
-    suspend fun getWeather24h(time: DateTime, location: Location): List<WeatherTimeForecast>{
+    suspend fun getWeather24h(time: DateTime, location: CustomLocation): List<WeatherTimeForecast>{
         val hour = time.hour
 
         // Creates DateTime objects for the next 24 Hours
@@ -69,7 +69,7 @@ class WeatherRepository {
         
     }
 
-    suspend fun getWeatherWeek(time: DateTime, location: Location): List<WeatherTimeForecast>{
+    suspend fun getWeatherWeek(time: DateTime, location: CustomLocation): List<WeatherTimeForecast>{
         
         // Creates a list of days for the week
         val week = mutableListOf<DateTime>()
@@ -91,7 +91,7 @@ class WeatherRepository {
         
     }
 
-    suspend fun getRiseAndSet(loc: Location, time: DateTime): SunriseAndSunset {
+    suspend fun getRiseAndSet(loc: CustomLocation, time: DateTime): SunriseAndSunset {
         return sunrisesunsetData.fetchSunriseandSunset(loc, time)
     }
 

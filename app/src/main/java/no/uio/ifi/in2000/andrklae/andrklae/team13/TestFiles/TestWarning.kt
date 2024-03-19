@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningDataSource
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 
@@ -17,7 +17,7 @@ suspend fun testWarning(){
     val lat = 59.91
     val lon = 10.71
 
-    val location = Location(name, lon, lat, type, fylke)
+    val location = CustomLocation(name, lon, lat, type, fylke)
 
     val warningRepo = WarningRepository()
     val result = warningRepo.findClosestCoordinate(location, warningRepo.fetchAllWarnings().features)

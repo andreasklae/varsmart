@@ -4,7 +4,7 @@ import okhttp3.internal.threadName
 
 class KnownLocations{
     val locations = listOf(
-        Location(
+        CustomLocation(
             name = "Oslo",
             lon= 59.91,
             lat= 10.75,
@@ -15,7 +15,7 @@ class KnownLocations{
 
     )
 
-    fun returnFiltered(search: String): List<Location>{
+    fun returnFiltered(search: String): List<CustomLocation>{
         return locations.filter { it.name.lowercase() == search.lowercase() }
     }
 }

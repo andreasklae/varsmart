@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata
 class LocationRepository{
-    suspend fun getLocations(search: String): List<Location>{
+    suspend fun getLocations(search: String): List<CustomLocation>{
         val knownLocations = KnownLocations()
 
         println("Searching known cities")

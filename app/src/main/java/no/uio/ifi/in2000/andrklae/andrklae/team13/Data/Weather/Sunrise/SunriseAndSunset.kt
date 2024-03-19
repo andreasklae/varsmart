@@ -1,12 +1,12 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 
 
 class SunriseAndSunset(
     val sunriseData: SunriseData,
-    val location: Location,
+    val location: CustomLocation,
     val time: DateTime
     ) {
     val sunriseTime: String = sunriseData.properties.sunrise.time

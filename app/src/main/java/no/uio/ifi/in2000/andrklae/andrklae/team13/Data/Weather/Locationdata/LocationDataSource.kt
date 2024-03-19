@@ -24,12 +24,12 @@ class LocationDataSource() {
         }
     }
 
-    suspend fun fetchAddresses(search:String): List<Location> {
+    suspend fun fetchAddresses(search:String): List<CustomLocation> {
 
         val path="https://api.kartverket.no/stedsnavn/v1/navn?sok=$search&utkoordsys=4258&treffPerSide=10&side=1"
         val response: ApiResponse = client.get(path).body()
         return response.navn.map { navnItem ->
-            Location(
+            CustomLocation(
                 name = navnItem.skrivemåte,
                 lon = navnItem.representasjonspunkt.øst,
                 lat = navnItem.representasjonspunkt.nord,

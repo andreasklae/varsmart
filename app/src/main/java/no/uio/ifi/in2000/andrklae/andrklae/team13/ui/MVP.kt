@@ -26,8 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
+import no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles.MasterRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 
 // dummy data
@@ -37,27 +38,28 @@ val fylke = "Oslo"
 val lat = 59.91
 val lon = 10.71
 
-val location = Location(no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles.name, lon, lat, type, fylke)
+val location = CustomLocation(no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles.name, lon, lat, type, fylke)
 
 val year = "2024"
 val month = "03"
-val day = "16"
+val day = "20"
 val hour = "16"
 
 val dateTime = DateTime(year, month, day, hour)
 
 
-
-@Preview(showSystemUi = true)
+val homeVM1 = HomeViewModel(dateTime, location)
+//@Preview(showSystemUi = true)
 @Composable
-fun MVP(homeVM: HomeViewModel = HomeViewModel(dateTime, location)) {
-
+fun MVP(masterRepository: MasterRepository) {
+    val homeVM = homeVM1
     Column(
         modifier = Modifier
             .padding(10.dp)
     ) {
         Text(
-            text = homeVM.loc.name,
+            text = "Things: ${masterRepository.currentLocation?.lat}, ${masterRepository.currentLocation?.lon}",
+            //text = homeVM.loc.name,
             fontSize = 40.sp,
         )
         Widgets(homeVM)
