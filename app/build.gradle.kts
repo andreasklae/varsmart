@@ -2,6 +2,9 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0-Beta3"
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("dagger.hilt.android.plugin")
+    id("kotlin-kapt")
 }
 
 android {
@@ -84,4 +87,15 @@ dependencies {
 
     //Implementation for gson deserialization
     implementation("io.ktor:ktor-serialization-gson:2.3.8")
+
+    //Implementations related to Google Maps SDK and Google Play Services
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation("com.google.maps.android:maps-compose:4.3.3")
+    implementation("com.google.maps.android:maps-ktx:5.0.0")
+    implementation("com.google.maps.android:maps-utils-ktx:5.0.0")
+    implementation("com.google.dagger:hilt-android:2.44")
+
+    // Kapt
+    kapt("com.google.dagger:hilt-compiler:2.44.2")
 }
