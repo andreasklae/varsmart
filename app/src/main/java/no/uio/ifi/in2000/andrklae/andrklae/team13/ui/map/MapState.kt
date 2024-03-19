@@ -5,5 +5,5 @@ import android.location.Location
 data class MapState(
     val lastKnownLocation: Location?,
     // This is for showing warning areas later
-    //val clusterItems: List<ZoneClusterItem>,
+    val clusterItems: List<ZoneClusterItem>,
 )

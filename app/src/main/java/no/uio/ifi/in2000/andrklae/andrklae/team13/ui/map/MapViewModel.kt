@@ -11,11 +11,18 @@ import com.google.maps.android.ktx.model.polygonOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class MapViewModel( /*Give repos or data*/ ): ViewModel() {
+
+    val polygonPoints = listOf(
+        LatLng(40.7128, -74.0060), // New York
+        LatLng(34.0522, -118.2437), // Los Angeles
+        LatLng(41.8781, -87.6298), // Chicago
+        LatLng(37.7749, -122.4194) // San Francisco
+    )
     val state: MutableState<MapState> = mutableStateOf(
         MapState(
             lastKnownLocation = null,
             // Warning areas for later
-            /*clusterItems = listOf(
+            clusterItems = listOf(
                 ZoneClusterItem(
                     id = "zone-1",
                     title = "Zone 1",
@@ -25,12 +32,10 @@ class MapViewModel( /*Give repos or data*/ ): ViewModel() {
                         add(LatLng(49.101, -122.529))
                         add(LatLng(49.092, -122.501))
                         add(LatLng(49.1, -122.506))
-                        fillColor(some color goes here)
+                        fillColor(Color.RED)
                     }
                 )
             )
-
-             */
         )
     )
 

@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Change to MVP
-                    ComposeMapDemoMarkers()
+                    ComposeMapDemoMarkers(mapViewModel)
                     //MVP()
                 }
             }
