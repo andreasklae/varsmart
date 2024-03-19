@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,20 +18,21 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MVP
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.ComposeMapDemoMarkers
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
 
 class MainActivity : ComponentActivity() {
     private val mapViewModel = MapViewModel()
-
+    val homeVM = HomeViewModel()
 
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                mapViewModel.getDeviceLocation(fusedLocationProviderClient)
+                homeVM.getLiveLocation(fusedLocationProviderClient)
             }
         }
 
@@ -39,14 +41,15 @@ class MainActivity : ComponentActivity() {
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED -> {
-            mapViewModel.getDeviceLocation(fusedLocationProviderClient)
+            homeVM.getLiveLocation(fusedLocationProviderClient)
         }
         else -> {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
+    
+    @SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -59,8 +62,11 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Change to MVP
-                    ComposeMapDemoMarkers(mapViewModel)
-                    //MVP()
+                    //ComposeMapDemoMarkers(mapViewModel)
+
+                    //homeVM.getLiveLocation(fusedLocationProviderClient)
+
+                    MVP(homeVM)
                 }
             }
         }

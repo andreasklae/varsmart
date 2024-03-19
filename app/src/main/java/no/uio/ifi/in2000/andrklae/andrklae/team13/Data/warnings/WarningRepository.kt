@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 
 class WarningRepository {
 
@@ -16,7 +16,7 @@ class WarningRepository {
     data class Coordinate2(val lat: Double, val lon: Double)
 
 
-    fun findClosestCoordinate(loc: Location, coordinates: List<Feature>): Feature {
+    fun findClosestCoordinate(loc: CustomLocation, coordinates: List<Feature>): Feature {
         val myCoordinate = Coordinate2(loc.lat, loc.lon)
         println("Looking for alerts near ${loc.name} (${loc.lat}, ${loc.lon})...")
         var closestCoordinate: Coordinate2? = null

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 
 
-data class Location (
+data class CustomLocation (
     val name: String,
     val lon: Double,
     val lat: Double,

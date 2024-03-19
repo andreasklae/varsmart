@@ -1,38 +1,75 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseAndSunset
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
-import no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles.dateTime
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import android.location.Location
+import androidx.room.util.copy
+import com.google.android.gms.location.FusedLocationProviderClient
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 
-class HomeViewModel(dateTime: DateTime, location: Location): ViewModel() {
-    val loc = location
-    val dt = dateTime
+class HomeViewModel(): ViewModel() {
+    // initialize location as Oslo
+    val name = "Oslo"
+    val type = "By"
+    val fylke = "Oslo"
+    val lat = 59.91
+    val lon = 10.71
+
+    var loc = CustomLocation(name, lon, lat, type, fylke)
+
+    // finds current datetime
+    val current = LocalDateTime.now()
+    val year = current.year.toString()
+    val month = current.monthValue.toString()
+    val day = current.dayOfMonth.toString()
+    val hour = current.hour.toString()
+    var dt = DateTime(year, month, day, hour) // Assuming DateTime is a custom class you've defined to hold these values
+
     val statusStates: List<String> = listOf("Loading", "Success", "Failed")
 
+    val lastKnownLocation: MutableStateFlow<CustomLocation?>? = null
+    val _lastKnownLocation = lastKnownLocation?.asStateFlow()
 
+    fun setLocation(loc: CustomLocation){
+        this.loc = loc
+    }
+    @SuppressLint("MissingPermission")
+    fun getLiveLocation(fusedLocationProviderClient: FusedLocationProviderClient){
+        viewModelScope.launch {
+            try {
+                println("En")
+                val locationResult = fusedLocationProviderClient.lastLocation
 
+                println(locationResult.result)
+                println("En og en halv")
+                locationResult.addOnCompleteListener { task ->
+                    println("To")
+                    if (task.isSuccessful) {
+                        println("Tre")
+                        lastKnownLocation?.value = CustomLocation("My location", task.result.longitude, task.result.latitude, "", "")
+                        if (locationResult.result!= null){
+                            println("User Coords: ${locationResult.result.latitude}, ${locationResult.result.longitude}")
+                        }
+                    }
+                }
+                loc = CustomLocation("My Location", locationResult.result.latitude, locationResult.result.longitude, "","")
+                updateCurrentWeather()
+                updateWeek()
+                updateNext24h()
+            } catch (e: SecurityException) {
+
+            }
+        }
+    }
     val wRepo = WeatherRepository()
-    
-    val currentDateTime = LocalDateTime.now()
-    //val currentDateTime = _currentDateTime.asStateFlow()
-    val _currentTime = MutableStateFlow<DateTime>(DateTime(
-        currentDateTime.year.toString(),
-        currentDateTime.monthValue.toString(),
-        currentDateTime.dayOfMonth.toString(),
-        currentDateTime.hour.toString())
-    )
-    val currentTime = _currentTime.asStateFlow()
 
 
     // Variables for currentWeather
@@ -127,12 +164,12 @@ class HomeViewModel(dateTime: DateTime, location: Location): ViewModel() {
     fun updateTime(){
         viewModelScope.launch{
                val newcurrentDateTime = LocalDateTime.now()
-               //val currentDateTime = _currentDateTime.asStateFlow()
-               _currentTime.value = DateTime(
+               dt = DateTime(
                    newcurrentDateTime.year.toString(),
                    newcurrentDateTime.monthValue.toString(),
                    newcurrentDateTime.dayOfMonth.toString(),
-                   newcurrentDateTime.hour.toString())
+                   newcurrentDateTime.hour.toString()
+               )
         }
     }
 }
