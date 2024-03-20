@@ -54,13 +54,13 @@ class MapViewModel( /*Give repos or data*/ ): ViewModel() {
                     state.value = state.value.copy(
                         lastKnownLocation = task.result
                     )
-                    if (locationResult.result.latitude != null && locationResult.result.longitude != null){
+                    if (locationResult.result != null){
                         println("User Coords: ${locationResult.result.latitude}, ${locationResult.result.longitude}")
                     }
                 }
             }
         } catch (e: SecurityException) {
-            // Show error or something
         }
     }
 }
+

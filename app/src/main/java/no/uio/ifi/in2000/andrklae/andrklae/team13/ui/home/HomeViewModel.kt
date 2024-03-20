@@ -1,38 +1,63 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseAndSunset
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
+import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
+
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
-import no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles.dateTime
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import android.location.Location
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.room.util.copy
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.ktx.model.polygonOptions
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapState
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.ZoneClusterItem
 
-class HomeViewModel(dateTime: DateTime, location: Location): ViewModel() {
-    val loc = location
-    val dt = dateTime
+class HomeViewModel(): ViewModel() {
+    // initialize location as Oslo
+    val name = "Oslo"
+    val type = "By"
+    val fylke = "Oslo"
+    val lat = 59.91
+    val lon = 10.71
+
+    val _loc = MutableStateFlow(CustomLocation(name, lat, lon, type, fylke))
+    val loc = _loc.asStateFlow()
+
+    // finds current datetime
+    val current = LocalDateTime.now()
+    val year = current.year.toString()
+    val month = current.monthValue.toString()
+    val day = current.dayOfMonth.toString()
+    val hour = current.hour.toString()
+    var dt = DateTime(
+        year,
+        month,
+        day,
+        hour
+    ) // Assuming DateTime is a custom class you've defined to hold these values
+
     val statusStates: List<String> = listOf("Loading", "Success", "Failed")
 
-
+    fun setLocation(loc: CustomLocation) {
+        _loc.value = loc
+        println("new location set")
+    }
 
     val wRepo = WeatherRepository()
-    
-    val currentDateTime = LocalDateTime.now()
-    //val currentDateTime = _currentDateTime.asStateFlow()
-    val _currentTime = MutableStateFlow<DateTime>(DateTime(
-        currentDateTime.year.toString(),
-        currentDateTime.monthValue.toString(),
-        currentDateTime.dayOfMonth.toString(),
-        currentDateTime.hour.toString())
-    )
-    val currentTime = _currentTime.asStateFlow()
 
 
     // Variables for currentWeather
@@ -63,17 +88,23 @@ class HomeViewModel(dateTime: DateTime, location: Location): ViewModel() {
 
     init {
         println("init")
+        update()
+    }
+
+    fun update() {
         updateCurrentWeather()
         updateWeek()
         updateNext24h()
+        println("updating for: ${_loc.value.name}")
     }
-    fun updateCurrentWeather(){
+
+    fun updateCurrentWeather() {
         viewModelScope.launch {
             println("Fetching weather")
             _wStatus.value = statusStates[0]
-            val weather = wRepo.getCurrentWeather(dt, loc)
+            val weather = wRepo.getCurrentWeather(dt, _loc.value)
 
-            if (weather != null){
+            if (weather != null) {
                 _temp.value = weather.temperature.toString()
                 _airPressure.value = weather.airPressure.toString()
                 _cloudCoverage.value = weather.cloudCoverage.toString()
@@ -81,58 +112,56 @@ class HomeViewModel(dateTime: DateTime, location: Location): ViewModel() {
                 _windSpeed.value = weather.windSpeed.toString()
 
                 _wStatus.value = statusStates[1]
-            }
-
-            else{
+            } else {
                 _wStatus.value = statusStates[2]
             }
         }
     }
 
 
-    fun updateNext24h(){
+    fun updateNext24h() {
         viewModelScope.launch {
             _dayWeatherStatus.value = statusStates[0]
-            val list = wRepo.getWeather24h(dt, loc)
-            if (list.isNotEmpty()){
+            val list = wRepo.getWeather24h(dt, _loc.value)
+            if (list.isNotEmpty()) {
                 _next24.value = list
                 _dayWeatherStatus.value = statusStates[1]
-            }
-            else{
+            } else {
                 _dayWeatherStatus.value = statusStates[2]
             }
         }
-        
+
     }
 
-    fun updateWeek(){
+    fun updateWeek() {
         viewModelScope.launch {
             _weekWeatherStatus.value = statusStates[0]
-            val list = wRepo.getWeatherWeek(dt, loc)
-            if (list.isNotEmpty()){
+            val list = wRepo.getWeatherWeek(dt, _loc.value)
+            if (list.isNotEmpty()) {
                 _week.value = list
                 _dayWeatherStatus.value = statusStates[1]
-            }
-            else{
+            } else {
                 _weekWeatherStatus.value = statusStates[2]
             }
         }
 
     }
-     fun updateSunriseAndSunset() {
-        viewModelScope.launch{
-            wRepo.getRiseAndSet(loc, dt)
+
+    fun updateSunriseAndSunset() {
+        viewModelScope.launch {
+            wRepo.getRiseAndSet(_loc.value, dt)
         }
     }
-    fun updateTime(){
-        viewModelScope.launch{
-               val newcurrentDateTime = LocalDateTime.now()
-               //val currentDateTime = _currentDateTime.asStateFlow()
-               _currentTime.value = DateTime(
-                   newcurrentDateTime.year.toString(),
-                   newcurrentDateTime.monthValue.toString(),
-                   newcurrentDateTime.dayOfMonth.toString(),
-                   newcurrentDateTime.hour.toString())
+
+    fun updateTime() {
+        viewModelScope.launch {
+            val newcurrentDateTime = LocalDateTime.now()
+            dt = DateTime(
+                newcurrentDateTime.year.toString(),
+                newcurrentDateTime.monthValue.toString(),
+                newcurrentDateTime.dayOfMonth.toString(),
+                newcurrentDateTime.hour.toString()
+            )
         }
     }
 }

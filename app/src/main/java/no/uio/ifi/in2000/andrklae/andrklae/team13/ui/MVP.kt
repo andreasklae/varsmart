@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,39 +28,44 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.asStateFlow
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
+import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 
-// dummy data
-val name = "Oslo"
-val type = "By"
-val fylke = "Oslo"
-val lat = 59.91
-val lon = 10.71
-
-val location = Location(no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles.name, lon, lat, type, fylke)
-
-val year = "2024"
-val month = "03"
-val day = "16"
-val hour = "16"
-
-val dateTime = DateTime(year, month, day, hour)
 
 
 
-@Preview(showSystemUi = true)
+@SuppressLint("SuspiciousIndentation")
 @Composable
-fun MVP(homeVM: HomeViewModel = HomeViewModel(dateTime, location)) {
-
+fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
+ val loc by homeVM.loc.collectAsState()
+    println("My location: ${loc.lat}, ${loc.lon}")
     Column(
         modifier = Modifier
             .padding(10.dp)
     ) {
+        if (loc.name == "My location"){
+            Button(
+                onClick = {
+                homeVM.setLocation(CustomLocation("Oslo", 59.91, 10.71, "By", "Oslo"))
+                    homeVM.update()
+            }
+            ){
+                Text(text = "Oslo")
+            }
+        }
+        else{
+            Button(onClick = { activity.getCurrentLocation() }) {
+                Text(text = "My location")
+            }
+        }
+
         Text(
-            text = homeVM.loc.name,
+            text = loc.name,
             fontSize = 40.sp,
         )
         Widgets(homeVM)

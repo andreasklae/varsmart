@@ -1,7 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseDataSource
 
 suspend fun main() {
@@ -13,7 +13,7 @@ suspend fun main() {
     val lat = 59.91
     val lon = 10.71
 
-    val location = Location(name, lon, lat, type, fylke)
+    val customLocation = CustomLocation(name, lon, lat, type, fylke)
 
     val year = "2024"
     val month = "03"
@@ -25,7 +25,7 @@ suspend fun main() {
     val dataSource = SunriseDataSource()
 
     // fetches forecast for a specific location and time
-    val sunsetAndSunrise = dataSource.fetchSunriseandSunset(location, dateTime) // Replace with an actual call to fetch data
+    val sunsetAndSunrise = dataSource.fetchSunriseandSunset(customLocation, dateTime) // Replace with an actual call to fetch data
 
     // Print the weather forecast for the specified time
     println(sunsetAndSunrise)

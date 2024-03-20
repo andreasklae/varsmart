@@ -1,8 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherDataSource
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 
 val repo = WeatherRepository()
@@ -13,7 +12,7 @@ val fylke = "Oslo"
 val lat = 59.91
 val lon = 10.71
 
-val location = Location(name, lon, lat, type, fylke)
+val customLocation = CustomLocation(name, lon, lat, type, fylke)
 
 val year = "2024"
 val month = "03"
@@ -38,7 +37,7 @@ suspend fun test24H(){
 
 
 
-    val weather = repo.getWeather24h(dateTime, location)
+    val weather = repo.getWeather24h(dateTime, customLocation)
     weather.forEach {
 
         println(
@@ -48,13 +47,13 @@ suspend fun test24H(){
 }
 suspend fun testSunriseSunset(){
 
-    val sunrisesunset = repo.getRiseAndSet(location, dateTime)
+    val sunrisesunset = repo.getRiseAndSet(customLocation, dateTime)
 
     println("For the day: ${dateTime.dayOfWeek} (${dateTime.day}.${dateTime.month}), the sunrise at: ${sunrisesunset.sunriseTime}, and sunset at: ${sunrisesunset.sunsetTime}.")
 }
 
 suspend fun testWeekWeather(){
-    val week = repo.getWeatherWeek( dateTime, location)
+    val week = repo.getWeatherWeek( dateTime, customLocation)
 
     week.forEach {
         println(

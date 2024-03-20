@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Location
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 
 /*
 * This data class holds weather variables for a given location and time
@@ -17,7 +17,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Loca
 data class WeatherTimeForecast(
     val weatherForecast: WeatherForecast,
     val time: DateTime,
-    val location: Location
+    val customLocation: CustomLocation
 ) {
     val specifiedTime = time.isoFormat
     val timeSeries: TimeSeries? = weatherForecast.properties.timeseries.find { it.time.startsWith(specifiedTime) }
@@ -29,7 +29,7 @@ data class WeatherTimeForecast(
 
     override fun toString(): String {
         return if (timeSeries != null) {
-            "Weather Forecast for ${location.name} at ${time}:\n" +
+            "Weather Forecast for ${customLocation.name} at ${time}:\n" +
                     "Air Pressure: $airPressure hPa\n" +
                     "Temperature: $temperature °C\n" +
                     "Cloud Coverage: $cloudCoverage%\n" +
