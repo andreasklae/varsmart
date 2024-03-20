@@ -98,6 +98,10 @@ dependencies {
     implementation("com.google.maps.android:maps-utils-ktx:5.0.0")
     implementation("com.google.dagger:hilt-android:2.44.2")
 
+    // For SVG
+    implementation ("io.coil-kt:coil-compose:2.1.0")
+    implementation ("io.coil-kt:coil-svg:2.1.0")
+
     // Kapt
     kapt("com.google.dagger:hilt-compiler:2.44.2")
 }

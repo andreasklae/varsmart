@@ -80,6 +80,8 @@ class HomeViewModel(): ViewModel() {
     val windSpeed = _windSpeed.asStateFlow()
     val _rain = MutableStateFlow("")
     val rain = _rain.asStateFlow()
+    val _symbol = MutableStateFlow("")
+    val symbol = _symbol.asStateFlow()
 
     // Variables for next 24Hours
     val _dayWeatherStatus = MutableStateFlow(statusStates[0])
@@ -123,6 +125,7 @@ class HomeViewModel(): ViewModel() {
                 _humidity.value = weather.humidity.toString()
                 _windSpeed.value = weather.windSpeed.toString()
                 _rain.value = weather.percipitation.toString()
+                _symbol.value = weather.symbolName.toString()
 
                 _wStatus.value = statusStates[1]
             } else {

@@ -13,7 +13,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Cust
 * humidity -- A Double. is measured as a percentage
 * windSpeed -- A Double. Measured in m/s. wind direction is not specified
 * percipitation -- A Double. Measured in mm.
-* symbol -- A string, represents weather symbol
+* symbolName -- A string, represents weather symbol
 */
 data class WeatherTimeForecast(
     val weatherForecast: WeatherForecast,
@@ -28,7 +28,7 @@ data class WeatherTimeForecast(
     val humidity: Double? = timeSeries?.data?.instant?.details?.relative_humidity
     val windSpeed: Double? = timeSeries?.data?.instant?.details?.wind_speed
     val percipitation: Double? = timeSeries?.data?.next_1_hours?.details?.precipitation_amount
-    val symbol: String? = timeSeries?.data?.next_1_hours?.summary?.symbol_code
+    val symbolName: String? = timeSeries?.data?.next_1_hours?.summary?.symbol_code
 
     override fun toString(): String {
         return if (timeSeries != null) {
@@ -38,10 +38,11 @@ data class WeatherTimeForecast(
                     "Cloud Coverage: $cloudCoverage%\n" +
                     "Percipitation: ${percipitation}mm\n" +
                     "Humidity: $humidity%\n" +
-                    "Symbol: $symbol\n" +
+                    "Symbol: $symbolName\n" +
                     "Wind Speed: $windSpeed m/s"
         } else {
             "No weather data available for $specifiedTime"
         }
     }
+
 }

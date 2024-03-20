@@ -2,11 +2,13 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,12 +28,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import kotlinx.coroutines.flow.asStateFlow
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
@@ -41,8 +53,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
-
-
+import java.io.File
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -53,8 +64,8 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = Modifier.
-        verticalScroll(scrollState)
+        modifier = Modifier
+            .verticalScroll(scrollState)
             .padding(10.dp)
     ) {
         if (loc.name == "My location"){
@@ -72,6 +83,7 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
                 Text(text = "My location")
             }
         }
+
 
         Text(
             text = loc.name,
@@ -93,6 +105,8 @@ fun Widgets(homeVM: HomeViewModel){
     val humidity by homeVM.humidity.collectAsState()
     val windSpeed by homeVM.windSpeed.collectAsState()
     val rain by homeVM.rain.collectAsState()
+    val symbol by homeVM.symbol.collectAsState()
+
 
     val dayWeatherStatus by homeVM.dayWeatherStatus.collectAsState()
     val next24 by homeVM.next24.collectAsState()
@@ -104,19 +118,21 @@ fun Widgets(homeVM: HomeViewModel){
 
     Column{
         // Temp Widget
+        DrawSymbol(symbol = symbol, size = 120.dp)
         when (wStatus) {
             homeVM.statusStates[0] -> {
                 println(homeVM.statusStates[0])
-                CurrentTempWidget(homeVM.statusStates[0])
+                CurrentTempWidget(homeVM.statusStates[0], "")
             }
             homeVM.statusStates[1] -> {
                 println(homeVM.statusStates[1])
+
 
                 Row(
                     modifier = Modifier.fillMaxWidth(), // Ensure the Row fills the screen width
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CurrentTempWidget(temp)
+                    CurrentTempWidget(temp, symbol)
                     Spacer(modifier = Modifier.weight(1f))
                     CurrentRainWidget(rain)
                 }
@@ -124,7 +140,7 @@ fun Widgets(homeVM: HomeViewModel){
             }
 
             else -> {
-                CurrentTempWidget(homeVM.statusStates[2])
+                CurrentTempWidget(homeVM.statusStates[2], "")
                 println(homeVM.statusStates[2])
 
             }
@@ -170,14 +186,18 @@ fun Widgets(homeVM: HomeViewModel){
 
 }
 @Composable
-fun CurrentTempWidget(temp: String) {
+fun CurrentTempWidget(temp: String, symbol: String) {
+
+
     Box(
         modifier = Modifier
             .size(120.dp)
             .background(color = Color.Gray, shape = RoundedCornerShape(10.dp)),
         contentAlignment = Alignment.Center
     ) {
+
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
             Text(text = "Temperature", color = Color.White)
             Text(text = "$temp°C", color = Color.White)
         }
@@ -208,9 +228,15 @@ fun DayWidget(weather: WeatherTimeForecast) {
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(modifier = Modifier.height(4.dp)) // Add a spacer for custom spacing
+            DrawSymbol(symbol = weather.symbolName.toString(), size = 60.dp) // Adjusted size
+            Spacer(modifier = Modifier.height(2.dp)) // Add a spacer for custom spacing
+            Text(text = "${weather.temperature}°C", color = Color.White, modifier = Modifier.padding(top = 2.dp)) // Adjust padding as needed
             Text(text = weather.time.hour + ":00", color = Color.White)
-            Text(text = "${weather.temperature}°C", color = Color.White)
+            Spacer(modifier = Modifier.height(4.dp)) // Add a spacer for custom spacing
+
         }
+
     }
 }
 
@@ -257,8 +283,8 @@ fun WeekTableWidget(weatherForecastList: List<WeatherTimeForecast>) {
                         .fillMaxWidth()
                         .wrapContentWidth(Alignment.End),
                     color = Color.White
-
                 )
+
             }
 
             if (forecast != weatherForecastList.last()){
@@ -303,5 +329,28 @@ fun AlertWidget(alerts: Feature?) {
 
 
         }
+    }
+}
+
+@Composable
+fun DrawSymbol(symbol: String, size: Dp) {
+    Box(modifier = Modifier.size(size), contentAlignment = Alignment.Center) {
+        val painter = rememberAsyncImagePainter(
+            model = ImageRequest.Builder(LocalContext.current)
+                .decoderFactory(coil.decode.SvgDecoder.Factory())
+                .data("https://raw.githubusercontent.com/metno/weathericons/89e3173756248b4696b9b10677b66c4ef435db53/weather/svg/$symbol.svg")
+                // Coil's .size() method is used to define a target size for image decoding, not the display size in Compose.
+                // Since we're using Box's size to control the image size, this is not strictly necessary unless the SVG has a very large default size.
+                .build(),
+            // ContentScale.Fit will ensure the image scales properly within the bounds you've set without cropping.
+            contentScale = ContentScale.Fit
+        )
+        Image(
+            painter = painter,
+            contentDescription = null,
+            // Fill the max size of the parent Box, and adjust the image scaling with contentScale.
+            modifier = Modifier.matchParentSize(),
+            contentScale = ContentScale.Fit // This makes the image fit within the given dimensions, maintaining aspect ratio.
+        )
     }
 }
