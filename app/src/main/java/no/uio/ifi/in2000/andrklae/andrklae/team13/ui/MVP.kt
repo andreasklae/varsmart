@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -25,6 +27,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +37,8 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 
@@ -44,8 +50,11 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
  val loc by homeVM.loc.collectAsState()
     println("My location: ${loc.lat}, ${loc.lon}")
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = Modifier
+        modifier = Modifier.
+        verticalScroll(scrollState)
             .padding(10.dp)
     ) {
         if (loc.name == "My location"){
@@ -83,6 +92,7 @@ fun Widgets(homeVM: HomeViewModel){
     val cloudCoverage by homeVM.cloudCoverage.collectAsState()
     val humidity by homeVM.humidity.collectAsState()
     val windSpeed by homeVM.windSpeed.collectAsState()
+    val rain by homeVM.rain.collectAsState()
 
     val dayWeatherStatus by homeVM.dayWeatherStatus.collectAsState()
     val next24 by homeVM.next24.collectAsState()
@@ -90,20 +100,31 @@ fun Widgets(homeVM: HomeViewModel){
     val weekWeatherStatus by homeVM.weekWeatherStatus.collectAsState()
     val week by homeVM.week.collectAsState()
 
+    val alerts by homeVM.warning.collectAsState()
+
     Column{
         // Temp Widget
         when (wStatus) {
             homeVM.statusStates[0] -> {
                 println(homeVM.statusStates[0])
-                CurrentWeatherWidgets(homeVM.statusStates[0])
+                CurrentTempWidget(homeVM.statusStates[0])
             }
             homeVM.statusStates[1] -> {
                 println(homeVM.statusStates[1])
-                CurrentWeatherWidgets(temp)
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(), // Ensure the Row fills the screen width
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CurrentTempWidget(temp)
+                    Spacer(modifier = Modifier.weight(1f))
+                    CurrentRainWidget(rain)
+                }
+
             }
 
             else -> {
-                CurrentWeatherWidgets(homeVM.statusStates[2])
+                CurrentTempWidget(homeVM.statusStates[2])
                 println(homeVM.statusStates[2])
 
             }
@@ -132,7 +153,7 @@ fun Widgets(homeVM: HomeViewModel){
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        AlertWidget()
+        AlertWidget(alerts)
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -149,7 +170,7 @@ fun Widgets(homeVM: HomeViewModel){
 
 }
 @Composable
-fun CurrentWeatherWidgets(temp: String) {
+fun CurrentTempWidget(temp: String) {
     Box(
         modifier = Modifier
             .size(120.dp)
@@ -159,6 +180,21 @@ fun CurrentWeatherWidgets(temp: String) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = "Temperature", color = Color.White)
             Text(text = "$temp°C", color = Color.White)
+        }
+    }
+}
+
+@Composable
+fun CurrentRainWidget(rain: String) {
+    Box(
+        modifier = Modifier
+            .size(120.dp)
+            .background(color = Color.Gray, shape = RoundedCornerShape(10.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = "Rain", color = Color.White)
+            Text(text = "${rain}mm", color = Color.White)
         }
     }
 }
@@ -233,7 +269,7 @@ fun WeekTableWidget(weatherForecastList: List<WeatherTimeForecast>) {
 }
 
 @Composable
-fun AlertWidget() {
+fun AlertWidget(alerts: Feature?) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -244,11 +280,27 @@ fun AlertWidget() {
             modifier = Modifier
                 .padding(10.dp)
         ) {
-            Text(text = "Alerts", color = Color.White)
+            Text(text = "Closest weather alert", color = Color.White)
             Divider(color = Color.White, thickness = 1.dp)
-            Text(text = "Alert 1", color = Color.White)
-            Text(text = "Alert 2", color = Color.White)
-            Text(text = "Alert 3", color = Color.White)
+            if (alerts != null){
+                println(alerts)
+                Text(
+                    text = alerts.properties.area + ":",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = alerts.properties.description,
+                    color = Color.White
+                )
+            }
+            else{
+                Text(
+                    text = "No nearby alerts",
+                    color = Color.White
+                )
+            }
+
 
         }
     }

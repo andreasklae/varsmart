@@ -15,11 +15,11 @@ suspend fun main() {
     val lat = 59.91
     val lon = 10.71
 
-    val customLocation = CustomLocation(name, lon, lat, type, fylke)
+    val customLocation = CustomLocation(name, lat, lon, type, fylke)
 
     val year = "2024"
     val month = "03"
-    val day = "13"
+    val day = "20"
     val hour = "16"
 
     val dateTime = DateTime(year, month, day, hour)

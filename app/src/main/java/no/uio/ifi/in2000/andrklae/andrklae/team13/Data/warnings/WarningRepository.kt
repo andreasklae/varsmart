@@ -4,7 +4,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Cust
 
 class WarningRepository {
 
-
+    var warningRange = 40
     private val warningDataSource: WarningDataSource= WarningDataSource()
     // TO-DO
     // Initialize variable with List<Features>
@@ -16,7 +16,7 @@ class WarningRepository {
     data class Coordinate2(val lat: Double, val lon: Double)
 
 
-    fun findClosestCoordinate(loc: CustomLocation, coordinates: List<Feature>): Feature {
+    fun findClosestCoordinate(loc: CustomLocation, coordinates: List<Feature>): Feature? {
         val myCoordinate = Coordinate2(loc.lat, loc.lon)
         println("Looking for alerts near ${loc.name} (${loc.lat}, ${loc.lon})...")
         var closestCoordinate: Coordinate2? = null
@@ -78,7 +78,11 @@ class WarningRepository {
                 }
             }
         }
-        return test
+        return if(calculateKm(myCoordinate.lat, myCoordinate.lon, closestCoordinate!!.lat, closestCoordinate!!.lon) <= warningRange){
+            test
+        } else{
+            null
+        }
     }
 
 
@@ -92,12 +96,17 @@ class WarningRepository {
                 Math.sin(dLon / 2) * Math.sin(dLon / 2)
         val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
         return earthRadius * c
-    }/*
-    fun checkArrayList(coordinate: Coordinate2, liste: ArrayList<*>): Coordinate2{
-
-
-
-
     }
-    */
+
+    fun calculateKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val R = 6371 // Radius of the earth in kilometers
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return R * c // Distance in kilometers
+    }
+
 }
