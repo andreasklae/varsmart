@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
     private fun set(){
         lifecycleScope.launch {
             println("TESTTTTT")
-            delay(3000)
+            delay(100)
             myVariable.value = masterRepository.currentLocation.toString()
         }
     }
