@@ -23,10 +23,15 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.ktx.model.polygonOptions
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapState
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.ZoneClusterItem
 
 class HomeViewModel(): ViewModel() {
+    val wRepo = WeatherRepository()
+    val aRepo = WarningRepository()
     // initialize location as Oslo
     val name = "Oslo"
     val type = "By"
@@ -57,7 +62,7 @@ class HomeViewModel(): ViewModel() {
         println("new location set")
     }
 
-    val wRepo = WeatherRepository()
+
 
 
     // Variables for currentWeather
@@ -73,6 +78,8 @@ class HomeViewModel(): ViewModel() {
     val humidity = _humidity.asStateFlow()
     val _windSpeed = MutableStateFlow("")
     val windSpeed = _windSpeed.asStateFlow()
+    val _rain = MutableStateFlow("")
+    val rain = _rain.asStateFlow()
 
     // Variables for next 24Hours
     val _dayWeatherStatus = MutableStateFlow(statusStates[0])
@@ -86,6 +93,10 @@ class HomeViewModel(): ViewModel() {
     val _week = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
     val week = _week.asStateFlow()
 
+    // Variable for warning
+    val _warning: MutableStateFlow<Feature?> = MutableStateFlow(null)
+    val warning = _warning.asStateFlow()
+
     init {
         println("init")
         update()
@@ -95,6 +106,7 @@ class HomeViewModel(): ViewModel() {
         updateCurrentWeather()
         updateWeek()
         updateNext24h()
+        fetchWarning()
         println("updating for: ${_loc.value.name}")
     }
 
@@ -110,6 +122,7 @@ class HomeViewModel(): ViewModel() {
                 _cloudCoverage.value = weather.cloudCoverage.toString()
                 _humidity.value = weather.humidity.toString()
                 _windSpeed.value = weather.windSpeed.toString()
+                _rain.value = weather.percipitation.toString()
 
                 _wStatus.value = statusStates[1]
             } else {
@@ -162,6 +175,13 @@ class HomeViewModel(): ViewModel() {
                 newcurrentDateTime.dayOfMonth.toString(),
                 newcurrentDateTime.hour.toString()
             )
+        }
+    }
+
+    fun fetchWarning() {
+        viewModelScope.launch {
+            val warnings = aRepo.fetchAllWarnings().features
+            _warning.value = aRepo.findClosestCoordinate(_loc.value, warnings)
         }
     }
 }
