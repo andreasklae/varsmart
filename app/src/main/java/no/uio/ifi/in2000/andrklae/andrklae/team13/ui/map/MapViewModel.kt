@@ -9,8 +9,12 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.ktx.model.polygonOptions
 import kotlinx.coroutines.flow.MutableStateFlow
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 
-class MapViewModel( /*Give repos or data*/ ): ViewModel() {
+class MapViewModel(location: CustomLocation, warning: Feature): ViewModel() {
+    val location = location
+    val warning = warning
 
     val polygonPoints = listOf(
         LatLng(40.7128, -74.0060), // New York
@@ -18,49 +22,29 @@ class MapViewModel( /*Give repos or data*/ ): ViewModel() {
         LatLng(41.8781, -87.6298), // Chicago
         LatLng(37.7749, -122.4194) // San Francisco
     )
-    val state: MutableState<MapState> = mutableStateOf(
-        MapState(
-            lastKnownLocation = null,
-            // Warning areas for later
-            clusterItems = listOf(
-                ZoneClusterItem(
-                    id = "zone-1",
-                    title = "Zone 1",
-                    snippet = "This is Zone 1.",
-                    polygonOptions = polygonOptions {
-                        add(LatLng(49.105, -122.524))
-                        add(LatLng(49.101, -122.529))
-                        add(LatLng(49.092, -122.501))
-                        add(LatLng(49.1, -122.506))
-                        fillColor(Color.RED)
-                    }
-                )
-            )
-        )
-    )
+    val state: MutableState<MapState> = mutableStateOf(MapState(location, warning))
+    /*fun getPolygons(): List<ZoneClusterItem> {
+        val list: List<ZoneClusterItem> = emptyList()
+        warning.geometry.coordinates.forEach { it ->
+            if (warning.geometry.coordinates.size > 1) {
 
-    @SuppressLint("MissingPermission")
-    fun getDeviceLocation(
-        fusedLocationProviderClient: FusedLocationProviderClient
-    ) {
-        /*
-         * Get the best and most recent location of the device, which may be null in rare
-         * cases when a location is not available.
-         */
-        try {
-            val locationResult = fusedLocationProviderClient.lastLocation
-            locationResult.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    state.value = state.value.copy(
-                        lastKnownLocation = task.result
-                    )
-                    if (locationResult.result != null){
-                        println("User Coords: ${locationResult.result.latitude}, ${locationResult.result.longitude}")
-                    }
-                }
+            } else {
+
             }
-        } catch (e: SecurityException) {
+
+
+            /*
+
+           list.add(ZoneClusterItem(warning.properties.id, location.name, warning.properties.description, ))
+
+           */
+
+            return list
         }
+
+    }*/
+    fun getLocation(): LatLng {
+        return LatLng(location.lat, location.lon)
     }
 }
 

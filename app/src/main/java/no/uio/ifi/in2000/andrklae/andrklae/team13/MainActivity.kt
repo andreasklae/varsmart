@@ -24,7 +24,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
 class MainActivity : ComponentActivity() {
-    private val mapViewModel = MapViewModel()
+    //private val mapViewModel = MapViewModel()
     val homeVM = HomeViewModel()
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                 LocationUtil.fetchLocation(this, this) { customLocation ->
                     if (customLocation != null) {
                         homeVM.setLocation(customLocation)
-                        homeVM.update()
+                        homeVM.update(true)
                         println("Location fetched after permission granted")
                     } else {
                         // Handle the case where location is still null
@@ -71,7 +71,6 @@ class MainActivity : ComponentActivity() {
             LocationUtil.fetchLocation(this,this) { customLocation ->
                 if (customLocation != null) {
                     homeVM.setLocation(customLocation)
-                    homeVM.update()
                     println("hentet lokasjon")
                 }
             }

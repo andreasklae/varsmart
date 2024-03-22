@@ -72,7 +72,7 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
             Button(
                 onClick = {
                 homeVM.setLocation(CustomLocation("Oslo", 59.91, 10.71, "By", "Oslo"))
-                    homeVM.update()
+                    
             }
             ){
                 Text(text = "Oslo")
@@ -96,15 +96,12 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
 
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun Widgets(homeVM: HomeViewModel){
     val wStatus by homeVM.wStatus.collectAsState()
-    val temp by homeVM.temp.collectAsState()
-    val airPressure by homeVM.airPressure.collectAsState()
-    val cloudCoverage by homeVM.cloudCoverage.collectAsState()
-    val humidity by homeVM.humidity.collectAsState()
-    val windSpeed by homeVM.windSpeed.collectAsState()
-    val rain by homeVM.rain.collectAsState()
+    val currentWeather by homeVM.currentWeather.collectAsState()
+
     val symbol by homeVM.symbol.collectAsState()
 
 
@@ -132,9 +129,9 @@ fun Widgets(homeVM: HomeViewModel){
                     modifier = Modifier.fillMaxWidth(), // Ensure the Row fills the screen width
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CurrentTempWidget(temp, symbol)
+                    CurrentTempWidget(currentWeather?.temperature.toString(), symbol)
                     Spacer(modifier = Modifier.weight(1f))
-                    CurrentRainWidget(rain)
+                    CurrentRainWidget(currentWeather?.percipitation.toString())
                 }
 
             }
