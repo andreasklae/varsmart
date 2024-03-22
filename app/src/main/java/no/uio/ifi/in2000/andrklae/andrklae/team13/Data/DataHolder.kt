@@ -12,8 +12,6 @@ import java.time.LocalDateTime
 data class DataHolder(
     val location: CustomLocation
 ){
-    val wRepo = WeatherRepository()
-    val aRepo = WarningRepository()
 
     var current = LocalDateTime.now()
     var currentYear = current.year.toString()
@@ -34,7 +32,11 @@ data class DataHolder(
     var rise: String? = null
     var set: String? = null
     var warning: Feature? = null
-    companion object { val favourites = mutableListOf<DataHolder>() }
+    companion object {
+        val favourites = mutableListOf<DataHolder>()
+        val wRepo = WeatherRepository()
+        val aRepo = WarningRepository()
+    }
 
     init {
         favourites.add(this)
