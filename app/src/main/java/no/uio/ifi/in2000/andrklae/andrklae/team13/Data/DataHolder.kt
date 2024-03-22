@@ -18,7 +18,9 @@ data class DataHolder(
     companion object { val favourites = mutableListOf<DataHolder>() }
 
     init {
-        favourites.add(this)
+        if (currentWeather != null){
+            favourites.add(this)
+        }
     }
 
     fun removeFromFavorites(){

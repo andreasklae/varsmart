@@ -63,6 +63,7 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
     println("My location: ${loc.lat}, ${loc.lon}")
     val scrollState = rememberScrollState()
 
+
     Column(
         modifier = Modifier
             .verticalScroll(scrollState)
@@ -71,15 +72,17 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
         if (loc.name == "My location"){
             Button(
                 onClick = {
-                homeVM.setLocation(CustomLocation("Oslo", 59.91, 10.71, "By", "Oslo"))
-                    
+                homeVM.setLocation(homeVM.alesund)
+
             }
             ){
-                Text(text = "Oslo")
+                Text(text = "Ålesund")
             }
         }
         else{
-            Button(onClick = { activity.getCurrentLocation() }) {
+            Button(onClick = {
+                activity.getCurrentLocation()
+            }) {
                 Text(text = "My location")
             }
         }
@@ -90,8 +93,6 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
             fontSize = 40.sp,
         )
         Widgets(homeVM)
-
-
     }
 
 }
@@ -101,9 +102,6 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
 fun Widgets(homeVM: HomeViewModel){
     val wStatus by homeVM.wStatus.collectAsState()
     val currentWeather by homeVM.currentWeather.collectAsState()
-
-    val symbol by homeVM.symbol.collectAsState()
-
 
     val dayWeatherStatus by homeVM.dayWeatherStatus.collectAsState()
     val next24 by homeVM.next24.collectAsState()
@@ -115,7 +113,7 @@ fun Widgets(homeVM: HomeViewModel){
 
     Column{
         // Temp Widget
-        DrawSymbol(symbol = symbol, size = 120.dp)
+        currentWeather?.symbolName?.let { DrawSymbol(symbol = it, size = 120.dp) }
         when (wStatus) {
             homeVM.statusStates[0] -> {
                 println(homeVM.statusStates[0])
@@ -129,7 +127,11 @@ fun Widgets(homeVM: HomeViewModel){
                     modifier = Modifier.fillMaxWidth(), // Ensure the Row fills the screen width
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CurrentTempWidget(currentWeather?.temperature.toString(), symbol)
+                    currentWeather?.symbolName?.let {
+                        CurrentTempWidget(currentWeather?.temperature.toString(),
+                            it
+                        )
+                    }
                     Spacer(modifier = Modifier.weight(1f))
                     CurrentRainWidget(currentWeather?.percipitation.toString())
                 }
@@ -173,10 +175,12 @@ fun Widgets(homeVM: HomeViewModel){
         // Week forecast widget
         when (weekWeatherStatus){
             homeVM.statusStates[0] -> {
-
+                WeekTableWidget(listOf())
+                println("antall dager: ${ week.size }")
             }
             homeVM.statusStates[1] -> {
                 WeekTableWidget(week)
+                println("antall dager: ${ week.size }")
             }
         }
     }

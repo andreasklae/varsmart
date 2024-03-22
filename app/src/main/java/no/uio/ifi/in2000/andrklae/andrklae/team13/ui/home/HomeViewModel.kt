@@ -65,15 +65,12 @@ class HomeViewModel(): ViewModel() {
     val rise = _rise.asStateFlow()
     val _set = MutableStateFlow("")
     val set = _set.asStateFlow()
-    
-    // initialize location as Oslo
-    val name = "Oslo"
-    val type = "By"
-    val fylke = "Oslo"
-    val lat = 59.91
-    val lon = 10.71
 
-    val _loc = MutableStateFlow(CustomLocation(name, lat, lon, type, fylke))
+    // initialize location as Ålesund
+
+    val alesund = CustomLocation("Ålesund", 62.47, 6.13, "By", "")
+
+    val _loc = MutableStateFlow(alesund)
     val loc = _loc.asStateFlow()
 
     // finds current datetime
@@ -100,20 +97,33 @@ class HomeViewModel(): ViewModel() {
     )
     init {
         println("init")
-        update(true)
+        if (DataHolder.favourites.contains(data)){
+            update(true)
+        }
+        else{
+            update(false)
+        }
+
     }
     fun update(dataExist: Boolean) {
         println("updating for: ${_loc.value.name}")
         updateTime()
+
         if (dataExist && dt.hour > data.lastUpdate.hour){
-            updateCurrentWeather()
-            updateWeek()
-            updateNext24h()
-            fetchWarning()
-            updateSunriseAndSunset()
-            data.lastUpdate = dt
+            DataHolder.favourites.forEach{
+                if (it.currentWeather?.customLocation == _loc.value){
+                    data = it
+                    println(it.currentWeather!!.customLocation.name)
+                    updateCurrentWeather()
+                    updateWeek()
+                    updateNext24h()
+                    fetchWarning()
+                    updateSunriseAndSunset()
+                    data.lastUpdate = dt
+                }
+            }
         }
-        
+
         else if (dataExist){
             DataHolder.favourites.forEach{
                 if (it.currentWeather?.customLocation == _loc.value){
@@ -128,32 +138,54 @@ class HomeViewModel(): ViewModel() {
                 }
             }
         }
-        
-        
+
+        else{
+            data = DataHolder(
+                dt,
+                _currentWeather.value,
+                _week.value,
+                _next24.value,
+                _warning.value,
+                _rise.value,
+                _set.value
+            )
+            updateCurrentWeather()
+            updateWeek()
+            updateNext24h()
+            fetchWarning()
+            updateSunriseAndSunset()
+        }
+
+
     }
     fun setLocation(loc: CustomLocation) {
+        print("bytter fra ${_loc.value.name}")
         _loc.value = loc
+        println(" til ${_loc.value.name}")
         var dataExists = false
+        println("Favoritter: ")
+        DataHolder.favourites.forEach{
+            println("\t ${it.currentWeather?.customLocation?.name}")
+        }
         DataHolder.favourites.forEach{
             if (it.currentWeather?.customLocation == loc){
                 dataExists = true
+                println("Fant ${_loc.value.name} i favourites")
             }
         }
         update(dataExists)
     }
     fun updateTime() {
-        viewModelScope.launch {
-            val newcurrentDateTime = LocalDateTime.now()
-            dt = DateTime(
-                newcurrentDateTime.year.toString(),
-                newcurrentDateTime.monthValue.toString(),
-                newcurrentDateTime.dayOfMonth.toString(),
-                newcurrentDateTime.hour.toString()
-            )
-        }
+        val newcurrentDateTime = LocalDateTime.now()
+        dt = DateTime(
+            newcurrentDateTime.year.toString(),
+            newcurrentDateTime.monthValue.toString(),
+            newcurrentDateTime.dayOfMonth.toString(),
+            newcurrentDateTime.hour.toString()
+        )
     }
 
-    
+
 
     fun updateCurrentWeather() {
         viewModelScope.launch {
@@ -163,8 +195,8 @@ class HomeViewModel(): ViewModel() {
 
             if (fetchedWeather != null) {
                 _currentWeather.value = fetchedWeather
-                _symbol.value = fetchedWeather.symbolName.toString()
                 data.currentWeather = _currentWeather.value
+                _symbol.value = fetchedWeather.symbolName.toString()
 
                 _wStatus.value = statusStates[1]
             } else {
@@ -181,7 +213,7 @@ class HomeViewModel(): ViewModel() {
             if (list.isNotEmpty()) {
                 _next24.value = list
                 data.day = _next24.value
-                
+
                 _dayWeatherStatus.value = statusStates[1]
             } else {
                 _dayWeatherStatus.value = statusStates[2]
@@ -191,16 +223,19 @@ class HomeViewModel(): ViewModel() {
     }
 
     fun updateWeek() {
+        println("Fetching week")
         viewModelScope.launch {
             _weekWeatherStatus.value = statusStates[0]
             val list = wRepo.getWeatherWeek(dt, _loc.value)
             if (list.isNotEmpty()) {
+                println("Success fetching week ${list.first().temperature}")
                 _week.value = list
                 data.week = _week.value
-                
-                _dayWeatherStatus.value = statusStates[1]
+                _weekWeatherStatus.value = statusStates[1]
             } else {
                 _weekWeatherStatus.value = statusStates[2]
+                println("failed fetching week")
+
             }
         }
 
@@ -213,6 +248,7 @@ class HomeViewModel(): ViewModel() {
             _set.value = sun.sunsetTime
             data.rise = _rise.value
             data.set = _set.value
+
         }
     }
 
@@ -223,7 +259,7 @@ class HomeViewModel(): ViewModel() {
             val warnings = aRepo.fetchAllWarnings().features
             _warning.value = aRepo.findClosestCoordinate(_loc.value, warnings)
             data.warningFeature = _warning.value
-            
+
         }
     }
 }
