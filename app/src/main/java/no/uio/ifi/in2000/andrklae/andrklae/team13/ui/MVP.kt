@@ -45,6 +45,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import kotlinx.coroutines.flow.asStateFlow
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
@@ -59,8 +60,7 @@ import java.io.File
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
- val loc by homeVM.loc.collectAsState()
-    println("My location: ${loc.lat}, ${loc.lon}")
+    val loc by homeVM.loc.collectAsState()
     val scrollState = rememberScrollState()
 
 
@@ -71,12 +71,9 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
     ) {
         if (loc.name == "My location"){
             Button(
-                onClick = {
-                homeVM.setLocation(homeVM.alesund)
-
-            }
+                onClick = {homeVM.setLocation(0)}
             ){
-                Text(text = "Ålesund")
+                Text(text = DataHolder.favourites[0].location.name)
             }
         }
         else{
@@ -116,11 +113,9 @@ fun Widgets(homeVM: HomeViewModel){
         currentWeather?.symbolName?.let { DrawSymbol(symbol = it, size = 120.dp) }
         when (wStatus) {
             homeVM.statusStates[0] -> {
-                println(homeVM.statusStates[0])
                 CurrentTempWidget(homeVM.statusStates[0], "")
             }
             homeVM.statusStates[1] -> {
-                println(homeVM.statusStates[1])
 
 
                 Row(
@@ -140,7 +135,6 @@ fun Widgets(homeVM: HomeViewModel){
 
             else -> {
                 CurrentTempWidget(homeVM.statusStates[2], "")
-                println(homeVM.statusStates[2])
 
             }
         }
@@ -176,11 +170,9 @@ fun Widgets(homeVM: HomeViewModel){
         when (weekWeatherStatus){
             homeVM.statusStates[0] -> {
                 WeekTableWidget(listOf())
-                println("antall dager: ${ week.size }")
             }
             homeVM.statusStates[1] -> {
                 WeekTableWidget(week)
-                println("antall dager: ${ week.size }")
             }
         }
     }
@@ -310,7 +302,6 @@ fun AlertWidget(alerts: Feature?) {
             Text(text = "Closest weather alert", color = Color.White)
             Divider(color = Color.White, thickness = 1.dp)
             if (alerts != null){
-                println(alerts)
                 Text(
                     text = alerts.properties.area + ":",
                     color = Color.White,
