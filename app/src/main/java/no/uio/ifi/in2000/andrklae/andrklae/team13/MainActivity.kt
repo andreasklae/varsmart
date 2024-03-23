@@ -24,6 +24,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Loca
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MVP
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
 class MainActivity : ComponentActivity() {
     //private val mapViewModel = MapViewModel()
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
     val alesund = CustomLocation("Ålesund", 62.47, 6.13, "By", "")
     val alesundData = DataHolder(alesund)
     val homeVM = HomeViewModel(0)
+    val test = 0
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -66,7 +68,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MVP(homeVM, this)
+                    if(test == 1){
+                        MapWithPolygon()
+                    }
+                    else{
+                        MVP(homeVM, this)
+                    }
+
                 }
             }
         }
