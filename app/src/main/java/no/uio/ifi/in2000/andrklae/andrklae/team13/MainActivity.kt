@@ -60,8 +60,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MVP(homeVM, this)
-                    //HomeScreen()
+                    //MVP(homeVM, this)
+                    HomeScreen()
                 }
             }
         }
