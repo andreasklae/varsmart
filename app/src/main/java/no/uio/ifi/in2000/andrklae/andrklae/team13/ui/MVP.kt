@@ -56,6 +56,8 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 import java.io.File
+import androidx.compose.ui.res.painterResource
+import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -295,11 +297,18 @@ fun AlertWidget(alerts: Feature?) {
             .fillMaxWidth()
             .background(color = Color.Gray, shape = RoundedCornerShape(10.dp)),
     ) {
-        /*Image(
-            painter = painterResource(id = R.drawable.)
+        /*
+        Image(
+            painter = painterResource(id = R.drawable.fog),
+            contentDescription = "",
+            contentScale= ContentScale.FillBounds,
+            modifier=Modifier.matchParentSize()
+
         )
 
          */
+
+
         Column(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
