@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.media.Image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -294,11 +295,17 @@ fun AlertWidget(alerts: Feature?) {
             .fillMaxWidth()
             .background(color = Color.Gray, shape = RoundedCornerShape(10.dp)),
     ) {
+        /*Image(
+            painter = painterResource(id = R.drawable.)
+        )
+
+         */
         Column(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
                 .padding(10.dp)
         ) {
+
             Text(text = "Closest weather alert", color = Color.White)
             Divider(color = Color.White, thickness = 1.dp)
             if (alerts != null){
