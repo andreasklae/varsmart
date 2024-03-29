@@ -100,4 +100,6 @@ dependencies {
 
     // Kapt
     kapt("com.google.dagger:hilt-compiler:2.44.2")
+
+    implementation("com.airbnb.android:lottie-compose:5.2.0")
 }
