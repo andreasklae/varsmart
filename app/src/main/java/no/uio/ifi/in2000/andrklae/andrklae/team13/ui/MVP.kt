@@ -57,6 +57,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 import java.io.File
 import androidx.compose.ui.res.painterResource
+import coil.compose.rememberImagePainter
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 
 
@@ -297,16 +298,7 @@ fun AlertWidget(alerts: Feature?) {
             .fillMaxWidth()
             .background(color = Color.Gray, shape = RoundedCornerShape(10.dp)),
     ) {
-        /*
-        Image(
-            painter = painterResource(id = R.drawable.fog),
-            contentDescription = "",
-            contentScale= ContentScale.FillBounds,
-            modifier=Modifier.matchParentSize()
 
-        )
-
-         */
 
 
         Column(
@@ -360,5 +352,6 @@ fun DrawSymbol(symbol: String, size: Dp) {
             modifier = Modifier.matchParentSize(),
             contentScale = ContentScale.Fit // This makes the image fit within the given dimensions, maintaining aspect ratio.
         )
+
     }
 }

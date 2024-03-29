@@ -25,6 +25,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MVP
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.bilde
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
 class MainActivity : ComponentActivity() {
     //private val mapViewModel = MapViewModel()
@@ -69,7 +70,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     if(test == 1){
-                        MapWithPolygon()
+                        bilde()
                     }
                     else{
                         MVP(homeVM, this)
