@@ -156,7 +156,7 @@ fun UpperHalf(){
 @Composable
 fun MainComponent(innerPadding: PaddingValues){
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(0.dp),
         modifier = Modifier
             .padding(innerPadding)
 
@@ -165,38 +165,36 @@ fun MainComponent(innerPadding: PaddingValues){
             UpperHalf()
         }
         item{
-            //håndter om det ikke er noen varsler
-            val description= "Lorem ipsum dolor sit amet, consectetur adipiscing eli,Lorem ipsum dolor sit amet,\""
-            val title= "Varsel om snø: Sørlig del av østlandet"
-            DisplayWarning(warningContent = {WarningContent(description)},description,title)
+            //WarningList should be of actual warning objects
+            //the warnings should be organized by priority
+            val warningList= mutableListOf(
+                "Varsel om snø: Sørlig del av østlandet",
+                "Varsel om snø: Sørlig del av østlandet"
+            )
+            WarningScroll(warningList = warningList)
+
+        }
+
+        item{
+            val HourlyTemp= mutableListOf(
+                "Varsel om snø: Sørlig del av østlandet",
+                "Varsel om snø: Sørlig del av østlandet",
+                "Varsel om snø: Sørlig del av østlandet",
+                "Varsel om snø: Sørlig del av østlandet",
+                "Varsel om snø: Sørlig del av østlandet",
+                "Varsel om snø: Sørlig del av østlandet"
+            )
+            HourlyScroll(hourlyList = HourlyTemp)
+        }
+        item{
+            val dailyTemp= mutableListOf(
+                "V", "V", "V", "V", "V", "V", "d"
+            )
+            DailyTable(dailyTemp = dailyTemp)
 
         }
 
     }
-    /*
-    //WarningList should be of actual warning objects
-    //the warnings should be organized by priority
-    val warningList= mutableListOf(
-        "Varsel om snø: Sørlig del av østlandet",
-        "Varsel om snø: Sørlig del av østlandet"
-    )
-    if (warningList.isNotEmpty()){
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(4.dp)){
-            val description= "Lorem ipsum dolor sit amet, consectetur adipiscing eli,Lorem ipsum dolor sit amet,\""
-            val title= "Varsel om snø: Sørlig del av østlandet"
-            warningList.forEach{
-                item {
-                    DisplayWarning(
-                        warningContent = { WarningContent(warningDescription = description) },
-                        warningDescription = description,
-                        warningTitle = title
-                    )
-                }
-            }
-
-        }
-    }
-*/
 
 }
 
@@ -304,7 +302,7 @@ fun DisplayWarning(warningContent: @Composable () -> Unit, warningDescription: S
 
     Box(modifier = Modifier
         .padding(16.dp)
-        .width(429.dp)
+        .width(380.dp)
         .clip(RoundedCornerShape(15.dp))
         .background(Color.White.copy(alpha = 0.7f))
         .clickable { expanded = !expanded }
@@ -380,5 +378,152 @@ fun WarningContent(warningDescription: String) {
 
     }
 
+
+//Change the list parameter to be of the type Warning
+@Composable
+fun WarningScroll(warningList: MutableList<String>){
+    if (warningList.isNotEmpty()){
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(4.dp)){
+            val description= "Lorem ipsum dolor sit amet, consectetur adipiscing eli,Lorem ipsum dolor sit amet,\""
+            val title= "Varsel om snø: Sørlig del av østlandet"
+            warningList.forEach{
+                item {
+                    DisplayWarning(
+                        warningContent = { WarningContent(warningDescription = description) },
+                        warningDescription = description,
+                        warningTitle = title
+                    )
+                }
+            }
+
+        }
+    }
+
+
+
+}
+
+
+//Should have parameters for a list of the type DateTime
+//Variables for icon, time, temperature
+@Composable
+fun HourlyForecast(){
+    Box(modifier = Modifier
+        .padding(8.dp)
+        .width(74.dp)
+        .height(110.dp)
+        .clip(RoundedCornerShape(20.dp))
+        .background(Color.White.copy(alpha = 0.7f))
+        .drawWithContent {
+            drawContent()
+            drawRoundRect(
+                color = Color.Black.copy(alpha = 0.1f), // Set the opacity using the alpha value
+                size = Size(74.dp.toPx(), 110.dp.toPx()),
+                cornerRadius = CornerRadius(40f, 30f),
+                style = Stroke(2f)
+            )
+        },
+        contentAlignment = Alignment.Center
+
+    ){
+
+        Column (
+            modifier = Modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ){
+
+            ImageIcon(y = 0, x = 0, symbolId = R.drawable.sunclouds, width = 50, height = 40)
+            Text(
+                text = "10°",
+                fontSize = 20.sp,
+
+                )
+
+            Text(
+                text = "Nå",
+                fontSize = 14.sp,
+
+                )
+        }
+
+    }
+
+
+}
+
+//Change the list to of the type Datetime
+@Composable
+fun HourlyScroll(hourlyList: MutableList<String>){
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(1.dp)){
+        hourlyList.forEach{
+            item {
+                HourlyForecast()
+            }
+        }
+    }
+}
+
+@Composable
+fun DailyForecast(day: String, weatherIcon: Int, midDayTemp: String){
+    Row(
+        modifier = Modifier
+            .padding(8.dp)
+    ){
+        Text(
+            text = day,
+            fontSize = 20.sp,
+
+            )
+        Spacer(modifier = Modifier.padding(20.dp))
+
+        ImageIcon(y = -3, x = -2, symbolId = weatherIcon, 35, 40)
+
+        Spacer(modifier = Modifier.padding(20.dp))
+        Text(
+            text = midDayTemp,
+            fontSize = 20.sp
+
+        )
+        Spacer(modifier = Modifier.padding(20.dp))
+        Text(
+            text = "10-20mm",
+            fontSize = 20.sp
+        )
+
+    }
+
+}
+
+
+
+@Composable
+fun DailyTable(dailyTemp: MutableList<String>){
+    Box(modifier = Modifier
+        .padding(16.dp)
+        .width(380.dp)
+        .height(390.dp)
+        .clip(RoundedCornerShape(15.dp))
+        .background(Color.White.copy(alpha = 0.8f))
+        .drawWithContent {
+            drawContent()
+            drawRoundRect(
+                color = Color.Black.copy(alpha = 0.1f), // Set the opacity using the alpha value
+                size = Size(160.dp.toPx(), 134.dp.toPx()),
+                cornerRadius = CornerRadius(40f, 30f),
+                style = Stroke(2f)
+            )
+        },
+        contentAlignment = Alignment.Center
+
+    ){
+        Column {
+            dailyTemp.forEach{
+                DailyForecast(day = "Mandag", weatherIcon = R.drawable.heavyrain, midDayTemp = "2°",)
+            }
+        }
+
+    }
+}
 
 
