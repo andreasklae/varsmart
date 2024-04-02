@@ -86,7 +86,9 @@ fun HomeScreen() {
 
             ) { innerPadding ->
 
+
                 MainComponent(innerPadding = innerPadding)
+                TopAppBar()
 
             }
         }
@@ -106,7 +108,7 @@ fun prevHomeScreen(){
 fun TopAppBar(){
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-       verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically
     ) {
         favorittButton()
         mapButton()
@@ -130,21 +132,23 @@ fun UpperHalf(){
         )
 
         Column() {
-            TopAppBar()
+            Spacer(modifier = Modifier.padding(20.dp))
             Row(horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ){
-                Text(text = "OSLO", fontSize = 30.sp)
+                Text(text = "OSLO", fontSize = 35.sp)
 
             }
-            Spacer(modifier = Modifier.height(25.dp))
-            mainForecastBox()
-            Box (
-                modifier = Modifier
-                    .offset(290.dp,25.dp)
-            ){
-                Chicken()
+            Column {
+                Spacer(modifier = Modifier.height(25.dp))
+                mainForecastBox()
+                Box(
+                    modifier = Modifier
+                        .offset(290.dp, 25.dp)
+                ) {
+                    Chicken()
+                }
             }
 
 
@@ -158,45 +162,49 @@ fun UpperHalf(){
 
 @Composable
 fun MainComponent(innerPadding: PaddingValues){
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(0.dp),
+    Column(
         modifier = Modifier
-            .padding(innerPadding)
 
     ) {
-        item {
-            UpperHalf()
-        }
-        item{
-            //WarningList should be of actual warning objects
-            //the warnings should be organized by priority
-            val warningList= mutableListOf(
-                "Varsel om snø: Sørlig del av østlandet",
-                "Varsel om snø: Sørlig del av østlandet"
-            )
-            WarningScroll(warningList = warningList)
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+            modifier = Modifier
+                .padding(innerPadding)
+        ) {
+            item {
+                UpperHalf()
+            }
+            item {
+                //WarningList should be of actual warning objects
+                //the warnings should be organized by priority
+                val warningList = mutableListOf(
+                    "Varsel om snø: Sørlig del av østlandet",
+                    "Varsel om snø: Sørlig del av østlandet"
+                )
+                WarningScroll(warningList = warningList)
+
+            }
+
+            item {
+                val HourlyTemp = mutableListOf(
+                    "Varsel om snø: Sørlig del av østlandet",
+                    "Varsel om snø: Sørlig del av østlandet",
+                    "Varsel om snø: Sørlig del av østlandet",
+                    "Varsel om snø: Sørlig del av østlandet",
+                    "Varsel om snø: Sørlig del av østlandet",
+                    "Varsel om snø: Sørlig del av østlandet"
+                )
+                HourlyScroll(hourlyList = HourlyTemp)
+            }
+            item {
+                val dailyTemp = mutableListOf(
+                    "V", "V", "V", "V", "V", "V", "d"
+                )
+                DailyTable(dailyTemp = dailyTemp)
+
+            }
 
         }
-
-        item{
-            val HourlyTemp= mutableListOf(
-                "Varsel om snø: Sørlig del av østlandet",
-                "Varsel om snø: Sørlig del av østlandet",
-                "Varsel om snø: Sørlig del av østlandet",
-                "Varsel om snø: Sørlig del av østlandet",
-                "Varsel om snø: Sørlig del av østlandet",
-                "Varsel om snø: Sørlig del av østlandet"
-            )
-            HourlyScroll(hourlyList = HourlyTemp)
-        }
-        item{
-            val dailyTemp= mutableListOf(
-                "V", "V", "V", "V", "V", "V", "d"
-            )
-            DailyTable(dailyTemp = dailyTemp)
-
-        }
-
     }
 
 }
@@ -519,7 +527,7 @@ fun DailyTable(dailyTemp: MutableList<String>){
             drawContent()
             drawRoundRect(
                 color = Color.Black.copy(alpha = 0.1f), // Set the opacity using the alpha value
-                size = Size(160.dp.toPx(), 134.dp.toPx()),
+                size = Size(380.dp.toPx(), 390.dp.toPx()),
                 cornerRadius = CornerRadius(40f, 30f),
                 style = Stroke(2f)
             )

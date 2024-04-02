@@ -41,7 +41,7 @@ fun Chicken() {
         contentAlignment = Alignment.TopEnd) {
         LottieAnimation(
             composition = composition,
-            iterations = 2,
+            iterations = 20,
             modifier = Modifier.size(120.dp)
 
 
