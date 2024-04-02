@@ -22,6 +22,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Curr
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.LocationRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MVP
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
@@ -69,13 +70,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if(test == 1){
-                        bilde()
-                    }
-                    else{
-                        MVP(homeVM, this)
-                    }
 
+                    //MVP(homeVM, this)
+                    HomeScreen()
                 }
             }
         }
