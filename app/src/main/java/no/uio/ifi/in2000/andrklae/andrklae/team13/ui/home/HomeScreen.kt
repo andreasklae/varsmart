@@ -1,7 +1,10 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -305,6 +308,13 @@ fun DisplayWarning(warningContent: @Composable () -> Unit, warningDescription: S
         .width(380.dp)
         .clip(RoundedCornerShape(15.dp))
         .background(Color.White.copy(alpha = 0.7f))
+        .animateContentSize(
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioLowBouncy,
+                stiffness = Spring.StiffnessLow
+            )
+
+        )
         .clickable { expanded = !expanded }
         //.heightIn(min = if (expanded) 200.dp else 70.dp)
     ) {
