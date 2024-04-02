@@ -73,7 +73,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("io.ktor:ktor-client-core:2.3.8")
     implementation("io.ktor:ktor-client-cio:2.3.8")
     implementation("io.ktor:ktor-client-android:2.3.8")
@@ -84,8 +84,8 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
     implementation("io.ktor:ktor-client-core:2.3.8")
     implementation("io.ktor:ktor-client-cio:2.3.8")
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.2")
-    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.4")
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     //Implementation for gson deserialization
     implementation("io.ktor:ktor-serialization-gson:2.3.8")
@@ -99,7 +99,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44.2")
 
     // For SVG
-    implementation ("io.coil-kt:coil-compose:2.1.0")
+    implementation ("io.coil-kt:coil-compose:2.5.0")
     implementation ("io.coil-kt:coil-svg:2.1.0")
 
     // Kapt
