@@ -17,16 +17,24 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.tasks.Task
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.LocationRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MVP
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.bilde
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
 class MainActivity : ComponentActivity() {
-    private val mapViewModel = MapViewModel()
-    val homeVM = HomeViewModel()
+    //private val mapViewModel = MapViewModel()
+
+    val alesund = CustomLocation("Ålesund", 62.47, 6.13, "By", "")
+    val alesundData = DataHolder(alesund)
+    val homeVM = HomeViewModel(0)
+    val test = 0
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -36,12 +44,14 @@ class MainActivity : ComponentActivity() {
                 // Permission was granted, try to fetch the location
                 LocationUtil.fetchLocation(this, this) { customLocation ->
                     if (customLocation != null) {
-                        homeVM.setLocation(customLocation)
-                        homeVM.update()
-                        println("Location fetched after permission granted")
+                        DataHolder(customLocation)
+                        val index = DataHolder.favourites.indexOf(
+                            DataHolder.favourites.find { it.location == customLocation }
+                        )
+                        homeVM.setLocation(index)
+                        homeVM.updateAll()
                     } else {
-                        // Handle the case where location is still null
-                        println("Failed to fetch location even after permission was granted")
+
                     }
                 }
             } else {
@@ -60,6 +70,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
                     //MVP(homeVM, this)
                     HomeScreen()
                 }
@@ -72,9 +83,24 @@ class MainActivity : ComponentActivity() {
             // If permission is already granted, attempt to fetch the location immediately
             LocationUtil.fetchLocation(this,this) { customLocation ->
                 if (customLocation != null) {
-                    homeVM.setLocation(customLocation)
-                    homeVM.update()
-                    println("hentet lokasjon")
+
+                    // checks if the user has moved
+                    val notMoved = DataHolder.favourites.any {
+                        it.location.lat == customLocation.lat
+                                &&
+                        it.location.lon == customLocation.lon
+                    }
+                    if (notMoved){
+                        val index = DataHolder.favourites.indexOf(
+                            DataHolder.favourites.find { it.location == customLocation }
+                        )
+                        homeVM.setLocation(index)
+                    }
+                    else{
+                        DataHolder.favourites.remove(DataHolder.favourites.find { it.location.name == "My location" })
+                        val newLocation = DataHolder(customLocation)
+                        homeVM.setLocation(DataHolder.favourites.lastIndex)
+                    }
                 }
             }
         }

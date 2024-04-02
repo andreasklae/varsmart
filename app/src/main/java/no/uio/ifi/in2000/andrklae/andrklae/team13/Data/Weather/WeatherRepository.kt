@@ -63,7 +63,6 @@ class WeatherRepository {
             return weather
         }
         catch (exception: Exception){
-            println("Error fetching Weather")
             return emptyList()
         }
         

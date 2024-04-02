@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 // Serializable class to hold information from the JSON file
@@ -24,8 +25,10 @@ data class Properties(
 @Serializable
 data class TimeSeries(
     val time: String,
-    val data: Data
+    val data: Data,
+
 ) {
+
     override fun toString(): String {
         return "Time: $time, Data: $data"
     }
@@ -33,8 +36,8 @@ data class TimeSeries(
 
 @Serializable
 data class Data(
-    val instant: InstantDetails
-    // Add more fields for next_1_hours, next_6_hours, etc., if needed
+    val instant: InstantDetails,
+    val next_1_hours: next_1_hours? = null
 ) {
     override fun toString(): String {
         return instant.toString()
@@ -57,9 +60,23 @@ data class InstantWeatherDetails(
     val cloud_area_fraction: Double,
     val relative_humidity: Double,
     val wind_speed: Double
-    // Add other relevant fields
 ) {
     override fun toString(): String {
         return "Pressure: $air_pressure_at_sea_level hPa, Temperature: $air_temperature °C, Cloud Cover: $cloud_area_fraction%, Humidity: $relative_humidity%, Wind Speed: $wind_speed m/s"
     }
 }
+
+@Serializable
+data class next_1_hours(
+    val summary: Summary,
+    val details: Details
+)
+@Serializable
+data class Summary(
+    val symbol_code: String
+)
+
+@Serializable
+data class Details(
+    val precipitation_amount: Double
+)
