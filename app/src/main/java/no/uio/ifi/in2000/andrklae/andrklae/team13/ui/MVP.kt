@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.media.Image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -45,6 +46,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import kotlinx.coroutines.flow.asStateFlow
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
@@ -54,14 +56,17 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 import java.io.File
+import androidx.compose.ui.res.painterResource
+import coil.compose.rememberImagePainter
+import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
- val loc by homeVM.loc.collectAsState()
-    println("My location: ${loc.lat}, ${loc.lon}")
+    val loc by homeVM.loc.collectAsState()
     val scrollState = rememberScrollState()
+
 
     Column(
         modifier = Modifier
@@ -70,16 +75,15 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
     ) {
         if (loc.name == "My location"){
             Button(
-                onClick = {
-                homeVM.setLocation(CustomLocation("Oslo", 59.91, 10.71, "By", "Oslo"))
-                    homeVM.update()
-            }
+                onClick = {homeVM.setLocation(0)}
             ){
-                Text(text = "Oslo")
+                Text(text = DataHolder.favourites[0].location.name)
             }
         }
         else{
-            Button(onClick = { activity.getCurrentLocation() }) {
+            Button(onClick = {
+                activity.getCurrentLocation()
+            }) {
                 Text(text = "My location")
             }
         }
@@ -90,23 +94,15 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
             fontSize = 40.sp,
         )
         Widgets(homeVM)
-
-
     }
 
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun Widgets(homeVM: HomeViewModel){
     val wStatus by homeVM.wStatus.collectAsState()
-    val temp by homeVM.temp.collectAsState()
-    val airPressure by homeVM.airPressure.collectAsState()
-    val cloudCoverage by homeVM.cloudCoverage.collectAsState()
-    val humidity by homeVM.humidity.collectAsState()
-    val windSpeed by homeVM.windSpeed.collectAsState()
-    val rain by homeVM.rain.collectAsState()
-    val symbol by homeVM.symbol.collectAsState()
-
+    val currentWeather by homeVM.currentWeather.collectAsState()
 
     val dayWeatherStatus by homeVM.dayWeatherStatus.collectAsState()
     val next24 by homeVM.next24.collectAsState()
@@ -118,30 +114,31 @@ fun Widgets(homeVM: HomeViewModel){
 
     Column{
         // Temp Widget
-        DrawSymbol(symbol = symbol, size = 120.dp)
+        currentWeather?.symbolName?.let { DrawSymbol(symbol = it, size = 120.dp) }
         when (wStatus) {
             homeVM.statusStates[0] -> {
-                println(homeVM.statusStates[0])
                 CurrentTempWidget(homeVM.statusStates[0], "")
             }
             homeVM.statusStates[1] -> {
-                println(homeVM.statusStates[1])
 
 
                 Row(
                     modifier = Modifier.fillMaxWidth(), // Ensure the Row fills the screen width
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CurrentTempWidget(temp, symbol)
+                    currentWeather?.symbolName?.let {
+                        CurrentTempWidget(currentWeather?.temperature.toString(),
+                            it
+                        )
+                    }
                     Spacer(modifier = Modifier.weight(1f))
-                    CurrentRainWidget(rain)
+                    CurrentRainWidget(currentWeather?.percipitation.toString())
                 }
 
             }
 
             else -> {
                 CurrentTempWidget(homeVM.statusStates[2], "")
-                println(homeVM.statusStates[2])
 
             }
         }
@@ -176,7 +173,7 @@ fun Widgets(homeVM: HomeViewModel){
         // Week forecast widget
         when (weekWeatherStatus){
             homeVM.statusStates[0] -> {
-
+                WeekTableWidget(listOf())
             }
             homeVM.statusStates[1] -> {
                 WeekTableWidget(week)
@@ -301,15 +298,18 @@ fun AlertWidget(alerts: Feature?) {
             .fillMaxWidth()
             .background(color = Color.Gray, shape = RoundedCornerShape(10.dp)),
     ) {
+
+
+
         Column(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
                 .padding(10.dp)
         ) {
+
             Text(text = "Closest weather alert", color = Color.White)
             Divider(color = Color.White, thickness = 1.dp)
             if (alerts != null){
-                println(alerts)
                 Text(
                     text = alerts.properties.area + ":",
                     color = Color.White,
@@ -352,5 +352,6 @@ fun DrawSymbol(symbol: String, size: Dp) {
             modifier = Modifier.matchParentSize(),
             contentScale = ContentScale.Fit // This makes the image fit within the given dimensions, maintaining aspect ratio.
         )
+
     }
 }

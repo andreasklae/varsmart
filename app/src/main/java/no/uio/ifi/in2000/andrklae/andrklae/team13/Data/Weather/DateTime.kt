@@ -41,4 +41,20 @@ data class DateTime(
             intiHour = "12"
         )
     }
+
+    operator fun compareTo(dt: DateTime): Int {
+        if (this.year != dt.year) {
+            return this.year.toInt() - dt.year.toInt()
+        }
+        if (this.month != dt.month) {
+            return this.month.toInt() - dt.month.toInt()
+        }
+        if (this.day != dt.day) {
+            return this.day.toInt() - dt.day.toInt()
+        }
+        if (this.hour != dt.hour) {
+            return this.hour.toInt() - dt.hour.toInt()
+        }
+        return 0
+    }
 }

@@ -18,7 +18,6 @@ class WarningRepository {
 
     fun findClosestCoordinate(loc: CustomLocation, coordinates: List<Feature>): Feature? {
         val myCoordinate = Coordinate2(loc.lat, loc.lon)
-        println("Looking for alerts near ${loc.name} (${loc.lat}, ${loc.lon})...")
         var closestCoordinate: Coordinate2? = null
         var test: Feature = coordinates[0]
         var minDistance = Double.MAX_VALUE
