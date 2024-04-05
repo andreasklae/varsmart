@@ -34,7 +34,7 @@ fun WeekTable(homeVM: HomeViewModel){
 
     Box(
         modifier = Modifier
-            .padding(20.dp)
+            .padding(horizontal = 20.dp)
             .fillMaxWidth()
             .fillMaxHeight()
             .glassEffect()
@@ -51,7 +51,6 @@ fun WeekTable(homeVM: HomeViewModel){
 
     ){
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Været den neste uken",

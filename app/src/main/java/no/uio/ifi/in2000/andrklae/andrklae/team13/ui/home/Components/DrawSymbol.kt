@@ -20,18 +20,14 @@ fun DrawSymbol(symbol: String?, size: Dp, modifier: Modifier = Modifier) {
             model = ImageRequest.Builder(LocalContext.current)
                 .decoderFactory(SvgDecoder.Factory())
                 .data("https://raw.githubusercontent.com/metno/weathericons/89e3173756248b4696b9b10677b66c4ef435db53/weather/svg/$symbol.svg")
-                // Coil's .size() method is used to define a target size for image decoding, not the display size in Compose.
-                // Since we're using Box's size to control the image size, this is not strictly necessary unless the SVG has a very large default size.
                 .build(),
-            // ContentScale.Fit will ensure the image scales properly within the bounds you've set without cropping.
             contentScale = ContentScale.Fit
         )
         Image(
             painter = painter,
             contentDescription = null,
-            // Fill the max size of the parent Box, and adjust the image scaling with contentScale.
             modifier = Modifier.matchParentSize(),
-            contentScale = ContentScale.Fit // This makes the image fit within the given dimensions, maintaining aspect ratio.
+            contentScale = ContentScale.Fit
         )
 
     }

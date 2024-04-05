@@ -41,7 +41,7 @@ import coil.request.ImageRequest
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components.Next24
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components.RainAndWind
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components.RainWindSun
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components.TopAppBar
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components.UpperHalf
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components.Warning
@@ -68,10 +68,10 @@ fun HomeScreen(homeVM: HomeViewModel) {
 fun MainComponent(innerPadding: PaddingValues, homeVM: HomeViewModel){
 
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(0.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp),
         modifier = Modifier
             .fillMaxHeight()
-            .padding(innerPadding)
+            .padding(0.dp)
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
@@ -90,16 +90,16 @@ fun MainComponent(innerPadding: PaddingValues, homeVM: HomeViewModel){
         }
 
         item {
-            RainAndWind(homeVM)
-        }
-
-        item {
             Next24(homeVM)
         }
         item {
-            WeekTable(homeVM)
-
+            RainWindSun(homeVM)
         }
+        item {
+            WeekTable(homeVM)
+        }
+
+
 
     }
 }

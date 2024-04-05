@@ -123,8 +123,3 @@ fun UpperHalf(homeVM: HomeViewModel){
     }
 }
 
-@Composable
-fun MainForecastBox(weather: WeatherTimeForecast?){
-
-}
-
