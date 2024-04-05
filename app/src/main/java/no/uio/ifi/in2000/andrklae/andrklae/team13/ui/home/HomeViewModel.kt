@@ -1,37 +1,17 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
-import java.time.LocalDateTime
-import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.room.util.copy
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.ktx.model.polygonOptions
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapState
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.ZoneClusterItem
 
 class HomeViewModel(index: Int): ViewModel() {
-    var data = DataHolder.favourites[index]
+    var data = DataHolder.Favourites[index]
 
     val statusStates: List<String> = listOf("Loading", "Success", "Failed")
 
@@ -70,7 +50,7 @@ class HomeViewModel(index: Int): ViewModel() {
     val set = _set.asStateFlow()
 
 
-    val _loc = MutableStateFlow(DataHolder.favourites[0].location)
+    val _loc = MutableStateFlow(DataHolder.Favourites[0].location)
     val loc = _loc.asStateFlow()
 
     init {
@@ -86,7 +66,7 @@ class HomeViewModel(index: Int): ViewModel() {
     }
     fun setLocation(i: Int) {
         print("Changing location from ${data.location.name} to ")
-        data = DataHolder.favourites[i]
+        data = DataHolder.Favourites[i]
         println(data.location.name)
 
         _loc.value = data.location

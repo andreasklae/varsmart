@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseAndSunset
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
@@ -33,22 +32,22 @@ data class DataHolder(
     var set: String? = null
     var warning: Feature? = null
     companion object {
-        val favourites = mutableListOf<DataHolder>()
+        val Favourites = mutableListOf<DataHolder>()
         val wRepo = WeatherRepository()
         val aRepo = WarningRepository()
     }
 
     init {
-        favourites.add(this)
+        Favourites.add(this)
         println("Creating data for ${location.name} and adding to favourites")
         println("Favorites: ")
-        favourites.forEach{
+        Favourites.forEach{
             println("\t ${it.location.name}")
         }
 
     }
     fun removeFromFavorites(){
-        favourites.remove(this)
+        Favourites.remove(this)
     }
 
     suspend fun updateCurrentWeather() {
