@@ -60,10 +60,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-            setContent {
+        setContent {
 
             Team13Theme {
                 Surface(
@@ -72,7 +73,7 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     //MVP(homeVM, this)
-                    HomeScreen()
+                    HomeScreen(homeVM)
                 }
             }
         }
@@ -88,15 +89,14 @@ class MainActivity : ComponentActivity() {
                     val notMoved = DataHolder.favourites.any {
                         it.location.lat == customLocation.lat
                                 &&
-                        it.location.lon == customLocation.lon
+                                it.location.lon == customLocation.lon
                     }
                     if (notMoved){
                         val index = DataHolder.favourites.indexOf(
                             DataHolder.favourites.find { it.location == customLocation }
                         )
                         homeVM.setLocation(index)
-                    }
-                    else{
+                    } else{
                         DataHolder.favourites.remove(DataHolder.favourites.find { it.location.name == "My location" })
                         val newLocation = DataHolder(customLocation)
                         homeVM.setLocation(DataHolder.favourites.lastIndex)
