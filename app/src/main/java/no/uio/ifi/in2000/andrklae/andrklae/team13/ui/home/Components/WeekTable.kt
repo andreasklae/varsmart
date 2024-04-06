@@ -37,16 +37,7 @@ fun WeekTable(homeVM: HomeViewModel){
             .padding(horizontal = 20.dp)
             .fillMaxWidth()
             .fillMaxHeight()
-            .glassEffect()
-            .drawWithContent {
-                drawContent()
-                drawRoundRect(
-                    color = Color.Black.copy(alpha = 0.1f), // Set the opacity using the alpha value
-                    size = Size(380.dp.toPx(), 390.dp.toPx()),
-                    cornerRadius = CornerRadius(40f, 30f),
-                    style = Stroke(2f)
-                )
-            },
+            .glassEffect(),
         contentAlignment = Alignment.Center
 
     ){
@@ -63,7 +54,6 @@ fun WeekTable(homeVM: HomeViewModel){
                 thickness = 1.dp,
                 modifier = Modifier.padding(horizontal = 15.dp))
             when (wStatus) {
-
                 homeVM.statusStates[0] ->{
                     CircularProgressIndicator(
                         color = Color.Black,
@@ -73,6 +63,46 @@ fun WeekTable(homeVM: HomeViewModel){
                 }
 
                 homeVM.statusStates[1] -> {
+                    Row(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp, horizontal = 15.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Dag",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .weight(0.12f)
+                        )
+
+                        Text(
+                            text = "Vær",
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .weight(0.15f)
+                        )
+
+                        Text(
+                            text = "Temp",
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .weight(0.15f)
+                                .fillMaxWidth()
+                        )
+                        Text(
+                            text = "Regn",
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .weight(0.2f)
+                        )
+                    }
                     week.forEach{
                         val symbol = it.symbolName
                         DayRow(it)
