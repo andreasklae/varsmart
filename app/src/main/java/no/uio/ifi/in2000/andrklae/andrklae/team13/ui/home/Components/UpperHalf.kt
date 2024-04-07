@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,7 +28,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 @Composable
@@ -67,38 +65,78 @@ fun UpperHalf(homeVM: HomeViewModel){
                 Spacer(modifier = Modifier.height(25.dp))
 
                 // Temperature box
-                Box(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .width(160.dp)
-                        .height(134.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color.White.copy(alpha = 0.7f)) // Semi-transparent background
-                        .border(1.dp, Color.White.copy(alpha = 0.7f), RoundedCornerShape(20.dp)),
+                Row {
+                    Box(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .width(160.dp)
+                            .height(134.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color.White.copy(alpha = 0.7f)) // Semi-transparent background
+                            .border(1.dp, Color.White.copy(alpha = 0.7f), RoundedCornerShape(20.dp)),
 
-                    contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center
 
-                ) {
-                    when(wStatus){
-                        homeVM.statusStates[0] -> {
-                            CircularProgressIndicator(
-                                color = Color.Black, // Sets the color of the spinner
-                                strokeWidth = 4.dp // Sets the stroke width of the spinner
-                            )
-                        }
-                        homeVM.statusStates[1] -> {
-                            Text(
-                                text = "${weather!!.temperature}°C",
-                                fontSize = 35.sp,
-                            )
-                        }
-                        homeVM.statusStates[2] -> {
+                    ) {
+                        when(wStatus){
+                            homeVM.statusStates[0] -> {
+                                CircularProgressIndicator(
+                                    color = Color.Black, // Sets the color of the spinner
+                                    strokeWidth = 4.dp // Sets the stroke width of the spinner
+                                )
+                            }
 
+                            homeVM.statusStates[1] -> {
+                                Text(
+                                    text = "${weather!!.temperature}°C",
+                                    fontSize = 35.sp,
+                                )
+                            }
+
+                            homeVM.statusStates[2] -> {
+
+                            }
                         }
+
+
                     }
 
+                    // Gpt respons
+                    Box(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color.White.copy(alpha = 0.7f)) // Semi-transparent background
+                            .border(1.dp, Color.White.copy(alpha = 0.7f), RoundedCornerShape(20.dp)),
 
+                        contentAlignment = Alignment.Center
+
+                    ) {
+                        when(wStatus){
+                            homeVM.statusStates[0] -> {
+                                CircularProgressIndicator(
+                                    color = Color.Black, // Sets the color of the spinner
+                                    strokeWidth = 4.dp // Sets the stroke width of the spinner
+                                )
+                            }
+
+                            homeVM.statusStates[1] -> {
+                                Text(
+                                    text = homeVM.GPTResponse.value,
+                                    fontSize = 10.sp,
+                                    modifier = Modifier.padding(10.dp)
+                                )
+                            }
+
+                            homeVM.statusStates[2] -> {
+
+                            }
+                        }
+
+
+                    }
                 }
+
 
                 // mr. Praktisk
                 Box(
@@ -116,7 +154,7 @@ fun UpperHalf(homeVM: HomeViewModel){
                 weather!!.symbolName,
                 size = 120.dp,
                 modifier = Modifier
-                    .offset(x = 110.dp, y = 90.dp)
+                    .offset(x = 80.dp, y = 80.dp)
             )
         }
 

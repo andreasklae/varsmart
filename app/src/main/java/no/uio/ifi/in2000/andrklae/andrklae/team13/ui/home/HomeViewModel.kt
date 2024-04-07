@@ -1,35 +1,20 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
-import java.time.LocalDateTime
-import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.room.util.copy
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.ktx.model.polygonOptions
-import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapState
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.ZoneClusterItem
+
+import com.aallam.openai.api.BetaOpenAI
+import com.aallam.openai.api.chat.*
+import com.aallam.openai.api.model.ModelId
+import com.aallam.openai.client.OpenAI
 
 class HomeViewModel(index: Int): ViewModel() {
     var data = DataHolder.favourites[index]
@@ -43,6 +28,7 @@ class HomeViewModel(index: Int): ViewModel() {
     val currentWeather = _currentWeather.asStateFlow()
     val _symbol = MutableStateFlow("")
     val symbol = _symbol.asStateFlow()
+    val GPTResponse = mutableStateOf("")
 
 
     // Variables for next 24Hours
@@ -98,9 +84,15 @@ class HomeViewModel(index: Int): ViewModel() {
                 _symbol.value = weather.symbolName.toString()
                 _next24.value = data.next24h
                 _week.value = data.week
-
-
                 _wStatus.value = statusStates[1]
+
+                getGPTResponse(
+                    "sted: $loc " +
+                            "temp: ${weather.temperature}C " +
+                            "beskrivelse: ${weather.symbolName} " +
+                            "regn: ${weather. precipitation}mm " +
+                            "vind: ${weather.windSpeed}m/s "
+                )
             } else {
                 println("Failed fetching current weather for ${data.location.name}")
                 _wStatus.value = statusStates[2]
@@ -124,14 +116,38 @@ class HomeViewModel(index: Int): ViewModel() {
 
         }
     }
-
-
-
     fun updateWarning() {
         viewModelScope.launch {
             data.updateWarning()
             _warning.value = data.warning
 
+        }
+    }
+
+
+    @OptIn(BetaOpenAI::class)
+    fun getGPTResponse(weather: String) {
+        val prompt = "gi meg råd basert på følgende vær. maks 50 ord $weather"
+
+        viewModelScope.launch {
+            val openAI = OpenAI("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")
+
+            try {
+                val chatCompletionRequest = ChatCompletionRequest(
+                    model = ModelId("gpt-3.5-turbo"),
+                    messages = listOf(
+                        ChatMessage(
+                            role = ChatRole.User,
+                            content = prompt
+                        )
+                    )
+                )
+
+                val completion: ChatCompletion = openAI.chatCompletion(chatCompletionRequest)
+
+                GPTResponse.value = completion.choices.first().message?.content.toString()
+            } catch (e: Exception) {
+            }
         }
     }
 }

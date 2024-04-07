@@ -108,4 +108,16 @@ dependencies {
 
     implementation("com.airbnb.android:lottie-compose:5.2.0")
     implementation ("androidx.compose.animation:animation:1.6.4")
+
+    // for GPT
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    implementation ("com.android.volley:volley:1.2.0")
+    implementation ("com.aallam.openai:openai-client:3.0.0")
+
+    // Hilt
+    implementation ("com.google.dagger:hilt-android:2.45")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
+    kapt ("com.google.dagger:hilt-compiler:2.45")
 }
