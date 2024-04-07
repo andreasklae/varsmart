@@ -21,9 +21,27 @@ data class DateTime(
     val time: String = "$hour:00"
 
     val DateInt = LocalDate.of(year.toInt(), month.toInt(), intiDay.toInt())
-    val dayOfWeek = DateInt.dayOfWeek.toString().lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+    val dayOfWeek = dayToNorwegian(DateInt)
 
+    private fun dayToNorwegian(dateInt: LocalDate?): String {
+        val day = DateInt.dayOfWeek
+            .toString().
+            lowercase()
+            .replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase() else it.toString()
 
+            }
+        return when (day) {
+            "Monday" -> "Mandag"
+            "Tuesday" -> "Tirsdag"
+            "Wednesday" -> "Onsdag"
+            "Thursday" -> "Torsdag"
+            "Friday" -> "Fredag"
+            "Saturday" -> "Lørdag"
+            "Sunday" -> "Søndag"
+            else -> "Invalid day"
+        }
+    }
 
 
     override fun toString(): String {
