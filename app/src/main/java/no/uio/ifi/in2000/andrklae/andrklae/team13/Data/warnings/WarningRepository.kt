@@ -16,6 +16,10 @@ class WarningRepository {
     }
 
 
+    data class Coordinate2(val lat: Double, val lon: Double)
+
+
+    // Refactored to use a single data class instead of separate classes for lat/long
     data class Coordinate(val latitude: Double, val longitude: Double)
 
     class CustomLocation(var lat: Double, var lon: Double)
@@ -79,5 +83,29 @@ class WarningRepository {
                 else -> null
             }
         }
+
+
+
+    fun calculateDistance(coord1: Coordinate2, coord2: Coordinate2): Double {
+        val earthRadius = 6371.0 // Radius of the Earth in kilometers
+        val dLat = Math.toRadians(coord2.lat - coord1.lat)
+        val dLon = Math.toRadians(coord2.lon - coord1.lon)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(coord1.lat)) * Math.cos(Math.toRadians(coord2.lat)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return earthRadius * c
+    }
+
+    fun calculateKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val R = 6371 // Radius of the earth in kilometers
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return R * c // Distance in kilometers
+    }
 
 }
