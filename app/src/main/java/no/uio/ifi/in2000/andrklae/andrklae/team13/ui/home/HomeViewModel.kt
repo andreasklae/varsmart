@@ -1,35 +1,18 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
-import java.time.LocalDateTime
-import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.room.util.copy
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.ktx.model.polygonOptions
-import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapState
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.ZoneClusterItem
+
+import com.aallam.openai.api.BetaOpenAI
+import kotlinx.coroutines.delay
 
 class HomeViewModel(index: Int): ViewModel() {
     var data = DataHolder.favourites[index]
@@ -43,11 +26,15 @@ class HomeViewModel(index: Int): ViewModel() {
     val currentWeather = _currentWeather.asStateFlow()
     val _symbol = MutableStateFlow("")
     val symbol = _symbol.asStateFlow()
+    val _gptCurrent = MutableStateFlow("")
+    val gptCurrent = _gptCurrent.asStateFlow()
 
 
     // Variables for next 24Hours
     val _next24 = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
     val next24 = _next24.asStateFlow()
+    val _gptWeek = MutableStateFlow("Trykk på meg for å spørre om været det neste døgnet")
+    val gptWeek = _gptWeek.asStateFlow()
 
     // Variables for the week
     val _week = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
@@ -89,22 +76,42 @@ class HomeViewModel(index: Int): ViewModel() {
 
     fun updateWeather() {
         viewModelScope.launch {
-            _wStatus.value = statusStates[0]
-            data.updateWeather()
-            val weather = data.currentWeather
 
-            if (weather != null) {
-                _currentWeather.value = weather
-                _symbol.value = weather.symbolName.toString()
-                _next24.value = data.next24h
-                _week.value = data.week
-
-
-                _wStatus.value = statusStates[1]
-            } else {
-                println("Failed fetching current weather for ${data.location.name}")
-                _wStatus.value = statusStates[2]
+            // loading dots while waiting for GPT response
+            launch {
+                while (data.GPTCurrent == ""){
+                    _gptCurrent.value = dotLoading(_gptCurrent.value)
+                    delay(500)
+                }
             }
+
+            launch {
+                _wStatus.value = statusStates[0]
+                data.updateWeather()
+                val weather = data.currentWeather
+
+                if (weather != null) {
+                    _currentWeather.value = weather
+                    _symbol.value = weather.symbolName.toString()
+                    _next24.value = data.next24h
+                    _week.value = data.week
+                    _wStatus.value = statusStates[1]
+
+                    data.updateGPTCurrent()
+                    val response = data.GPTCurrent
+                    _gptCurrent.value = ""
+
+                    // simulate writing
+                    response.forEach {
+                        _gptCurrent.value += it
+                        delay(20)
+                    }
+                } else {
+                    println("Failed fetching current weather for ${data.location.name}")
+                    _wStatus.value = statusStates[2]
+                }
+            }
+
         }
     }
 
@@ -124,14 +131,43 @@ class HomeViewModel(index: Int): ViewModel() {
 
         }
     }
-
-
-
     fun updateWarning() {
         viewModelScope.launch {
             data.updateWarning()
             _warning.value = data.warning
 
         }
+    }
+
+    fun updateGPTWeek() {
+        viewModelScope.launch {
+            launch {
+                _gptWeek.value = ""
+                while (data.gptWeek == "") {
+                    _gptWeek.value = dotLoading(_gptWeek.value)
+                    delay(500)
+                }
+            }
+            launch {
+                data.updateGPTWeek()
+                val weekResponse = data.gptWeek
+                _gptWeek.value = ""
+                // simulate writing
+                weekResponse.forEach {
+                    _gptWeek.value += it
+                    delay(20)
+                }
+            }
+
+        }
+    }
+    private suspend fun dotLoading(input: String): String {
+        var dots = input
+        if (dots == ". . . "){
+            dots = ""
+        } else{
+            dots += ". "
+        }
+        return dots
     }
 }

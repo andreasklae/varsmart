@@ -27,8 +27,8 @@ data class WeatherTimeForecast(
     val cloudCoverage: Double? = timeSeries?.data?.instant?.details?.cloud_area_fraction
     val humidity: Double? = timeSeries?.data?.instant?.details?.relative_humidity
     val windSpeed: Double? = timeSeries?.data?.instant?.details?.wind_speed
-    val precipitation: Double = timeSeries?.data?.next_1_hours?.details?.precipitation_amount ?: 0.0
-    val symbolName: String? = timeSeries?.data?.next_1_hours?.summary?.symbol_code ?: timeSeries?.data?.next_12_hours?.summary?.symbol_code
+    val precipitation: Double = timeSeries?.data?.next_1_hours?.details?.precipitation_amount ?: timeSeries?.data?.next_6_hours?.details?.precipitation_amount ?: 0.0
+    val symbolName: String? = timeSeries?.data?.next_1_hours?.summary?.symbol_code ?: timeSeries?.data?.next_6_hours?.summary?.symbol_code
 
     override fun toString(): String {
         return if (timeSeries != null) {

@@ -1,9 +1,8 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data
 
-import kotlinx.coroutines.delay
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepo
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseAndSunset
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
@@ -30,8 +29,12 @@ data class DataHolder(
 
     var weather: WeatherForecast? = null
     var currentWeather: WeatherTimeForecast? = null
+    var GPTCurrent = ""
+
     var next24h: List<WeatherTimeForecast> = listOf()
     var week: List<WeatherTimeForecast> = listOf()
+    var gptWeek = ""
+
     var rise: String? = null
     var set: String? = null
     var warning: Feature? = null
@@ -39,6 +42,7 @@ data class DataHolder(
         val favourites = mutableListOf<DataHolder>()
         val wRepo = WeatherRepository()
         val aRepo = WarningRepository()
+        val gptRepo = GPTRepo()
     }
 
     init {
@@ -68,6 +72,12 @@ data class DataHolder(
     suspend fun updateCurrentWeather() {
         if (weather != null){
             currentWeather = WeatherTimeForecast(weather!!, dt, location)
+        }
+    }
+
+    suspend fun updateGPTCurrent(){
+        if (weather != null){
+            GPTCurrent = gptRepo.fetchCurrent(currentWeather!!, next24h)
         }
     }
 
@@ -158,5 +168,9 @@ data class DataHolder(
             currentHour
         )
         return dt
+    }
+
+    suspend fun updateGPTWeek() {
+        gptWeek = gptRepo.fetchWeek(next24h)
     }
 }
