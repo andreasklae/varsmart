@@ -1,6 +1,9 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import com.mapbox.geojson.*
+import java.lang.Math.pow
+import kotlin.math.sqrt
 
 class WarningRepository {
 
@@ -16,72 +19,113 @@ class WarningRepository {
     data class Coordinate2(val lat: Double, val lon: Double)
 
 
-    fun findClosestCoordinate(loc: CustomLocation, coordinates: List<Feature>): Feature? {
-        val myCoordinate = Coordinate2(loc.lat, loc.lon)
-        var closestCoordinate: Coordinate2? = null
-        var test: Feature = coordinates[0]
-        var minDistance = Double.MAX_VALUE
-
-        // First get all lists of warnings, including clusters
-        // Coords is here I.E a size of 45
-        coordinates.forEach{it ->
-            if(it.geometry.coordinates is ArrayList<*>){
-                // If there is only 1 cluster of coordinates
-                // I.E [[59, 5][54, 45]]
-                if(it.geometry.coordinates.size == 1){
-                    // Iterate through each [lat, long] ArrayList to extract coordinates
-                    it.geometry.coordinates.forEach{coords ->
-                        // Again check if it's the correct type
-                        if(coords is ArrayList<*>){
-                            coords.forEach{x ->
-                                if(x is ArrayList<*>){
-                                    // Calling function on first and second element in the ArrayList (lat lng)
-                                    // Yes this is an absolute mess but it works
-                                    val distance = calculateDistance(myCoordinate, Coordinate2(x[1].toString().toDouble(), x[0].toString().toDouble()))
-                                    if (distance < minDistance) {
-                                        test = it
-                                        minDistance = distance
-                                        closestCoordinate = Coordinate2(x[1].toString().toDouble(), x[0].toString().toDouble())
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                // If there's more than 1 cluster of coordinates (2, nested list)
-                // I.E ["[[59, 54][43, 46]]""[[43, 65][34, 65]]"]
-                else{
-                    it.geometry.coordinates.forEach{it2 ->
-                        // it2 will now be the I.E 2 individual lists that contain another list of
-                        // [54, 695] lists
-                        if(it2 is ArrayList<*>){
-                            it2.forEach{it3 ->
-                                // it3 will now be [[54, 54][43, 25]] so we need to go deeper again
-                                if(it3 is ArrayList<*>){
-                                    it3.forEach{coords ->
-                                        // We have finally reached the inner [45, 65] ArrayList and
-                                        // can repeat the method to compare distance
-                                        if(coords is ArrayList<*>){
-                                            val distance = calculateDistance(myCoordinate, Coordinate2(coords[1].toString().toDouble(), coords[0].toString().toDouble()))
-                                            if (distance < minDistance) {
-                                                minDistance = distance
-                                                test = it
-                                                closestCoordinate = Coordinate2(coords[1].toString().toDouble(), coords[0].toString().toDouble())
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+    // Refactored to use a single function to handle different types of coordinate structures
+    private fun processCoordinates(coordinateList: Any?, myCoordinate: Coordinate2, minDistance: Double, currentMinimum: Feature, closestCoordinate: Coordinate2): Pair<Double, Feature?> {
+        when (coordinateList) {
+            is ArrayList<*> -> {
+                coordinateList.forEachIndexed { index, item ->
+                    val newCoordinate = parseItemToCoordinate(item) ?: continue
+                    val distance = calculateDistance(newCoordinate, myCoordinate)
+                    if (index > 0 && distance >= minDistance || index == 0) {
+                        return@processCoordinates updateIfNecessary(minDistance, distance, currentMinimum, closestCoordinate, newCoordinate)
                     }
                 }
             }
+            is String -> {
+                val newCoordinate = parseStringToCoordinate(coordinateList) ?: continue
+                val distance = calculateDistance(newCoordinate, myCoordinate)
+                if (distance < minDistance) {
+                    return@processCoordinates updateIfNecessary(minDistance, distance, currentMinimum, closestCoordinate, newCoordinate)
+                }
+            }
+            else -> Unit
         }
-        return if(calculateKm(myCoordinate.lat, myCoordinate.lon, closestCoordinate!!.lat, closestCoordinate!!.lon) <= warningRange){
+        return Pair(minDistance, currentMinimum)
+    }
 
-            test
-        } else{
+    // Helper functions to parse items into Coordinate2 objects or skip them
+    private fun parseItemToCoordinate(item: Any?) : Coordinate2? {
+        return try {
+            Coordinate2((item as ArrayList<Any>)[1].toString().toDouble(), (item as ArrayList<Any>)[0].toString().toDouble())
+        } catch (_: Exception) {
             null
+        }
+    }
+
+    private fun parseStringToCoordinate(string: String) : Coordinate2? {
+        return string.split(",").let { parts ->
+            try {
+                Coordinate2(parts[1].trim().toDouble(), parts[0].trim().toDouble())
+            } catch (_: Exception) {
+                null
+            }
+        }
+    }
+
+    // Update the minimum values if necessary
+    private fun updateIfNecessary(oldMinDist: Double, dist: Double, oldMinVal: Feature, prevCoord: Coordinate2, coord: Coordinate2): Pair<Double, Feature?> {
+        if (dist < oldMinDist) {
+            return Pair(dist, Feature("", Geometry.Point(GeoJsonObjectType.POINT, Point(listOf(Value(prevCoord)))))).also {
+                prevCoord.lat = coord.lat
+                prevCoord.lon = coord.lon
+            }
+        }
+        return Pair(oldMinDist, oldMinVal)
+    }
+
+    // Main function refactored using the helper functions
+    fun findClosestCoordinate(loc: CustomLocation, coordinates: List<Feature>) : Feature? {
+        val myCoordinate = Coordinate2(loc.lat, loc.lon)
+        var closestCoordinate: Coordinate2? = null
+        var minDistance = Double.MAX_VALUE
+        var currentMinimum: Feature = features[0]
+
+        coordinates.forEach { feature ->
+            val result = processCoordinates(feature.geometry.coordinates, myCoordinate, minDistance, currentMinimum, closestCoordinate)
+
+            minDistance = result.first
+            currentMinimum = result.second ?: currentMinimum
+            closestCoordinate?.apply { lat = currentMinimum.geometry.point.value.get()[0].valueAsNumber.doubleValue; lon = currentMinimum.geometry.point.value.get()[1].valueAsNumber.doubleValue }
+        }
+
+        return if (calculateKm(myCoordinate.lat, myCoordinate.lon, closestCoordinate!!.lat, closestCoordinate!!.lon) <= warningRange) {
+            currentMinimum
+        } else {
+            null
+        }
+    }
+
+    // Extension property to access latitude from Value object
+    val Value.lat: Double
+        get() = valueAsNumber.doubleValue
+
+    val Value.lon: Double
+        get() = next().valueAsNumber.doubleValue
+
+    data class Coordinate2(var lat: Double, var lon: Double)
+
+    object UtilityFunctions {
+        const val earthRadiusInMeters = 6378137f
+
+        private fun calculateDistance(c1: Coordinate2, c2: Coordinate2): Float {
+            val deltaLatitude = Math.toRadians(c2.lat - c1.lat)
+            val deltaLongitude = Math.toRadians(c2.lon - c1.lon)
+            val cosDeltaLatitude = Math.cos(deltaLatitude / 2)
+            val sinDeltaLatitude = Math.sin(deltaLatitude / 2)
+            val cosDeltaLongitude = Math.cos(deltaLongitude / 2)
+            val sinDeltaLongitude = Math.sin(deltaLongitude / 2)
+            val sumSquaredHalfChordLength = pow(cosDeltaLatitude * cosDeltaLongitude, 2.0) + pow(sinDeltaLatitude * sinDeltaLatitude, 2.0) + pow(cosDeltaLongitude * sinDeltaLatitude * sinDeltaLatitude, 2.0)
+            val squaredHalfChordLength = 1 - sumSquaredHalfChordLength
+            val s = sqrt(squaredHalfChordLength)
+            return ((earthRadiusInMeters * (1 - s)).toFloat()).roundToInt()
+        }
+
+        private fun calculateKm(startLat: Double, startLon: Double, endLat: Double, endLon: Double): Int {
+            val dLat = Math.toRadians(endLat - startLat)
+            val dLon = Math.toRadians(endLon - startLon)
+            val a = sin(dLat / 2) * sin(dLat / 2) + sin(dLon / 2) * sin(dLon / 2) * cos(Math.toRadians(startLat)) * cos(Math.toRadians(endLat))
+            val c = 2 * atan2(sqrt(a), sqrt(1 - a));
+            return (UtilityFunctions.earthRadiusInMeters * c).roundToInt()
         }
     }
 

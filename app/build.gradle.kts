@@ -126,4 +126,7 @@ dependencies {
     implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
     kapt ("com.google.dagger:hilt-compiler:2.45")
 
+    implementation ("com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0")
+
+
 }
