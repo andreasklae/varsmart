@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.ImageIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.settingsButton
@@ -77,7 +78,8 @@ data class Favorite(
 )
 
 @Composable
-fun FavoriteScreen() {
+fun FavoriteScreen(
+    favoriteViewModel: FavoriteViewModel= viewModel()) {
     val favorites = mutableListOf<Favorite>(
         Favorite(R.drawable.sunclouds, "Oslo","10°", "Over skyet"),
         Favorite(R.drawable.sunclouds, "Nice","27°", "Sol"),
@@ -104,7 +106,7 @@ fun FavoriteScreen() {
                     }
                     item {
                         if (showSearchBar) {
-                            SearchBarField()
+                            SearchBarField(favoriteViewModel)
 
                         }
                     }
@@ -140,7 +142,9 @@ fun FavoriteScreen() {
 @Composable
 fun FavoritePreview() {
     Team13Theme {
-        FavoriteScreen()
+        //FavoriteScreen()
+        val vm=FavoriteViewModel()
+       SearchBarField(favoriteViewModel = vm)
     }
 
 }
@@ -281,21 +285,28 @@ fun AddFavorite(onClick: () -> Unit){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarField(){
+fun SearchBarField(
+    favoriteViewModel: FavoriteViewModel
+){
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
+
 
     SearchBar(
         modifier = Modifier
             .width(380.dp)
-            .height(70.dp)
+            .height(350.dp)
             .clip(RoundedCornerShape(15.dp)),
         query = text,
         onQueryChange = {
             text= it
         },
         onSearch = {
-            active = false
+            favoriteViewModel.loadSearch(text)
+            active = true
+
+            println("trykket sok")
+
         },
         active = active,
         //remember to change functionality
@@ -323,11 +334,35 @@ fun SearchBarField(){
                 )
             }
         }
-    )
+    ){
+        LazyColumn {
 
-    {
+            favoriteViewModel.locationsUiState?.forEach { location ->
+                item {
+                    Box(modifier = Modifier.clickable {
+                        active=false
+                        favoriteViewModel.loadFavourites(location)}){
+                        Text(
+                            text = location.name + location.lat,
+                            modifier = Modifier.padding(
+                                start = 8.dp,
+                                top = 4.dp,
+                                end = 8.dp,
+                                bottom = 4.dp
+                            )
+                        )
+                    }
 
+
+                }
+            }
+        }
     }
+
 }
+
+
+
+
 
 

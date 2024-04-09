@@ -107,4 +107,5 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:2.44.2")
 
     implementation("com.airbnb.android:lottie-compose:5.2.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 }
