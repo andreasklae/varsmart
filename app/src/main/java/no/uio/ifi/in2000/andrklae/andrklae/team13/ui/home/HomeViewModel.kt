@@ -7,15 +7,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
-import androidx.compose.runtime.mutableStateOf
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
-
+import androidx.compose.runtime.mutableStateOf
 import com.aallam.openai.api.BetaOpenAI
 import kotlinx.coroutines.delay
 
 class HomeViewModel(index: Int): ViewModel() {
-    var data = DataHolder.favourites[index]
+    var data = DataHolder.Favourites[index]
 
     val statusStates: List<String> = listOf("Loading", "Success", "Failed")
     val _wStatus = MutableStateFlow(statusStates[0])
@@ -53,7 +52,7 @@ class HomeViewModel(index: Int): ViewModel() {
     val set = _set.asStateFlow()
 
 
-    val _loc = MutableStateFlow(DataHolder.favourites[0].location)
+    val _loc = MutableStateFlow(DataHolder.Favourites[0].location)
     val loc = _loc.asStateFlow()
 
     init {
@@ -67,7 +66,7 @@ class HomeViewModel(index: Int): ViewModel() {
     }
     fun setLocation(i: Int) {
         print("Changing location from ${data.location.name} to ")
-        data = DataHolder.favourites[i]
+        data = DataHolder.Favourites[i]
         println(data.location.name)
 
         _loc.value = data.location

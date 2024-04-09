@@ -39,23 +39,23 @@ data class DataHolder(
     var set: String? = null
     var warning: Feature? = null
     companion object {
-        val favourites = mutableListOf<DataHolder>()
+        val Favourites = mutableListOf<DataHolder>()
         val wRepo = WeatherRepository()
         val aRepo = WarningRepository()
         val gptRepo = GPTRepo()
     }
 
     init {
-        favourites.add(this)
+        Favourites.add(this)
         println("Creating data for ${location.name} and adding to favourites")
         println("Favorites: ")
-        favourites.forEach{
+        Favourites.forEach{
             println("\t ${it.location.name}")
         }
 
     }
     fun removeFromFavorites(){
-        favourites.remove(this)
+        Favourites.remove(this)
     }
 
     suspend fun updateWeather() {

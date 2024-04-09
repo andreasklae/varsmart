@@ -64,6 +64,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3:1.2.1")
     implementation ("org.slf4j:slf4j-log4j12:1.7.30")
     implementation("androidx.room:room-ktx:2.6.1")
     testImplementation("junit:junit:4.13.2")
@@ -86,7 +87,8 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.3.8")
     implementation("io.ktor:ktor-client-cio:2.3.8")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.4")
-    implementation("io.coil-kt:coil-compose:2.1.0")
+
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     //Implementation for gson deserialization
     implementation("io.ktor:ktor-serialization-gson:2.3.8")
@@ -100,13 +102,16 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44.2")
 
     // For SVG
-    implementation ("io.coil-kt:coil-compose:2.1.0")
+    implementation ("io.coil-kt:coil-compose:2.5.0")
     implementation ("io.coil-kt:coil-svg:2.1.0")
 
     // Kapt
     kapt("com.google.dagger:hilt-compiler:2.44.2")
 
     implementation("com.airbnb.android:lottie-compose:5.2.0")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
     implementation ("androidx.compose.animation:animation:1.6.4")
 
     // for GPT

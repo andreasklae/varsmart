@@ -18,6 +18,8 @@ data class CustomLocation (
                 "Type = $type \n" +
                 "Fylke = $fylke"
     }
+
+
 }
 
 

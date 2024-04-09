@@ -58,7 +58,7 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
             Button(
                 onClick = {homeVM.setLocation(0)}
             ){
-                Text(text = DataHolder.favourites[0].location.name)
+                Text(text = DataHolder.Favourites[0].location.name)
             }
         }
         else{

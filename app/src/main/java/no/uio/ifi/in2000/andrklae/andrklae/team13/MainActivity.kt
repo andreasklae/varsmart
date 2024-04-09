@@ -1,18 +1,16 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.android.volley.AuthFailureError
@@ -28,13 +26,8 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.LocationRepository
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MVP
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapViewModel
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.bilde
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
 
 import com.android.volley.Request
@@ -60,8 +53,8 @@ class MainActivity : ComponentActivity() {
                 LocationUtil.fetchLocation(this, this) { customLocation ->
                     if (customLocation != null) {
                         DataHolder(customLocation)
-                        val index = DataHolder.favourites.indexOf(
-                            DataHolder.favourites.find { it.location == customLocation }
+                        val index = DataHolder.Favourites.indexOf(
+                            DataHolder.Favourites.find { it.location == customLocation }
                         )
                         homeVM.setLocation(index)
                         homeVM.updateAll()
@@ -93,6 +86,27 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
     fun getCurrentLocation(){
         if (LocationUtil.hasLocationPermission(this)) {
@@ -101,20 +115,23 @@ class MainActivity : ComponentActivity() {
                 if (customLocation != null) {
 
                     // checks if the user has moved
-                    val notMoved = DataHolder.favourites.any {
+                    val notMoved = DataHolder.Favourites.any {
                         it.location.lat == customLocation.lat
                                 &&
                                 it.location.lon == customLocation.lon
                     }
                     if (notMoved){
-                        val index = DataHolder.favourites.indexOf(
-                            DataHolder.favourites.find { it.location == customLocation }
+                        val index = DataHolder.Favourites.indexOf(
+                            DataHolder.Favourites.find { it.location == customLocation }
                         )
                         homeVM.setLocation(index)
+                    }
+                    else{
+                        DataHolder.Favourites.remove(DataHolder.Favourites.find { it.location.name == "My location" })
                     } else{
                         DataHolder.favourites.remove(DataHolder.favourites.find { it.location.name == "My location" })
                         val newLocation = DataHolder(customLocation)
-                        homeVM.setLocation(DataHolder.favourites.lastIndex)
+                        homeVM.setLocation(DataHolder.Favourites.lastIndex)
                     }
                 }
             }
