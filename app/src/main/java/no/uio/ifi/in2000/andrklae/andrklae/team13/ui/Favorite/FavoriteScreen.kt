@@ -56,6 +56,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -63,8 +64,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.ImageIcon
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.settingsButton
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.glassEffect
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components.ImageIcon
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components.SettingsButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -84,7 +86,7 @@ fun FavoriteScreen(
         Favorite(R.drawable.sunclouds, "Oslo","10°", "Over skyet"),
         Favorite(R.drawable.sunclouds, "Nice","27°", "Sol"),
         Favorite(R.drawable.sunclouds, "Cancun","30°", "Mye sol"),
-        Favorite(R.drawable.heavyrain, "Rio di janairo","-7°", "Regn")
+        Favorite(R.drawable.sunclouds, "Rio di janairo","-7°", "Regn")
     )
     var showSearchBar by remember { mutableStateOf(false) }
 
@@ -142,9 +144,9 @@ fun FavoriteScreen(
 @Composable
 fun FavoritePreview() {
     Team13Theme {
-        //FavoriteScreen()
-        val vm=FavoriteViewModel()
-       SearchBarField(favoriteViewModel = vm)
+        FavoriteScreen()
+        val vm = FavoriteViewModel()
+        //SearchBarField(favoriteViewModel = vm)
     }
 
 }
@@ -156,7 +158,7 @@ fun FavoriteTopAppBar(){
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.weight(1f))
-        settingsButton()
+        SettingsButton()
     }
 }
 
@@ -171,8 +173,7 @@ fun FavoriteBox(location: String, weatherIcon: Int, midDayTemp: String, descript
             .padding(16.dp)
             .width(380.dp)
             .height(91.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(Color.White.copy(alpha = 0.5f))
+            .glassEffect()
             .clickable { onClick() }
     ){
         FavoriteForecast(
@@ -197,10 +198,11 @@ fun FavoriteBoxSwipe(
     Box(
         modifier = Modifier
             .padding(16.dp)
+            .glassEffect()
             .width(380.dp)
             .height(91.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(Color.White.copy(alpha = 0.5f))
+            //.clip(RoundedCornerShape(15.dp))
+            //.background(Color.White.copy(alpha = 0.5f))
             .clickable { onClick() }
             .draggable(
                 state = rememberDraggableState { delta ->
@@ -233,15 +235,16 @@ fun FavoriteBoxSwipe(
 @Composable
 fun FavoriteForecast(location: String, weatherIcon: Int, midDayTemp: String, description: String){
     Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(8.dp)
     ){
         ImageIcon(y = -3, x = -2, symbolId = weatherIcon, 79, 81)
 
-        Spacer(modifier = Modifier.padding(20.dp))
+        Spacer(modifier = Modifier.weight(0.1f))
         Column(
             modifier = Modifier
-                .width(180.dp)
+
         ) {
             Text(
                 text = location,
@@ -255,18 +258,13 @@ fun FavoriteForecast(location: String, weatherIcon: Int, midDayTemp: String, des
 
 
         }
+        Spacer(modifier = Modifier.weight(1f))
 
-        Column(
-            modifier = Modifier
-                .width(120.dp)
-                .align(Alignment.CenterVertically)
-        ) {
-            Text(
-                text = midDayTemp,
-                fontSize = 24.sp,
 
-                )
-        }
+        Text(
+            text = midDayTemp,
+            fontSize = 24.sp,
+        )
     }
 }
 

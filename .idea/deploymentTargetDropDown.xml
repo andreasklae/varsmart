@@ -3,7 +3,20 @@
   <component name="deploymentTargetDropDown">
     <value>
       <entry key="FavoritePreview">
-        <State />
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="$USER_HOME$/.android/avd/Pixel_7_API_32.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-04-09T11:35:17.744870Z" />
+        </State>
       </entry>
       <entry key="app">
         <State>
@@ -20,9 +33,6 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-03-28T10:06:46.015084Z" />
         </State>
-      </entry>
-      <entry key="prevHomeScreen">
-        <State />
       </entry>
     </value>
   </component>
