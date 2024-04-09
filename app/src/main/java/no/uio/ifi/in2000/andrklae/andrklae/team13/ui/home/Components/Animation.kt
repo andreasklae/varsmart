@@ -28,46 +28,13 @@ fun Chicken() {
 
 
     Box(
-        modifier= Modifier,
+        modifier = Modifier,
         contentAlignment = Alignment.TopEnd) {
         LottieAnimation(
             composition = composition,
-            iterations = 20,
+            iterations = 1,
             modifier = Modifier.size(120.dp)
-
-
         )
 
-
-    }
-}
-
-
-
-
-
-
-
-
-
-
-@Composable
-fun SpeechBubble(text: String, modifier: Modifier) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.TopEnd
-    ) {
-        Surface(
-            modifier = Modifier.padding(top = 40.dp, end = 40.dp),
-            shape = SpeechBubblen(),
-            color = MaterialTheme.colorScheme.background,
-            shadowElevation = 16.dp
-        ) {
-            Text(
-                text = text,
-                modifier = Modifier.padding(8.dp),
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
     }
 }

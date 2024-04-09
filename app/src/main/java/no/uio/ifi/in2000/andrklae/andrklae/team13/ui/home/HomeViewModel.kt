@@ -12,9 +12,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 
 import com.aallam.openai.api.BetaOpenAI
-import com.aallam.openai.api.chat.*
-import com.aallam.openai.api.model.ModelId
-import com.aallam.openai.client.OpenAI
+import kotlinx.coroutines.delay
 
 class HomeViewModel(index: Int): ViewModel() {
     var data = DataHolder.favourites[index]
@@ -28,12 +26,15 @@ class HomeViewModel(index: Int): ViewModel() {
     val currentWeather = _currentWeather.asStateFlow()
     val _symbol = MutableStateFlow("")
     val symbol = _symbol.asStateFlow()
-    val GPTResponse = mutableStateOf("")
+    val _gptCurrent = MutableStateFlow("")
+    val gptCurrent = _gptCurrent.asStateFlow()
 
 
     // Variables for next 24Hours
     val _next24 = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
     val next24 = _next24.asStateFlow()
+    val _gptWeek = MutableStateFlow("Trykk på meg for å spørre om været det neste døgnet")
+    val gptWeek = _gptWeek.asStateFlow()
 
     // Variables for the week
     val _week = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
@@ -75,28 +76,42 @@ class HomeViewModel(index: Int): ViewModel() {
 
     fun updateWeather() {
         viewModelScope.launch {
-            _wStatus.value = statusStates[0]
-            data.updateWeather()
-            val weather = data.currentWeather
 
-            if (weather != null) {
-                _currentWeather.value = weather
-                _symbol.value = weather.symbolName.toString()
-                _next24.value = data.next24h
-                _week.value = data.week
-                _wStatus.value = statusStates[1]
-
-                getGPTResponse(
-                    "sted: $loc " +
-                            "temp: ${weather.temperature}C " +
-                            "beskrivelse: ${weather.symbolName} " +
-                            "regn: ${weather. precipitation}mm " +
-                            "vind: ${weather.windSpeed}m/s "
-                )
-            } else {
-                println("Failed fetching current weather for ${data.location.name}")
-                _wStatus.value = statusStates[2]
+            // loading dots while waiting for GPT response
+            launch {
+                while (data.GPTCurrent == ""){
+                    _gptCurrent.value = dotLoading(_gptCurrent.value)
+                    delay(500)
+                }
             }
+
+            launch {
+                _wStatus.value = statusStates[0]
+                data.updateWeather()
+                val weather = data.currentWeather
+
+                if (weather != null) {
+                    _currentWeather.value = weather
+                    _symbol.value = weather.symbolName.toString()
+                    _next24.value = data.next24h
+                    _week.value = data.week
+                    _wStatus.value = statusStates[1]
+
+                    data.updateGPTCurrent()
+                    val response = data.GPTCurrent
+                    _gptCurrent.value = ""
+
+                    // simulate writing
+                    response.forEach {
+                        _gptCurrent.value += it
+                        delay(20)
+                    }
+                } else {
+                    println("Failed fetching current weather for ${data.location.name}")
+                    _wStatus.value = statusStates[2]
+                }
+            }
+
         }
     }
 
@@ -124,30 +139,35 @@ class HomeViewModel(index: Int): ViewModel() {
         }
     }
 
-
-    @OptIn(BetaOpenAI::class)
-    fun getGPTResponse(weather: String) {
-        val prompt = "gi meg råd basert på følgende vær. maks 50 ord $weather"
-
+    fun updateGPTWeek() {
         viewModelScope.launch {
-            val openAI = OpenAI("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")
-
-            try {
-                val chatCompletionRequest = ChatCompletionRequest(
-                    model = ModelId("gpt-3.5-turbo"),
-                    messages = listOf(
-                        ChatMessage(
-                            role = ChatRole.User,
-                            content = prompt
-                        )
-                    )
-                )
-
-                val completion: ChatCompletion = openAI.chatCompletion(chatCompletionRequest)
-
-                GPTResponse.value = completion.choices.first().message?.content.toString()
-            } catch (e: Exception) {
+            launch {
+                _gptWeek.value = ""
+                while (data.gptWeek == "") {
+                    _gptWeek.value = dotLoading(_gptWeek.value)
+                    delay(500)
+                }
             }
+            launch {
+                data.updateGPTWeek()
+                val weekResponse = data.gptWeek
+                _gptWeek.value = ""
+                // simulate writing
+                weekResponse.forEach {
+                    _gptWeek.value += it
+                    delay(20)
+                }
+            }
+
         }
+    }
+    private suspend fun dotLoading(input: String): String {
+        var dots = input
+        if (dots == ". . . "){
+            dots = ""
+        } else{
+            dots += ". "
+        }
+        return dots
     }
 }
