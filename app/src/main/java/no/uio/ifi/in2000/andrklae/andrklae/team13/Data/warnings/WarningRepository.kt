@@ -78,6 +78,7 @@ class WarningRepository {
             }
         }
         return if(calculateKm(myCoordinate.lat, myCoordinate.lon, closestCoordinate!!.lat, closestCoordinate!!.lon) <= warningRange){
+
             test
         } else{
             null

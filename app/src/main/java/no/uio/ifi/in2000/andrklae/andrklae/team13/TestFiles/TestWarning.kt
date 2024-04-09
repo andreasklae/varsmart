@@ -5,20 +5,33 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepositor
 
 
 suspend fun main(){
-        testWarning()
-    }
+    testWarning()
+}
 
 suspend fun testWarning(){
 
-    val name = "Oslo"
+    val name = "Custom location"
     val type = "By"
-    val fylke = "Oslo"
-    val lat = 59.91
-    val lon = 10.71
+    val fylke = ""
+    val lat = 72.5
+    val lon = 0.0
 
-    val customLocation = CustomLocation(name, lon, lat, type, fylke)
+    val customLocation = CustomLocation(name, lat, lon, type, fylke)
 
     val warningRepo = WarningRepository()
-    val result = warningRepo.findClosestCoordinate(customLocation, warningRepo.fetchAllWarnings().features)
-    println("Most nearby alert found at area: ${result!!.properties.area} Title: ${result.properties.title}")
+    val result = warningRepo
+        .findClosestCoordinate(
+            customLocation,
+            warningRepo.fetchAllWarnings().features
+        )
+
+    if (result != null){
+        println(
+            "Most nearby alert found at area: ${result.properties.area} \n" +
+                "Title: ${result.properties.title}"
+        )
+    }
+    else{
+        println("No nearby alerts")
+    }
 }
