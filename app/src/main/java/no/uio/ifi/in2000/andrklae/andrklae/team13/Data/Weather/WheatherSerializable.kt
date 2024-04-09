@@ -37,7 +37,9 @@ data class TimeSeries(
 @Serializable
 data class Data(
     val instant: InstantDetails,
-    val next_1_hours: next_1_hours? = null
+    val next_1_hours: next_1_hours? = null,
+    val next_12_hours: Next12Hours? = null,
+    val next_6_hours: Next6Hours? = null
 ) {
     override fun toString(): String {
         return instant.toString()
@@ -68,6 +70,15 @@ data class InstantWeatherDetails(
 
 @Serializable
 data class next_1_hours(
+    val summary: Summary,
+    val details: Details
+)
+@Serializable
+data class Next12Hours(
+    val summary: Summary,
+)
+@Serializable
+data class Next6Hours(
     val summary: Summary,
     val details: Details
 )

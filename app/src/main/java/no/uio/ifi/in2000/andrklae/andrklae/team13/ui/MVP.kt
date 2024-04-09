@@ -85,10 +85,8 @@ fun Widgets(homeVM: HomeViewModel){
     val wStatus by homeVM.wStatus.collectAsState()
     val currentWeather by homeVM.currentWeather.collectAsState()
 
-    val dayWeatherStatus by homeVM.dayWeatherStatus.collectAsState()
     val next24 by homeVM.next24.collectAsState()
 
-    val weekWeatherStatus by homeVM.weekWeatherStatus.collectAsState()
     val week by homeVM.week.collectAsState()
 
     val alerts by homeVM.warning.collectAsState()
@@ -113,7 +111,7 @@ fun Widgets(homeVM: HomeViewModel){
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    CurrentRainWidget(currentWeather?.percipitation.toString())
+                    CurrentRainWidget(currentWeather?.precipitation.toString())
                 }
 
             }
@@ -127,7 +125,7 @@ fun Widgets(homeVM: HomeViewModel){
         Spacer(modifier = Modifier.height(20.dp))
 
         // Next 24h widget
-        when (dayWeatherStatus){
+        when (wStatus){
             homeVM.statusStates[0] -> {
 
             }
@@ -152,7 +150,7 @@ fun Widgets(homeVM: HomeViewModel){
         Spacer(modifier = Modifier.height(20.dp))
 
         // Week forecast widget
-        when (weekWeatherStatus){
+        when (wStatus){
             homeVM.statusStates[0] -> {
                 WeekTableWidget(listOf())
             }
@@ -281,7 +279,6 @@ fun AlertWidget(alerts: Feature?) {
     ) {
 
 
-
         Column(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
@@ -300,8 +297,7 @@ fun AlertWidget(alerts: Feature?) {
                     text = alerts.properties.description,
                     color = Color.White
                 )
-            }
-            else{
+            } else {
                 Text(
                     text = "No nearby alerts",
                     color = Color.White

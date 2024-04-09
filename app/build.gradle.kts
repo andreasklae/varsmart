@@ -1,3 +1,4 @@
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -86,6 +87,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.3.8")
     implementation("io.ktor:ktor-client-cio:2.3.8")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.4")
+
     implementation("io.coil-kt:coil-compose:2.5.0")
 
     //Implementation for gson deserialization
@@ -107,5 +109,21 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:2.44.2")
 
     implementation("com.airbnb.android:lottie-compose:5.2.0")
+
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    implementation ("androidx.compose.animation:animation:1.6.4")
+
+    // for GPT
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    implementation ("com.android.volley:volley:1.2.0")
+    implementation ("com.aallam.openai:openai-client:3.0.0")
+
+    // Hilt
+    implementation ("com.google.dagger:hilt-android:2.45")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
+    kapt ("com.google.dagger:hilt-compiler:2.45")
+
 }

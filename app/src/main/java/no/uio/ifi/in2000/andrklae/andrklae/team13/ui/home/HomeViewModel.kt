@@ -9,35 +9,37 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
+import androidx.compose.runtime.mutableStateOf
+import com.aallam.openai.api.BetaOpenAI
+import kotlinx.coroutines.delay
 
 class HomeViewModel(index: Int): ViewModel() {
     var data = DataHolder.Favourites[index]
 
     val statusStates: List<String> = listOf("Loading", "Success", "Failed")
+    val _wStatus = MutableStateFlow(statusStates[0])
+    val wStatus = _wStatus.asStateFlow()
 
     // Variables for currentWeather
     val _currentWeather: MutableStateFlow<WeatherTimeForecast?> = MutableStateFlow(null)
     val currentWeather = _currentWeather.asStateFlow()
     val _symbol = MutableStateFlow("")
     val symbol = _symbol.asStateFlow()
-    val _wStatus = MutableStateFlow(statusStates[0])
-    val wStatus = _wStatus.asStateFlow()
+    val _gptCurrent = MutableStateFlow("")
+    val gptCurrent = _gptCurrent.asStateFlow()
+
 
     // Variables for next 24Hours
-    val _dayWeatherStatus = MutableStateFlow(statusStates[0])
-    val dayWeatherStatus = _dayWeatherStatus.asStateFlow()
     val _next24 = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
     val next24 = _next24.asStateFlow()
+    val _gptWeek = MutableStateFlow("Trykk på meg for å spørre om været det neste døgnet")
+    val gptWeek = _gptWeek.asStateFlow()
 
     // Variables for the week
-    val _weekWeatherStatus = MutableStateFlow(statusStates[0])
-    val weekWeatherStatus = _weekWeatherStatus.asStateFlow()
     val _week = MutableStateFlow<List<WeatherTimeForecast>>(emptyList())
     val week = _week.asStateFlow()
 
     // Variables for warning
-    val _warningStatus = MutableStateFlow(statusStates[0])
-    val warningStatus = _warningStatus.asStateFlow()
     val _warning: MutableStateFlow<Feature?> = MutableStateFlow(null)
     val warning = _warning.asStateFlow()
 
@@ -58,9 +60,7 @@ class HomeViewModel(index: Int): ViewModel() {
     }
     fun updateAll(){
         println("Updating data for ${data.location.name}")
-        updateCurrentWeather()
-        updateNext24h()
-        updateWeek()
+        updateWeather()
         updateWarning()
         updateSunriseAndSunset()
     }
@@ -73,57 +73,45 @@ class HomeViewModel(index: Int): ViewModel() {
         updateAll()
     }
 
-    fun updateCurrentWeather() {
+    fun updateWeather() {
         viewModelScope.launch {
-            _wStatus.value = statusStates[0]
-            data.updateCurrentWeather()
-            val weather = data.currentWeather
 
-            if (weather != null) {
-            _currentWeather.value = weather
-            _symbol.value = weather.symbolName.toString()
-
-                _wStatus.value = statusStates[1]
-            } else {
-                println("Failed fetching current weather for ${data.location.name}")
-                _wStatus.value = statusStates[2]
+            // loading dots while waiting for GPT response
+            launch {
+                while (data.GPTCurrent == ""){
+                    _gptCurrent.value = dotLoading(_gptCurrent.value)
+                    delay(500)
+                }
             }
-        }
-    }
 
+            launch {
+                _wStatus.value = statusStates[0]
+                data.updateWeather()
+                val weather = data.currentWeather
 
-    fun updateNext24h() {
-        viewModelScope.launch {
-            _dayWeatherStatus.value = statusStates[0]
-            data.updateNext24h()
-            val list = data.next24h
-            if (list.isNotEmpty()) {
-                _next24.value = list
+                if (weather != null) {
+                    _currentWeather.value = weather
+                    _symbol.value = weather.symbolName.toString()
+                    _next24.value = data.next24h
+                    _week.value = data.week
+                    _wStatus.value = statusStates[1]
 
-                _dayWeatherStatus.value = statusStates[1]
-            } else {
-                println("Failed fetching weather for the next 24h for ${data.location.name}")
-                _dayWeatherStatus.value = statusStates[2]
+                    data.updateGPTCurrent()
+                    val response = data.GPTCurrent
+                    _gptCurrent.value = ""
+
+                    // simulate writing
+                    response.forEach {
+                        _gptCurrent.value += it
+                        delay(20)
+                    }
+                } else {
+                    println("Failed fetching current weather for ${data.location.name}")
+                    _wStatus.value = statusStates[2]
+                }
             }
+
         }
-
-    }
-
-    fun updateWeek() {
-        viewModelScope.launch {
-            _weekWeatherStatus.value = statusStates[0]
-            data.updateWeek()
-            val list = data.week
-            if (list.isNotEmpty()) {
-                _week.value = list
-                _weekWeatherStatus.value = statusStates[1]
-            } else {
-                _weekWeatherStatus.value = statusStates[2]
-                println("Failed fetching weather for ${data.location.name} this week")
-
-            }
-        }
-
     }
 
     fun updateSunriseAndSunset() {
@@ -142,21 +130,43 @@ class HomeViewModel(index: Int): ViewModel() {
 
         }
     }
-
-
-
     fun updateWarning() {
-        _warningStatus.value = statusStates[0]
         viewModelScope.launch {
             data.updateWarning()
             _warning.value = data.warning
 
-            if(_warning.value != null){
-                _warningStatus.value = statusStates[1]
-            }
-            else{
-                _warningStatus.value = statusStates[2]
-            }
         }
+    }
+
+    fun updateGPTWeek() {
+        viewModelScope.launch {
+            launch {
+                _gptWeek.value = ""
+                while (data.gptWeek == "") {
+                    _gptWeek.value = dotLoading(_gptWeek.value)
+                    delay(500)
+                }
+            }
+            launch {
+                data.updateGPTWeek()
+                val weekResponse = data.gptWeek
+                _gptWeek.value = ""
+                // simulate writing
+                weekResponse.forEach {
+                    _gptWeek.value += it
+                    delay(20)
+                }
+            }
+
+        }
+    }
+    private suspend fun dotLoading(input: String): String {
+        var dots = input
+        if (dots == ". . . "){
+            dots = ""
+        } else{
+            dots += ". "
+        }
+        return dots
     }
 }

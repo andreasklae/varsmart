@@ -27,7 +27,7 @@ suspend fun main() {
     val dataSource = WeatherDataSource()
 
     // fetches forecast for a specific location and time
-    val weatherTimeForecast = dataSource.fetchWeather(customLocation, dateTime) // Replace with an actual call to fetch data
+    val weatherTimeForecast = dataSource.fetchWeather(customLocation) // Replace with an actual call to fetch data
 
     // Print the weather forecast for the specified time
     println(weatherTimeForecast)

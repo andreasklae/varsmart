@@ -5,6 +5,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Loca
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.LocationRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherDataSource
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 
 private val LRepo = LocationRepository()
 private val Wrepo = WeatherRepository()
@@ -18,12 +19,13 @@ suspend fun main(){
         )
         println()
         val year = "2024"
-        val month = "03"
-        val day = "10"
+        val month = "04"
+        val day = "4"
         val hour = "16"
 
         val dateTime = DateTime(year, month, day, hour)
-        val weather = Wrepo.getCurrentWeather(dateTime, location)
+        val weatherForecast = Wrepo.getWeather(location)
+        val weather = weatherForecast?.let { WeatherTimeForecast(it, dateTime, location) }
         println("Success, Printing info...")
         println()
         println(weather)

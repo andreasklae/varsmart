@@ -28,7 +28,7 @@ class WeatherDataSource {
         }
     }
 
-    suspend fun fetchWeather(loc: CustomLocation, dateTime: DateTime): WeatherTimeForecast {
+    suspend fun fetchWeather(loc: CustomLocation): WeatherForecast {
         // finds latitude and longitude
         val lat = loc.lat
         val lon = loc.lon
@@ -41,7 +41,7 @@ class WeatherDataSource {
 
         // returns WeatherTimeForecast object
         val weatherForecast: WeatherForecast = client.get(source).body()
-        return WeatherTimeForecast(weatherForecast, dateTime, loc)
+        return weatherForecast
     }
 }
 

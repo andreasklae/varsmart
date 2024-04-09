@@ -12,12 +12,30 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
+import com.android.volley.AuthFailureError
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.tasks.Task
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
+
+import com.android.volley.Request
+import com.android.volley.RetryPolicy
+import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
+
 class MainActivity : ComponentActivity() {
     //private val mapViewModel = MapViewModel()
 
@@ -50,10 +68,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-            setContent {
+        setContent {
 
             Team13Theme {
                 Surface(
@@ -62,7 +81,7 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     //MVP(homeVM, this)
-                    HomeScreen()
+                    HomeScreen(homeVM)
                 }
             }
         }
@@ -99,7 +118,7 @@ class MainActivity : ComponentActivity() {
                     val notMoved = DataHolder.Favourites.any {
                         it.location.lat == customLocation.lat
                                 &&
-                        it.location.lon == customLocation.lon
+                                it.location.lon == customLocation.lon
                     }
                     if (notMoved){
                         val index = DataHolder.Favourites.indexOf(
@@ -109,6 +128,8 @@ class MainActivity : ComponentActivity() {
                     }
                     else{
                         DataHolder.Favourites.remove(DataHolder.Favourites.find { it.location.name == "My location" })
+                    } else{
+                        DataHolder.favourites.remove(DataHolder.favourites.find { it.location.name == "My location" })
                         val newLocation = DataHolder(customLocation)
                         homeVM.setLocation(DataHolder.Favourites.lastIndex)
                     }
