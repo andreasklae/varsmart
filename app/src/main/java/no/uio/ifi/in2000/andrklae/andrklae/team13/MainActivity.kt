@@ -8,16 +8,24 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherScreen
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MasterUi
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.status.ErrorScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.MainComponent
 
 class MainActivity : ComponentActivity() {
     //private val mapViewModel = MapViewModel()
@@ -51,24 +59,42 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val alesund = CustomLocation("Ålesund", 62.47, 6.13, "By", "")
         val alesundData = DataHolder(alesund)
-        val homeVM = WeatherViewModel(0, this)
+        val weatherVM = WeatherViewModel(0, this)
         val test = 0
         super.onCreate(savedInstanceState)
 
         setContent {
+            val wStatus by weatherVM.wStatus.collectAsState()
+            val sunStatus by weatherVM.sunStatus.collectAsState()
+            when {
+                wStatus == weatherVM.statusStates[0]
+                        ||
+                        sunStatus == weatherVM.statusStates[0] -> {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
 
-            Team13Theme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
+                    ) {
+                        CircularProgressIndicator()
+                    }
 
-                    //MVP(homeVM, this)
-                    WeatherScreen(homeVM)
                 }
+
+                wStatus == weatherVM.statusStates[1]
+                        &&
+                        sunStatus == weatherVM.statusStates[1] -> {
+                    MasterUi(weatherVM)
+                }
+
+                else -> ErrorScreen(weatherVM)
+
             }
+
         }
     }
+
     fun isOnline(context: Context = this): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

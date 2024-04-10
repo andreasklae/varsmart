@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
@@ -42,12 +41,12 @@ fun Next24(homeVM: WeatherViewModel){
             homeVM.updateGPTWeek()
         },
         colors = buttonColors(Color.Transparent),
-        modifier = Modifier.offset(x = -10.dp, y = 0.dp),
+        modifier = Modifier.offset(x = -10.dp, y = -0.dp),
     ) {
         MrPraktisk()
     }
     SpeechBubble(gptWeek)
-    Spacer(modifier = Modifier.height(5.dp))
+    Spacer(modifier = Modifier.height(15.dp))
 
 
     Row (

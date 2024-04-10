@@ -56,7 +56,9 @@ fun MVP(homeVM: WeatherViewModel, activity: MainActivity) {
     ) {
         if (loc.name == "My location"){
             Button(
-                onClick = {homeVM.setLocation(0)}
+                onClick = {
+                    //homeVM.setLocation(0)
+                }
             ){
                 Text(text = DataHolder.Favourites[0].location.name)
             }

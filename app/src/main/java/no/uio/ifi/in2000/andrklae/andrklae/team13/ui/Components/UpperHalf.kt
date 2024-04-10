@@ -57,7 +57,7 @@ fun UpperHalf(homeVM: WeatherViewModel){
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             Text(text = loc.name, fontSize = 35.sp)
             Spacer(modifier = Modifier.height(30.dp))
             when (wStatus) {

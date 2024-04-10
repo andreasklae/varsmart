@@ -9,7 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,13 +20,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,90 +45,72 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import kotlin.math.roundToInt
 
 var expanded = false
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Warning(homeVM: WeatherViewModel, range: Int){
+fun WarningRow(homeVM: WeatherViewModel, range: Int){
     val alerts by homeVM.alerts.collectAsState()
     val filteredAlerts = alerts.filter { it.distance <= range }
-    val pageState = rememberPagerState(pageCount = { filteredAlerts.size })
-    if (filteredAlerts.isNotEmpty()){
-        val scrollState = rememberLazyListState()
-        val flingBehavior = rememberSnapFlingBehavior(lazyListState = scrollState)
-        LazyRow(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            state = scrollState,
-            flingBehavior = flingBehavior
-            ) {
-            items(filteredAlerts.size) { item ->
-                val alert = filteredAlerts[item]
-                var focused = false
-                var foucusedMod = Modifier.fillParentMaxWidth()
-                if (scrollState.firstVisibleItemIndex == item && !scrollState.isScrollInProgress){
-                    focused = true
-                } else focused = false
+    if (filteredAlerts.isNotEmpty()) {
+        val pagerState = rememberPagerState(pageCount = { filteredAlerts.size })
 
-                if (focused){
-                    foucusedMod = Modifier.fillParentMaxWidth()
-                }
-                else{
-                    foucusedMod = Modifier
-                        .fillParentMaxWidth()
-                        .alpha(0.5f)
-                }
-                Box(
-                    modifier = foucusedMod
-                ){
-                    DisplayWarning(
-                        warningDescription = "${alert.alert.properties.instruction} \n${alert.alert.properties.description} ${alert.alert.properties.consequences}",
-                        warningTitle = alert.alert.properties.area,
-                        warningLevel = alert.alert.properties.riskMatrixColor,
-                        distance = alert.distance
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
+        Column (
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(modifier = Modifier
-            )
-            {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    filteredAlerts.forEach{
-                        var dotModifier = Modifier
-                            .padding(2.dp)
-                            .glassEffect()
-                            .glassEffect()
-                            .glassEffect()
-                            .clip(CircleShape)
-                            .size(15.dp)
-                        if (scrollState.firstVisibleItemIndex != filteredAlerts.indexOf(it)){
-                            dotModifier = Modifier
-                                .padding(2.dp)
-                                .clip(CircleShape)
-                                .background(Color.Black)
-                                .size(10.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+        ){
+            HorizontalPager(
+                verticalAlignment = Alignment.Top,
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+                    .animateContentSize(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioLowBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
 
-                        }
-                        Box(modifier = dotModifier)
+                    )
+
+            ) { page ->
+                val alert = filteredAlerts[page]
+
+                DisplayWarning(
+                    warningDescription = "${alert.alert.properties.instruction} \n${alert.alert.properties.description} ${alert.alert.properties.consequences}",
+                    warningTitle = alert.alert.properties.area,
+                    warningLevel = alert.alert.properties.riskMatrixColor,
+                    distance = alert.distance
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(top= 15.dp)
+                    .glassEffect()
+                    .padding(5.dp)
+            ) {
+                filteredAlerts.forEach {
+                    var dotModifier = Modifier
+                        .padding(2.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.5f))
+                        .size(10.dp)
+                    if (pagerState.currentPage == filteredAlerts.indexOf(it)) {
+                        dotModifier = Modifier
+                            .padding(2.dp)
+                            .clip(CircleShape)
+                            .background(Color.Black)
+                            .size(12.dp)
 
                     }
+
+                    Box(modifier = dotModifier)
                 }
-
             }
-
         }
-    } else EmptyWarning()
+    }else EmptyWarning()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -163,7 +145,8 @@ fun DisplayWarning(
                 .padding(horizontal = 20.dp, vertical = 10.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth() // Ensure the Row fills the max width
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
                 WarningIcon(warningLevel)
 
@@ -180,10 +163,10 @@ fun DisplayWarning(
                 )
 
             }
-            Divider(
-                color = Color.Black,
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 5.dp),
                 thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 5.dp)
+                color = Color.Black
             )
             if (expanded) {
                 Text(

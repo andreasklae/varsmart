@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -9,11 +10,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -31,20 +36,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.glassEffect
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ImageIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.SettingsButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -56,109 +67,85 @@ data class Favorite(
     val description: String
 )
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FavoriteScreen(
-    favoriteViewModel: FavoriteViewModel= viewModel()) {
-    val favorites = mutableListOf<Favorite>(
-        Favorite(R.drawable.sunclouds, "Oslo","10°", "Over skyet"),
-        Favorite(R.drawable.sunclouds, "Nice","27°", "Sol"),
-        Favorite(R.drawable.sunclouds, "Cancun","30°", "Mye sol"),
-        Favorite(R.drawable.sunclouds, "Rio di janairo","-7°", "Regn")
-    )
+    weatherVM: WeatherViewModel,
+    pagerState: PagerState
+)
+{
+    val favorites = DataHolder.Favourites
     var showSearchBar by remember { mutableStateOf(false) }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize()
 
-    Team13Theme {
-        Surface(color = MaterialTheme.colorScheme.background) {
+    ) {
+        Spacer(modifier = Modifier.height(90.dp))
 
-            Scaffold(
-
-            ) { innerPadding ->
-                LazyColumn(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .padding(innerPadding)
-
-                ) {
-                    item {
-                        FavoriteTopAppBar()
-                    }
-                    item {
-                        if (showSearchBar) {
-                            SearchBarField(favoriteViewModel)
-
-                        }
-                    }
-                    favorites.forEach {
-                        item {
-                            FavoriteBoxSwipe(
-                                location = it.location,
-                                weatherIcon = it.weatherIcon,
-                                midDayTemp = it.temp,
-                                description = it.description,
-                                onClick = { /* handle button click */ }
-                            )
-                        }
-                    }
-
-                    item {
-                        AddFavorite(onClick = { showSearchBar = true }
-                        )
-
-
-                    }
-
-                }
-            }
+        if (showSearchBar) {
+            //SearchBarField()
 
         }
-    }
 
+        favorites.forEach {
+            FavoriteBox(it, weatherVM, pagerState)
+        }
 
-}
+        AddFavorite(onClick = { showSearchBar = true }
+        )
+        Spacer(modifier = Modifier.fillMaxHeight())
 
-@Preview
-@Composable
-fun FavoritePreview() {
-    Team13Theme {
-        FavoriteScreen()
-        val vm = FavoriteViewModel()
-        //SearchBarField(favoriteViewModel = vm)
-    }
-
-}
-
-@Composable
-fun FavoriteTopAppBar(){
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Spacer(modifier = Modifier.weight(1f))
-        SettingsButton()
     }
 }
 
 
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FavoriteBox(location: String, weatherIcon: Int, midDayTemp: String, description: String, onClick: () -> Unit) {
-
+fun FavoriteBox(data: DataHolder, weatherVM: WeatherViewModel, pagerState: PagerState) {
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
-            .padding(16.dp)
-            .width(380.dp)
-            .height(91.dp)
+            .padding(20.dp)
+            .fillMaxWidth()
             .glassEffect()
-            .clickable { onClick() }
+            .clickable {
+                coroutineScope.launch {
+                    weatherVM.setLocation(DataHolder.Favourites.indexOf(data))
+                    pagerState.animateScrollToPage(1)
+                }
+            }
+            .padding(horizontal = 5.dp)
+
     ){
-        FavoriteForecast(
-            location = location,
-            weatherIcon = weatherIcon,
-            midDayTemp = midDayTemp,
-            description = description
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+        ){
+            DrawSymbol(symbol = data.currentWeather!!.symbolName, size = 100.dp )
+            Column{
+                Text(
+                    text = data.location.name,
+                    fontSize = 24.sp,
+
+                    )
+                Text(
+                    text = data.currentWeather!!.symbolName.toString(),
+                    fontSize = 15.sp
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+
+
+            Text(
+                text = data.currentWeather!!.temperature.toString() + "°C",
+                fontSize = 24.sp,
+            )
+            Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+        }
     }
 }
 

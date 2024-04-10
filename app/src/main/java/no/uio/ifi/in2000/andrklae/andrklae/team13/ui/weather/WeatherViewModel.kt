@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,7 +60,6 @@ class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
         updateAll()
     }
     fun updateAll(){
-        println("pudating")
         if (activity.isOnline()){
             println("has internet")
             println("Updating data for ${data.location.name}")
@@ -72,13 +73,17 @@ class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
         }
 
     }
+    @OptIn(ExperimentalFoundationApi::class)
     fun setLocation(i: Int) {
         print("Changing location from ${data.location.name} to ")
-        data = DataHolder.Favourites[i]
-        println(data.location.name)
+        val isSame =  _loc.value == DataHolder.Favourites[i].location
 
-        _loc.value = data.location
-        updateAll()
+        if(!isSame){
+            data = DataHolder.Favourites[i]
+            println(data.location.name)
+            _loc.value = data.location
+            updateAll()
+        }
     }
 
     fun updateWeather() {
