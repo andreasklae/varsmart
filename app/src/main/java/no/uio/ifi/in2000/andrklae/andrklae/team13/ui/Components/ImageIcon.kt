@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

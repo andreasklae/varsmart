@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -18,9 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun TopAppBar(){
+fun TopAppBar(homeVM: WeatherViewModel){
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically

@@ -1,6 +1,5 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,14 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,10 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun UpperHalf(homeVM: HomeViewModel){
+fun UpperHalf(homeVM: WeatherViewModel){
     val loc by homeVM.loc.collectAsState()
 
     val wStatus by homeVM.wStatus.collectAsState()
@@ -121,7 +114,7 @@ fun WeatherBox(weather: WeatherTimeForecast){
     }
 }
 @Composable
-fun GptBox(homeVM: HomeViewModel, weather: WeatherTimeForecast){
+fun GptBox(homeVM: WeatherViewModel, weather: WeatherTimeForecast){
     val gptCurrent = homeVM.gptCurrent.collectAsState()
     Row(
         verticalAlignment = Alignment.CenterVertically,
