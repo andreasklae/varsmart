@@ -88,7 +88,7 @@ fun MainComponent(innerPadding: PaddingValues, homeVM: HomeViewModel){
         }
 
         item {
-            Warning(homeVM)
+            Warning(homeVM, 40)
         }
 
         item {

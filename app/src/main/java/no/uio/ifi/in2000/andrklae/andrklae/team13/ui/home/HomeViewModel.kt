@@ -9,9 +9,9 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
-import androidx.compose.runtime.mutableStateOf
-import com.aallam.openai.api.BetaOpenAI
 import kotlinx.coroutines.delay
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 
 class HomeViewModel(index: Int): ViewModel() {
     var data = DataHolder.Favourites[index]
@@ -40,8 +40,8 @@ class HomeViewModel(index: Int): ViewModel() {
     val week = _week.asStateFlow()
 
     // Variables for warning
-    val _warning: MutableStateFlow<Feature?> = MutableStateFlow(null)
-    val warning = _warning.asStateFlow()
+    val _alerts: MutableStateFlow<List<Alert>> = MutableStateFlow(mutableListOf())
+    val alerts = _alerts.asStateFlow()
 
     // Varibles for sunrise/set
     val _sunStatus = MutableStateFlow(statusStates[0])
@@ -86,7 +86,7 @@ class HomeViewModel(index: Int): ViewModel() {
 
             launch {
                 _wStatus.value = statusStates[0]
-                data.updateWeather()
+                data.updateAll()
                 val weather = data.currentWeather
 
                 if (weather != null) {
@@ -133,7 +133,7 @@ class HomeViewModel(index: Int): ViewModel() {
     fun updateWarning() {
         viewModelScope.launch {
             data.updateWarning()
-            _warning.value = data.warning
+            _alerts.value = data.alertList
 
         }
     }

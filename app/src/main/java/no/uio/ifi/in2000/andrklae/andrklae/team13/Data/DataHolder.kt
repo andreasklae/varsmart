@@ -6,7 +6,8 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Cust
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 import java.time.LocalDateTime
 
@@ -37,7 +38,9 @@ data class DataHolder(
 
     var rise: String? = null
     var set: String? = null
-    var warning: Feature? = null
+
+    var allWarnings: Warning? = null
+    var alertList = listOf<Alert>()
     companion object {
         val Favourites = mutableListOf<DataHolder>()
         val wRepo = WeatherRepository()
@@ -58,7 +61,7 @@ data class DataHolder(
         Favourites.remove(this)
     }
 
-    suspend fun updateWeather() {
+    suspend fun updateAll() {
         // if there is more than 1 hour since last update
         if(lastUpdate > getCurrentTime() || weather == null){
             lastUpdate = getCurrentTime()
@@ -66,6 +69,8 @@ data class DataHolder(
             updateCurrentWeather()
             updateNext24h()
             updateWeek()
+            updateWarning()
+            updateSunriseAndSunset()
         }
     }
 
@@ -77,7 +82,7 @@ data class DataHolder(
 
     suspend fun updateGPTCurrent(){
         if (weather != null){
-            GPTCurrent = gptRepo.fetchCurrent(currentWeather!!, next24h)
+            GPTCurrent = "gptRepo.fetchCurrent(currentWeather!!, next24h)"
         }
     }
 
@@ -151,8 +156,9 @@ data class DataHolder(
     }
 
     suspend fun updateWarning(){
-        val warnings = aRepo.fetchAllWarnings().features
-        warning = aRepo.findClosestCoordinate(location, warnings)
+        allWarnings = aRepo.fetchAllWarnings()
+        alertList = aRepo.fetchAlertList(allWarnings!!, location)
+        println(alertList.map { it.alert.properties.area })
     }
 
     fun getCurrentTime(): DateTime{
@@ -171,6 +177,6 @@ data class DataHolder(
     }
 
     suspend fun updateGPTWeek() {
-        gptWeek = gptRepo.fetchWeek(next24h)
+        gptWeek = "gptRepo.fetchWeek(next24h)"
     }
 }
