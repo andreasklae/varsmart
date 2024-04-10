@@ -43,7 +43,7 @@ class WarningRepository {
                 distanceToAlert = calculateDistance(closestCoord, Coordinate(loc.lat, loc.lon))
             }
 
-            alertList.add(Alert(alert, distanceToAlert))
+            alertList.add(Alert(alert, distanceToAlert, polygonList))
             alertList.sortBy { it.distance }
         }
         return alertList
@@ -158,7 +158,7 @@ fun flatten(list: List<*>): List<*> =
     }
 
 data class Coordinate(val lat: Double, val lon: Double)
-data class Alert(val alert: Feature, val distance: Double)
+data class Alert(val alert: Feature, val distance: Double, val polygonList: List<Polygon>)
 
 data class Polygon(val coordinates: List<Coordinate>){
     override fun toString(): String {
