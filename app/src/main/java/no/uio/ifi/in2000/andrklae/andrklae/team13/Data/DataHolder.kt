@@ -65,7 +65,6 @@ data class DataHolder(
         // if there is more than 1 hour since last update
         if(lastUpdate > getCurrentTime() || weather == null){
             lastUpdate = getCurrentTime()
-            weather = wRepo.getWeather(location)
             updateCurrentWeather()
             updateNext24h()
             updateWeek()
@@ -75,15 +74,15 @@ data class DataHolder(
     }
 
     suspend fun updateCurrentWeather() {
-        if (weather != null){
-            currentWeather = WeatherTimeForecast(weather!!, dt, location)
+        val newWeather = wRepo.getWeather(location)
+        if (newWeather != null){
+            lastUpdate = getCurrentTime()
+            currentWeather = WeatherTimeForecast(newWeather, dt, location)
         }
     }
 
     suspend fun updateGPTCurrent(){
-        if (weather != null){
             GPTCurrent = "gptRepo.fetchCurrent(currentWeather!!, next24h)"
-        }
     }
 
     suspend fun updateNext24h(){
@@ -147,11 +146,10 @@ data class DataHolder(
     }
 
     suspend fun updateSunriseAndSunset(){
-        if(lastUpdate > getCurrentTime() || rise == null || set == null){
-            lastUpdate = getCurrentTime()
-            val sun = wRepo.getRiseAndSet(location, dt)
-            rise = sun.sunriseTime
-            set = sun.sunsetTime
+        val newSun = wRepo.getRiseAndSet(location, dt)
+        if(newSun != null){
+            rise = newSun.sunriseTime
+            set = newSun.sunsetTime
         }
     }
 

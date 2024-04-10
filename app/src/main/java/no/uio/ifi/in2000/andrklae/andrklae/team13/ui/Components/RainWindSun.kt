@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,12 +20,12 @@ import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.glassEffect
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 val fontSize = 20.sp
 val iconHeight = 70
 @Composable
-fun RainWindSun(homeVM: HomeViewModel){
+fun RainWindSun(homeVM: WeatherViewModel){
 
     val boxes = listOf<String>("Regn", "Vind", "Sol")
 
@@ -54,7 +54,7 @@ fun RainWindSun(homeVM: HomeViewModel){
 }
 
 @Composable
-fun Sun(homeVM: HomeViewModel) {
+fun Sun(homeVM: WeatherViewModel) {
     val sStatus by homeVM.sunStatus.collectAsState()
     val set by homeVM.set.collectAsState()
     val rise by homeVM.rise.collectAsState()
@@ -117,7 +117,7 @@ fun Sun(homeVM: HomeViewModel) {
 }
 
 @Composable
-fun Wind(homeVM: HomeViewModel) {
+fun Wind(homeVM: WeatherViewModel) {
     val wStatus by homeVM.wStatus.collectAsState()
     val weather by homeVM.currentWeather.collectAsState()
     Column(
@@ -152,7 +152,7 @@ fun Wind(homeVM: HomeViewModel) {
 }
 
 @Composable
-fun Rain(homeVM: HomeViewModel) {
+fun Rain(homeVM: WeatherViewModel) {
     val wStatus by homeVM.wStatus.collectAsState()
     val weather by homeVM.currentWeather.collectAsState()
     Column(

@@ -23,8 +23,13 @@ class WeatherRepository {
         
     }
 
-    suspend fun getRiseAndSet(loc: CustomLocation, time: DateTime): SunriseAndSunset {
-        return sunrisesunsetData.fetchSunriseandSunset(loc, time)
+    suspend fun getRiseAndSet(loc: CustomLocation, time: DateTime): SunriseAndSunset? {
+        try {
+            return sunrisesunsetData.fetchSunriseandSunset(loc, time)
+        }catch (exception: Exception){
+            return null
+        }
+        
     }
 
 

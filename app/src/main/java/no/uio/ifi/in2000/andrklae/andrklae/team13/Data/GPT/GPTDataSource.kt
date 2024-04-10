@@ -8,7 +8,7 @@ import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 
-
+//
 class GPTDataSource {
     @OptIn(BetaOpenAI::class)
     suspend fun getGPTResponse(prompt: String): String{

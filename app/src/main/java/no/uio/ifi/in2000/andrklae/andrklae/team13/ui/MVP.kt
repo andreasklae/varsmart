@@ -39,12 +39,12 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
+fun MVP(homeVM: WeatherViewModel, activity: MainActivity) {
     val loc by homeVM.loc.collectAsState()
     val scrollState = rememberScrollState()
 
@@ -81,7 +81,7 @@ fun MVP(homeVM: HomeViewModel, activity: MainActivity) {
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Widgets(homeVM: HomeViewModel){
+fun Widgets(homeVM: WeatherViewModel){
     val wStatus by homeVM.wStatus.collectAsState()
     val currentWeather by homeVM.currentWeather.collectAsState()
 

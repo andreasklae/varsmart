@@ -49,6 +49,7 @@ data class Properties(
     val solarmidnight: Solarmidnight
 )
 
+// Main data class that contains meta data and data for sunrise and sunset times from API
 @Serializable
 data class SunriseData(
     val copyright: String,

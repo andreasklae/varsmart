@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,14 +8,13 @@ import kotlinx.coroutines.launch
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 
-class HomeViewModel(index: Int): ViewModel() {
+class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
     var data = DataHolder.Favourites[index]
-
+    val activity = activity
     val statusStates: List<String> = listOf("Loading", "Success", "Failed")
     val _wStatus = MutableStateFlow(statusStates[0])
     val wStatus = _wStatus.asStateFlow()
@@ -59,10 +58,19 @@ class HomeViewModel(index: Int): ViewModel() {
         updateAll()
     }
     fun updateAll(){
-        println("Updating data for ${data.location.name}")
-        updateWeather()
-        updateWarning()
-        updateSunriseAndSunset()
+        println("pudating")
+        if (activity.isOnline()){
+            println("has internet")
+            println("Updating data for ${data.location.name}")
+            updateWeather()
+            updateWarning()
+            updateSunriseAndSunset()
+        }
+        else{
+            _wStatus.value = statusStates [2]
+            _sunStatus.value = statusStates [2]
+        }
+
     }
     fun setLocation(i: Int) {
         print("Changing location from ${data.location.name} to ")

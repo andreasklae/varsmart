@@ -12,39 +12,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.core.content.ContextCompat
-import com.android.volley.AuthFailureError
-import com.android.volley.DefaultRetryPolicy
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.tasks.Task
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeScreen
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherScreen
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
-
-import com.android.volley.Request
-import com.android.volley.RetryPolicy
-import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
     //private val mapViewModel = MapViewModel()
 
-    val alesund = CustomLocation("Ålesund", 62.47, 6.13, "By", "")
-    val alesundData = DataHolder(alesund)
-    val homeVM = HomeViewModel(0)
-    val test = 0
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1001) {
             // Check if the permissions were granted
@@ -56,8 +35,8 @@ class MainActivity : ComponentActivity() {
                         val index = DataHolder.Favourites.indexOf(
                             DataHolder.Favourites.find { it.location == customLocation }
                         )
-                        homeVM.setLocation(index)
-                        homeVM.updateAll()
+                        //homeVM.setLocation(index)
+                        //homeVM.updateAll()
                     } else {
 
                     }
@@ -70,6 +49,10 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val alesund = CustomLocation("Ålesund", 62.47, 6.13, "By", "")
+        val alesundData = DataHolder(alesund)
+        val homeVM = WeatherViewModel(0, this)
+        val test = 0
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -81,12 +64,12 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     //MVP(homeVM, this)
-                    HomeScreen(homeVM)
+                    WeatherScreen(homeVM)
                 }
             }
         }
     }
-    fun isOnline(context: Context): Boolean {
+    fun isOnline(context: Context = this): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (connectivityManager != null) {
@@ -125,12 +108,12 @@ class MainActivity : ComponentActivity() {
                         val index = DataHolder.Favourites.indexOf(
                             DataHolder.Favourites.find { it.location == customLocation }
                         )
-                        homeVM.setLocation(index)
+                        //homeVM.setLocation(index)
                     }
                     else{
                         DataHolder.Favourites.remove(DataHolder.Favourites.find { it.location.name == "My location" })
                         val newLocation = DataHolder(customLocation)
-                        homeVM.setLocation(DataHolder.Favourites.lastIndex)
+                        //homeVM.setLocation(DataHolder.Favourites.lastIndex)
                     }
                 }
             }

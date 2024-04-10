@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
@@ -9,10 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,9 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,13 +46,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.glassEffect
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import kotlin.math.roundToInt
 
 var expanded = false
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Warning(homeVM: HomeViewModel, range: Int){
+fun Warning(homeVM: WeatherViewModel, range: Int){
     val alerts by homeVM.alerts.collectAsState()
     val filteredAlerts = alerts.filter { it.distance <= range }
     val pageState = rememberPagerState(pageCount = { filteredAlerts.size })
