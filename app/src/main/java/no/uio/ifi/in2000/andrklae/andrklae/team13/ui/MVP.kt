@@ -89,7 +89,7 @@ fun Widgets(homeVM: HomeViewModel){
 
     val week by homeVM.week.collectAsState()
 
-    val alerts by homeVM.warning.collectAsState()
+    val alerts by homeVM.alerts.collectAsState()
 
     Column{
         // Temp Widget
@@ -145,7 +145,7 @@ fun Widgets(homeVM: HomeViewModel){
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        AlertWidget(alerts)
+        AlertWidget(alerts.first().alert)
 
         Spacer(modifier = Modifier.height(20.dp))
 

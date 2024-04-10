@@ -7,7 +7,6 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,15 +40,15 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
 
 @Composable
-fun Warning(homeVM: HomeViewModel){
-    val warning by homeVM.warning.collectAsState()
-
-    if (warning != null){
-        println(warning!!.properties.area)
+fun Warning(homeVM: HomeViewModel, range: Int){
+    val alerts by homeVM.alerts.collectAsState()
+    val filteredAlerts = alerts.filter { it.distance <= range }
+    if (filteredAlerts.isNotEmpty()){
+        val alert = filteredAlerts.first().alert
         DisplayWarning(
-            warningDescription = "${warning!!.properties.instruction} \n${warning!!.properties.description} ${warning!!.properties.consequences}",
-            warningTitle = warning!!.properties.area,
-            warningLevel = warning!!.properties.riskMatrixColor
+            warningDescription = "${alert.properties.instruction} \n${alert.properties.description} ${alert.properties.consequences}",
+            warningTitle = alert.properties.area,
+            warningLevel = alert.properties.riskMatrixColor
         )
         Spacer(modifier = Modifier.height(10.dp))
     } else {

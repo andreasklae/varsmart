@@ -4,7 +4,7 @@ import kotlin.reflect.jvm.internal.impl.util.EmptyArrayMap
 
 
 data class Geometry(
-    val coordinates: List<Any>,
+    val coordinates: List<ArrayList<*>>,
     val type: String
 )
 

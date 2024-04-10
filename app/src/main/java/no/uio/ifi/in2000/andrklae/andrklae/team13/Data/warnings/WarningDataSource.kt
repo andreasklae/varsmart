@@ -39,7 +39,7 @@ class WarningDataSource{
 
         val alerts: AlertResponse= client.get(source).body()
 
-        return Warning( weatherAlert = alerts)
+        return Warning(weatherAlert = alerts)
 
     }
 
