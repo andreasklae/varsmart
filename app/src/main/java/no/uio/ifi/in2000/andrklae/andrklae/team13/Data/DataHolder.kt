@@ -82,7 +82,7 @@ data class DataHolder(
 
     suspend fun updateGPTCurrent(){
         if (weather != null){
-            GPTCurrent = gptRepo.fetchCurrent(currentWeather!!, next24h)
+            GPTCurrent = "gptRepo.fetchCurrent(currentWeather!!, next24h)"
         }
     }
 
@@ -158,6 +158,7 @@ data class DataHolder(
     suspend fun updateWarning(){
         allWarnings = aRepo.fetchAllWarnings()
         alertList = aRepo.fetchAlertList(allWarnings!!, location)
+        println(alertList.map { it.alert.properties.area })
     }
 
     fun getCurrentTime(): DateTime{
@@ -176,6 +177,6 @@ data class DataHolder(
     }
 
     suspend fun updateGPTWeek() {
-        gptWeek = gptRepo.fetchWeek(next24h)
+        gptWeek = "gptRepo.fetchWeek(next24h)"
     }
 }

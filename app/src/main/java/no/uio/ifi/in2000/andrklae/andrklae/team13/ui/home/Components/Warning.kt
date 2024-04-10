@@ -7,6 +7,9 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -38,18 +42,30 @@ import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.HomeViewModel
+import kotlin.math.roundToInt
 
 @Composable
 fun Warning(homeVM: HomeViewModel, range: Int){
     val alerts by homeVM.alerts.collectAsState()
-    val filteredAlerts = alerts.filter { it.distance <= range }
+    val filteredAlerts = alerts.filter { it.distance <= 500 }
     if (filteredAlerts.isNotEmpty()){
-        val alert = filteredAlerts.first().alert
-        DisplayWarning(
-            warningDescription = "${alert.properties.instruction} \n${alert.properties.description} ${alert.properties.consequences}",
-            warningTitle = alert.properties.area,
-            warningLevel = alert.properties.riskMatrixColor
-        )
+        val scrollState = rememberScrollState()
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .horizontalScroll(scrollState),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            filteredAlerts.forEach{
+                DisplayWarning(
+                    warningDescription = "${it.alert.properties.instruction} \n${it.alert.properties.description} ${it.alert.properties.consequences}",
+                    warningTitle = "${it.alert.properties.area} \n${it.distance.roundToInt()}km unna",
+                    warningLevel = it.alert.properties.riskMatrixColor
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(10.dp))
     } else {
         EmptyWarning()
