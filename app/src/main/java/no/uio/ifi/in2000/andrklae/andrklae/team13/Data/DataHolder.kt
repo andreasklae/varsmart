@@ -158,7 +158,6 @@ data class DataHolder(
     suspend fun updateWarning(){
         allWarnings = aRepo.fetchAllWarnings()
         alertList = aRepo.fetchAlertList(allWarnings!!, location)
-        println(alertList.map { it.alert.properties.area })
     }
 
     fun getCurrentTime(): DateTime{
