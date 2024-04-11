@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -19,11 +20,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -33,6 +39,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,13 +49,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.glassEffect
@@ -70,11 +80,14 @@ data class Favorite(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FavoriteScreen(
+    favVM: FavoriteViewModel,
     weatherVM: WeatherViewModel,
+    activity: MainActivity,
     pagerState: PagerState
 )
 {
     val favorites = DataHolder.Favourites
+    favorites.sortBy { if (it.location.name == "Min posisjon") 0 else 1 }
     var showSearchBar by remember { mutableStateOf(false) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -86,15 +99,23 @@ fun FavoriteScreen(
 
         if (showSearchBar) {
             //SearchBarField()
-
         }
-
         favorites.forEach {
-            FavoriteBox(it, weatherVM, pagerState)
+            println(favorites.size)
+            FavoriteBox(favVM, weatherVM, it, pagerState)
         }
 
-        AddFavorite(onClick = { showSearchBar = true }
-        )
+        Button(
+            onClick = { activity.getCurrentLocation() },
+            shape = CircleShape,
+            modifier = Modifier.glassEffect().clip(CircleShape),
+            colors = ButtonDefaults.buttonColors(Color.Transparent)
+
+
+        ) {
+            Icon(Icons.Filled.Add,"legg til posisjon")
+        }
+
         Spacer(modifier = Modifier.fillMaxHeight())
 
     }
@@ -105,7 +126,7 @@ fun FavoriteScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FavoriteBox(data: DataHolder, weatherVM: WeatherViewModel, pagerState: PagerState) {
+fun FavoriteBox(favVM: FavoriteViewModel, weatherVM: WeatherViewModel, data: DataHolder, pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
@@ -125,29 +146,46 @@ fun FavoriteBox(data: DataHolder, weatherVM: WeatherViewModel, pagerState: Pager
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
         ){
-            DrawSymbol(symbol = data.currentWeather!!.symbolName, size = 100.dp )
-            Column{
-                Text(
-                    text = data.location.name,
-                    fontSize = 24.sp,
-
+            val status by data.status
+            when (status){
+                "loading" -> {
+                    Text(
+                        text = data.location.name,
+                        fontSize = 24.sp
                     )
-                Text(
-                    text = data.currentWeather!!.symbolName.toString(),
-                    fontSize = 15.sp
-                )
+                    CircularProgressIndicator(color = Color.Black)
+                }
+
+                favVM.statusStates[1] -> {
+                    DrawSymbol(symbol = data.currentWeather!!.symbolName, size = 100.dp )
+                    Column{
+                        Text(
+                            text = data.location.name,
+                            fontSize = 24.sp
+                        )
+                        Text(
+                            text = data.currentWeather!!.symbolName.toString(),
+                            fontSize = 15.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+
+
+                    Text(
+                        text = data.currentWeather!!.temperature.toString() + "°C",
+                        fontSize = 24.sp,
+                    )
+                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                }
             }
-            Spacer(modifier = Modifier.weight(1f))
 
-
-            Text(
-                text = data.currentWeather!!.temperature.toString() + "°C",
-                fontSize = 24.sp,
-            )
-            Spacer(modifier = Modifier.padding(horizontal = 5.dp))
         }
     }
 }
+
+
+
+
 
 @Composable
 fun FavoriteBoxSwipe(
@@ -232,17 +270,6 @@ fun FavoriteForecast(location: String, weatherIcon: Int, midDayTemp: String, des
     }
 }
 
-@Composable
-fun AddFavorite(onClick: () -> Unit){
-    FloatingActionButton(onClick = { onClick()},
-        modifier = Modifier
-            .clip(RoundedCornerShape(100))
-    ) {
-        Icon(Icons.Filled.Add, "Floating action button.")
-    }
-
-}
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -263,13 +290,7 @@ fun SearchBarField(
         onQueryChange = {
             text= it
         },
-        onSearch = {
-            favoriteViewModel.loadSearch(text)
-            active = true
-
-            println("trykket sok")
-
-        },
+        onSearch = {},
         active = active,
         //remember to change functionality
         onActiveChange = {
@@ -297,7 +318,7 @@ fun SearchBarField(
             }
         }
     ){
-        LazyColumn {
+        /*LazyColumn {
 
             favoriteViewModel.locationsUiState?.forEach { location ->
                 item {
@@ -318,7 +339,7 @@ fun SearchBarField(
 
                 }
             }
-        }
+        }*/
     }
 
 }

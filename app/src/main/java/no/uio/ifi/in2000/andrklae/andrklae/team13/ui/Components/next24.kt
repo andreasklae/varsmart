@@ -29,16 +29,16 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForeca
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun Next24(homeVM: WeatherViewModel){
-    val wStatus by homeVM.wStatus.collectAsState()
-    val next24 by homeVM.next24.collectAsState()
-    val gptWeek by homeVM.gptWeek.collectAsState()
+fun Next24(weatherVM: WeatherViewModel){
+    val wStatus by weatherVM.wStatus.collectAsState()
+    val next24 by weatherVM.next24.collectAsState()
+    val gptWeek by weatherVM.gptWeek.collectAsState()
     val scrollState = rememberScrollState()
 
 
     Button(
         onClick = {
-            homeVM.updateGPTWeek()
+            weatherVM.updateGPTWeek()
         },
         colors = buttonColors(Color.Transparent),
         modifier = Modifier.offset(x = -10.dp, y = -0.dp),
@@ -57,7 +57,7 @@ fun Next24(homeVM: WeatherViewModel){
         verticalAlignment = Alignment.CenterVertically
     ){
         when (wStatus) {
-            homeVM.statusStates[0] -> {
+            weatherVM.statusStates[0] -> {
                 CircularProgressIndicator(
                     color = Color.Black,
                     strokeWidth = 4.dp,
@@ -65,7 +65,7 @@ fun Next24(homeVM: WeatherViewModel){
                 )
             }
 
-            homeVM.statusStates[1] -> {
+            weatherVM.statusStates[1] -> {
                 next24.forEach {
                     Spacer(modifier = Modifier.width(20.dp))
                     HourlyForecast(it)
@@ -73,7 +73,7 @@ fun Next24(homeVM: WeatherViewModel){
                 }
             }
 
-            homeVM.statusStates[2] -> {
+            weatherVM.statusStates[2] -> {
 
             }
         }

@@ -1,12 +1,17 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
@@ -16,6 +21,8 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 
 class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
     var data = DataHolder.Favourites[index]
+
+    @SuppressLint("StaticFieldLeak")
     val activity = activity
     val statusStates: List<String> = listOf("Loading", "Success", "Failed")
     val _wStatus = MutableStateFlow(statusStates[0])
@@ -75,12 +82,13 @@ class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
     }
     @OptIn(ExperimentalFoundationApi::class)
     fun setLocation(i: Int) {
-        print("Changing location from ${data.location.name} to ")
-        val isSame =  _loc.value == DataHolder.Favourites[i].location
+        print("Changing location from ${data.location.name} to ${DataHolder.Favourites[i].location.name}")
+        val isSame = _loc.value == DataHolder.Favourites[i].location
 
-        if(!isSame){
+        if (!isSame) {
             data = DataHolder.Favourites[i]
-            println(data.location.name)
+            println("       ")
+            println("ny data " + data.location.name)
             _loc.value = data.location
             updateAll()
         }

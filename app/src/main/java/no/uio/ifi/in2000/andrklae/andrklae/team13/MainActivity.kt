@@ -40,11 +40,7 @@ class MainActivity : ComponentActivity() {
                 LocationUtil.fetchLocation(this, this) { customLocation ->
                     if (customLocation != null) {
                         DataHolder(customLocation)
-                        val index = DataHolder.Favourites.indexOf(
-                            DataHolder.Favourites.find { it.location == customLocation }
-                        )
-                        //homeVM.setLocation(index)
-                        //homeVM.updateAll()
+                        //DataHolder.Favourites.sortBy { if (it.location == customLocation) 0 else 1 }
                     } else {
 
                     }
@@ -58,40 +54,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val alesund = CustomLocation("Ålesund", 62.47, 6.13, "By", "")
-        val alesundData = DataHolder(alesund)
-        val weatherVM = WeatherViewModel(0, this)
-        val test = 0
+        DataHolder(alesund)
         super.onCreate(savedInstanceState)
 
         setContent {
-            val wStatus by weatherVM.wStatus.collectAsState()
-            val sunStatus by weatherVM.sunStatus.collectAsState()
-            when {
-                wStatus == weatherVM.statusStates[0]
-                        ||
-                        sunStatus == weatherVM.statusStates[0] -> {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-
-                    ) {
-                        CircularProgressIndicator()
-                    }
-
-                }
-
-                wStatus == weatherVM.statusStates[1]
-                        &&
-                        sunStatus == weatherVM.statusStates[1] -> {
-                    MasterUi(weatherVM)
-                }
-
-                else -> ErrorScreen(weatherVM)
-
-            }
-
+            MasterUi(this)
         }
     }
 
@@ -118,11 +85,14 @@ class MainActivity : ComponentActivity() {
     }
 
     fun getCurrentLocation(){
+        println("Henter nåværende lokasjon")
         if (LocationUtil.hasLocationPermission(this)) {
             // If permission is already granted, attempt to fetch the location immediately
             LocationUtil.fetchLocation(this,this) { customLocation ->
                 if (customLocation != null) {
 
+                    val new = DataHolder(customLocation)
+                    /*
                     // fix later
                     // checks if the user has moved
                     val notMoved = DataHolder.Favourites.any {
@@ -140,7 +110,7 @@ class MainActivity : ComponentActivity() {
                         DataHolder.Favourites.remove(DataHolder.Favourites.find { it.location.name == "My location" })
                         val newLocation = DataHolder(customLocation)
                         //homeVM.setLocation(DataHolder.Favourites.lastIndex)
-                    }
+                    }*/
                 }
             }
         }

@@ -1,5 +1,11 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data
 
+import android.annotation.SuppressLint
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepo
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
@@ -41,8 +47,11 @@ data class DataHolder(
 
     var allWarnings: Warning? = null
     var alertList = listOf<Alert>()
+
+    val status = mutableStateOf("loading")
+    @SuppressLint("MutableCollectionMutableState")
     companion object {
-        val Favourites = mutableListOf<DataHolder>()
+        val Favourites = mutableStateListOf<DataHolder>()
         val wRepo = WeatherRepository()
         val aRepo = WarningRepository()
         val gptRepo = GPTRepo()
@@ -83,7 +92,7 @@ data class DataHolder(
     }
 
     suspend fun updateGPTCurrent(){
-            GPTCurrent = "gptRepo.fetchCurrent(currentWeather!!, next24h)"
+            GPTCurrent = gptRepo.fetchCurrent(currentWeather!!, next24h)
     }
 
     suspend fun updateNext24h(){
