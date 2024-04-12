@@ -127,3 +127,18 @@ fun MapButton(){
         )
     }
 }
+
+
+@Composable
+fun MapButton2(showDialog: Boolean, onDismiss: () -> Unit, warningTitle: String){
+    IconButton(
+        onClick = { },
+        modifier = Modifier.size(50.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.LocationOn,
+            contentDescription = "Settings",
+            tint = Color.Black
+        )
+    }
+}

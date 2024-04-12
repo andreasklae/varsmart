@@ -28,6 +28,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Polygon
 import java.io.File
 
 @Composable
@@ -70,7 +71,7 @@ fun ComposeMapDemoMarkers(mapViewModel: MapViewModel) {
     }
 }
 @Composable
-fun MapWithPolygon() {
+fun MapWithPolygon(polygon: Polygon) {
     val polygonPoints = listOf(
         LatLng(37.7749, -122.4194),
         LatLng(37.8049, -122.4400),
@@ -83,11 +84,12 @@ fun MapWithPolygon() {
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(LatLng(37.7749, -122.4194), 13f)
+            // position = CameraPosition.fromLatLngZoom(LatLng(37.7749, -122.4194), 13f)
+            position = CameraPosition.fromLatLngZoom(calculatePolygonCenter(polygon.coordinates), 30f)
         }
     ) {
         Polygon(
-            points = polygonPoints,
+            points = polygon.coordinates,
             clickable = true,
             fillColor = if (isPolygonSelected) Color.Red else Color.Gray,
             strokeColor = Color.Blue,
@@ -111,4 +113,18 @@ fun MapWithPolygon() {
             Text("Reset Selection")
         }
     }
+}
+fun calculatePolygonCenter(polygon: List<LatLng>): LatLng {
+    var totalLat = 0.0
+    var totalLng = 0.0
+
+    for (point in polygon) {
+        totalLat += point.latitude
+        totalLng += point.longitude
+    }
+
+    val centerLat = totalLat / polygon.size
+    val centerLng = totalLng / polygon.size
+
+    return LatLng(centerLat, centerLng)
 }
