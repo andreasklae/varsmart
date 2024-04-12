@@ -128,11 +128,11 @@ class MainActivity : ComponentActivity() {
                     }
                     else{
                         DataHolder.Favourites.remove(DataHolder.Favourites.find { it.location.name == "My location" })
-                    } else{
-                        DataHolder.favourites.remove(DataHolder.favourites.find { it.location.name == "My location" })
+                    } /*else{
+                        DataHolder.Favourites.remove(DataHolder.Favourites.find { it.location.name == "My location" })
                         val newLocation = DataHolder(customLocation)
                         homeVM.setLocation(DataHolder.Favourites.lastIndex)
-                    }
+                    }*/
                 }
             }
         }

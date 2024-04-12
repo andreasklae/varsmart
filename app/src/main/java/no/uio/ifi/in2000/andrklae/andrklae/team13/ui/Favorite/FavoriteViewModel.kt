@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite
 
+import android.health.connect.datatypes.ExerciseRoute.Location
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,7 +22,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Loca
 import java.io.IOException
 
 data class favouritesUiState(
-    val favourites: MutableMap<CustomLocation,DataHolder>
+    val favourites: MutableMap<CustomLocation, DataHolder>
 )
 
 class FavoriteViewModel() : ViewModel() {
@@ -70,9 +71,9 @@ class FavoriteViewModel() : ViewModel() {
 
         if (!(favouritesUiState.favourites.keys.contains(location))) {
             val favourite: DataHolder = DataHolder(location)
+            println(favourite)
             favouritesUiState.favourites.put(location,favourite)
         }
-        println("la ikke til bergen, finnes allerede.")
         //give notice about an already existing favourite
     }
 
