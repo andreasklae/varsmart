@@ -58,29 +58,29 @@ class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
 
         }
     }
-    fun updateMainGpt(){
-        viewModelScope.launch{
-            if(data.value!!.mainGpt == ""){
+    fun updateMainGpt() {
+        viewModelScope.launch {
+            if (data.value!!.mainGpt == "") {
                 data.value!!.updateGPTCurrent()
             }
         }
+
     }
     fun updateGPTWeek() {
         viewModelScope.launch {
             data.value!!.updateGPTWeek()
         }
     }
-
     fun dotLoading(input: String): String {
         var dots = input
-        if (dots == ". . . "){
+        if (dots == ". . . ") {
             dots = ""
-        } else{
+        } else {
             dots += ". "
         }
         return dots
     }
-    /*
+        /*
 
     fun updateWeather() {
         viewModelScope.launch {
@@ -146,4 +146,5 @@ class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
 
         }
     } */
+
 }

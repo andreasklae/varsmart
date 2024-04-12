@@ -1,5 +1,4 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
-
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,10 +23,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,14 +43,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Polygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import kotlin.math.roundToInt
 
@@ -66,7 +75,8 @@ fun WarningRow(data: DataHolder, range: Int){
             HorizontalPager(
                 verticalAlignment = Alignment.Top,
                 state = pagerState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .animateContentSize(
                         animationSpec = spring(
                             dampingRatio = Spring.DampingRatioLowBouncy,
@@ -76,19 +86,20 @@ fun WarningRow(data: DataHolder, range: Int){
                     )
 
             ) { page ->
-                val alert = filteredAlerts[page]
+                val alert = filteredAlerts[pagerState.currentPage]
 
                 DisplayWarning(
                     warningDescription = "${alert.alert.properties.instruction} \n${alert.alert.properties.description} ${alert.alert.properties.consequences}",
                     warningTitle = alert.alert.properties.area,
                     warningLevel = alert.alert.properties.riskMatrixColor,
-                    distance = alert.distance
+                    distance = alert.distance,
+                    polygon = alert.polygonList
                 )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .padding(top= 15.dp)
+                    .padding(top = 15.dp)
                     .glassEffect()
                     .padding(5.dp)
             ) {
@@ -120,8 +131,10 @@ fun DisplayWarning(
     warningDescription: String,
     warningTitle: String,
     warningLevel: String,
-    distance: Double
+    distance: Double,
+    polygon: List<Polygon>
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     val alpha = remember { Animatable(1f) }
 
@@ -158,7 +171,18 @@ fun DisplayWarning(
                 )
 
                 Spacer(Modifier.weight(1f))
-
+                IconButton(
+                    onClick = { showDialog = true },
+                    modifier = Modifier.size(50.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Settings",
+                        tint = Color.Black
+                    )
+                }
+                //MapButton2(showDialog = showDialog,
+                //    onDismiss = { showDialog = false })
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded,
                 )
@@ -213,6 +237,27 @@ fun DisplayWarning(
             )
         }
 
+    }
+    if(showDialog){
+        Dialog(onDismissRequest = { showDialog = false }) {
+            Surface(
+                color = Color.White,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(0.9f)
+                    .fillMaxHeight(0.7f)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    MapWithPolygon(polygon, warningLevel, warningTitle)
+                }
+            }
+        }
     }
 }
 @Composable
