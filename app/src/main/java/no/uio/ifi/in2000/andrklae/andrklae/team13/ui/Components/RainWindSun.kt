@@ -10,13 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
@@ -24,7 +23,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 val fontSize = 20.sp
 val iconHeight = 70
 @Composable
-fun RainWindSun(homeVM: WeatherViewModel){
+fun RainWindSun(homeVM: WeatherViewModel, data: DataHolder){
 
     val boxes = listOf<String>("Regn", "Vind", "Sol")
 
@@ -42,118 +41,19 @@ fun RainWindSun(homeVM: WeatherViewModel){
                     .padding(5.dp),
                 contentAlignment = Alignment.Center
             ) {
-                    when (it){
-                        "Regn" -> Rain(homeVM)
-                        "Vind" -> Wind(homeVM)
-                        "Sol" -> Sun(homeVM)
-                    }
-            }
-        }
-    }
-}
-
-@Composable
-fun Sun(homeVM: WeatherViewModel) {
-    val sStatus by homeVM.sunStatus.collectAsState()
-    val set by homeVM.set.collectAsState()
-    val rise by homeVM.rise.collectAsState()
-    val wStatus by homeVM.wStatus.collectAsState()
-    val weather by homeVM.currentWeather.collectAsState()
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Sol",
-            fontSize = fontSize,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-
-        when{
-            sStatus == homeVM.statusStates[0] && wStatus == homeVM.statusStates[0] -> {
-                CircularProgressIndicator(
-                    color = Color.Black,
-                    strokeWidth = 4.dp,
-                    modifier = Modifier.padding(20.dp)
-                )
-            }
-
-            sStatus == homeVM.statusStates[1] && wStatus == homeVM.statusStates[1] -> {
-                val currentTime = weather!!.time
-
-                val riseTime = rise.substringAfter("T").substringBefore("+")
-                val riseDt = DateTime(
-                    currentTime.year,
-                    currentTime.month,
-                    currentTime.day,
-                    riseTime.substringBefore(":")
-                )
-
-                val setTime = set.substringAfter("T").substringBefore("+")
-
-                if (riseDt >= currentTime){
-                    ImageIcon(y = 0, x = 0, symbolId = R.drawable.sunrise, width = 90, height = iconHeight)
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(text = "Oppgang:")
-                    Text(
-                        text = riseTime,
-                        fontSize = fontSize,
-                    )
-                } else {
-                    ImageIcon(y = 0, x = 0, symbolId = R.drawable.sunset, width = 90, height = iconHeight)
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(text = "Nedgang:")
-                    Text(
-                        text = setTime,
-                        fontSize = fontSize,
-                    )
+                when (it){
+                    "Regn" -> Rain(homeVM, data)
+                    "Vind" -> Wind(homeVM, data)
+                    "Sol" -> Sun(homeVM, data)
                 }
-
             }
         }
     }
-
 }
-
 @Composable
-fun Wind(homeVM: WeatherViewModel) {
-    val wStatus by homeVM.wStatus.collectAsState()
-    val weather by homeVM.currentWeather.collectAsState()
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
-        Text(
-            text = "Vind",
-            fontSize = fontSize,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        when (wStatus) {
-            homeVM.statusStates[0] -> {
-                CircularProgressIndicator(
-                    color = Color.Black,
-                    strokeWidth = 4.dp,
-                    modifier = Modifier.padding(20.dp)
-                )
-            }
-
-            homeVM.statusStates[1] -> {
-                Spacer(modifier = Modifier.weight(1f))
-                weather!!.windSpeed?.let { WindSymbol(it) }
-                Text(
-                    text = "${weather!!.windSpeed}m/s",
-                    fontSize = fontSize,
-                )
-            }
-        }
-    }
-
-}
-
-@Composable
-fun Rain(homeVM: WeatherViewModel) {
-    val wStatus by homeVM.wStatus.collectAsState()
-    val weather by homeVM.currentWeather.collectAsState()
+fun Rain(homeVM: WeatherViewModel, data: DataHolder) {
+    val weatherStatus = data.weatherStatus
+    val weather = data.currentWeather
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     )
@@ -163,8 +63,8 @@ fun Rain(homeVM: WeatherViewModel) {
             fontSize = fontSize,
         )
         Spacer(modifier = Modifier.weight(1f))
-        when (wStatus) {
-            homeVM.statusStates[0] -> {
+        when (weatherStatus.value) {
+            data.statusStates[0] -> {
                 CircularProgressIndicator(
                     color = Color.Black,
                     strokeWidth = 4.dp,
@@ -172,7 +72,7 @@ fun Rain(homeVM: WeatherViewModel) {
                 )
             }
 
-            homeVM.statusStates[1] -> {
+            data.statusStates[1] -> {
 
                 Spacer(modifier = Modifier.weight(1f))
                 RainSymbol(weather!!.precipitation)
@@ -184,7 +84,40 @@ fun Rain(homeVM: WeatherViewModel) {
         }
     }
 }
+@Composable
+fun Wind(homeVM: WeatherViewModel, data: DataHolder) {
+    val weatherStatus = data.weatherStatus
+    val weather = data.currentWeather
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    )
+    {
+        Text(
+            text = "Vind",
+            fontSize = fontSize,
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        when (weatherStatus.value) {
+            data.statusStates[0] -> {
+                CircularProgressIndicator(
+                    color = Color.Black,
+                    strokeWidth = 4.dp,
+                    modifier = Modifier.padding(20.dp)
+                )
+            }
 
+            data.statusStates[1] -> {
+                Spacer(modifier = Modifier.weight(1f))
+                weather!!.windSpeed?.let { WindSymbol(it) }
+                Text(
+                    text = "${weather!!.windSpeed}m/s",
+                    fontSize = fontSize,
+                )
+            }
+        }
+    }
+
+}
 @Composable
 private fun RainSymbol(precipitation: Double) {
     when {
@@ -272,6 +205,67 @@ fun WindSymbol(windSpeed: Double){
             Text(
                 text = "Det er vindstille!"
             )
+        }
+    }
+
+}
+
+@Composable
+fun Sun(homeVM: WeatherViewModel, data: DataHolder) {
+    val sunStatus = data.sunStatus
+    val set = data.set
+    val rise = data.rise
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Sol",
+            fontSize = fontSize,
+        )
+        Spacer(modifier = Modifier.weight(1f))
+
+        when(sunStatus.value){
+            data.statusStates[0] -> {
+                CircularProgressIndicator(
+                    color = Color.Black,
+                    strokeWidth = 4.dp,
+                    modifier = Modifier.padding(20.dp)
+                )
+            }
+
+            data.statusStates[1] -> {
+                val currentTime = data.dt
+
+                val riseTime = rise!!.substringAfter("T").substringBefore("+")
+                val riseDt = DateTime(
+                    currentTime.year,
+                    currentTime.month,
+                    currentTime.day,
+                    riseTime.substringBefore(":")
+                )
+
+                val setTime = set!!.substringAfter("T").substringBefore("+")
+
+                if (riseDt >= currentTime){
+                    ImageIcon(y = 0, x = 0, symbolId = R.drawable.sunrise, width = 90, height = iconHeight)
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(text = "Oppgang:")
+                    Text(
+                        text = riseTime,
+                        fontSize = fontSize,
+                    )
+                } else {
+                    ImageIcon(y = 0, x = 0, symbolId = R.drawable.sunset, width = 90, height = iconHeight)
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(text = "Nedgang:")
+                    Text(
+                        text = setTime,
+                        fontSize = fontSize,
+                    )
+                }
+
+            }
         }
     }
 

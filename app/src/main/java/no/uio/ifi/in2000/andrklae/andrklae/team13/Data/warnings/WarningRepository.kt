@@ -9,8 +9,13 @@ class WarningRepository {
     }
 
     // fetches all warnings
-    suspend fun fetchAllWarnings(): Warning{
-        return warningDataSource.fetchAllWarnings()
+    suspend fun fetchAllWarnings(): Warning?{
+        try {
+            return warningDataSource.fetchAllWarnings()
+        }catch (e: Exception){
+            return null
+        }
+
     }
 
     // Turns the warnings into a list of Alert objects sorted by the distance to them
