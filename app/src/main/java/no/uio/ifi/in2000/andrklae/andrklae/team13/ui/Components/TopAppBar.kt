@@ -73,7 +73,14 @@ fun FavouriteButton(pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
     IconButton(
         onClick = {
-            coroutineScope.launch { pagerState.animateScrollToPage(0) }
+            coroutineScope.launch {
+                if(pagerState.currentPage == 0){
+                    pagerState.animateScrollToPage(1)
+                }
+                else{
+                    pagerState.animateScrollToPage(0)
+                }
+            }
         },
         modifier = Modifier
             .size(50.dp)
