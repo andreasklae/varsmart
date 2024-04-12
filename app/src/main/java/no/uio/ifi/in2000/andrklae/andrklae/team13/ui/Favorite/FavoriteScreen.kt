@@ -75,13 +75,8 @@ data class Favorite(
 fun FavoriteScreen(
     favoriteViewModel: FavoriteViewModel = viewModel()
 ) {
-    //var favorites = favoriteViewModel.favouritesUiState.favourites.values
-    val favorites = remember { mutableStateOf(emptyList<DataHolder>()) }
-
+    var favorites by remember { mutableStateOf(favoriteViewModel.favouritesUiState.favourites)}
     // Use LaunchedEffect to observe changes in FavoriteViewModel and update the favoritesList
-    LaunchedEffect(favoriteViewModel.favouritesUiState) {
-        favorites.value = favoriteViewModel.favouritesUiState.favourites.values.toList()
-    }
 
 
     var showSearchBar by remember { mutableStateOf(false) }
@@ -108,7 +103,8 @@ fun FavoriteScreen(
 
                         }
                     }
-                    favorites.value.forEach(){
+                    item { FavoriteBoxSwipe("test", "cloudy", 05.5, { showSearchBar = true })  }
+                    favorites.forEach(){
                         item {
                             FavoriteBoxSwipe(
                                 location = it.location.name,
@@ -159,7 +155,7 @@ fun FavoriteTopAppBar(){
 
 
 
-
+//Either box or swipe
 @Composable
 fun FavoriteBox(location: String, weatherIcon: String?, midDayTemp: Double?, /*description: String,*/ onClick: () -> Unit) {
 
@@ -258,8 +254,6 @@ fun FavoriteForecast(
             /*Text(
                 text = description,
                 fontSize = 15.sp ) */
-
-
         }
 
         Column(
@@ -294,9 +288,6 @@ fun SearchBarField(
 ) {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-    var selectedIndex by remember { mutableStateOf(0) }
-
-
     SearchBar(
         modifier = Modifier
             .width(380.dp)
@@ -343,7 +334,7 @@ fun SearchBarField(
 
         LazyColumn {
 
-            favoriteViewModel.locationsUiState?.forEach { location ->
+            favoriteViewModel.locationsUiState.forEach { location ->
                 item {
                     Box(modifier = Modifier.clickable {
                         active = false
@@ -351,8 +342,8 @@ fun SearchBarField(
                     }) {
                         //updates the list
                         /*LaunchedEffect(location){
-                            favoriteViewModel.loadFavourites(location)
-                        }*/
+                                    favoriteViewModel.loadFavourites(location)
+                                }*/
 
                         Text(
                             text = location.name + location.lat,

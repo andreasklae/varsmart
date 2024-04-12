@@ -21,12 +21,12 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Loca
 import java.io.IOException
 
 data class favouritesUiState(
-    val favourites: MutableMap<CustomLocation,DataHolder>
+    val favourites: MutableList<DataHolder>
 )
 
 class FavoriteViewModel() : ViewModel() {
     val locationRepository: LocationRepository= LocationRepository()
-    var favouritesUiState by mutableStateOf(favouritesUiState(favourites = mutableMapOf()))
+    var favouritesUiState by mutableStateOf(favouritesUiState(favourites = mutableListOf<DataHolder>()))
     var locationsUiState by  mutableStateOf(listOf<CustomLocation>())
 
     init{
@@ -36,7 +36,7 @@ class FavoriteViewModel() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try{
                 Add(location)
-                println(favouritesUiState)
+                println(favouritesUiState.favourites)
 
             } catch (e: IOException) {
 
@@ -68,23 +68,11 @@ class FavoriteViewModel() : ViewModel() {
 
     suspend fun Add(location: CustomLocation){
 
-        if (!(favouritesUiState.favourites.keys.contains(location))) {
-
-            // Check if the location already exists in favourites
-            if (!favouritesUiState.favourites.containsKey(location)) {
-                // Create a new DataHolder for the location
-                val newFavorite = DataHolder(location)
-
-                // Update the favouritesUiState immutably
-                favouritesUiState = favouritesUiState.copy(
-                    favourites = favouritesUiState.favourites.toMutableMap().apply {
-                        put(location, newFavorite)
-                    }
-                )
-            }
-        }
-        //give notice about an already existing favourite
+        val favourite: DataHolder = DataHolder(location)
+        favouritesUiState.favourites.add(favourite)
     }
+
+    //give notice about an already existing favourite
 
     suspend fun Search(locationName: String){
         locationsUiState = locationRepository.getLocations(locationName)
