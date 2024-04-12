@@ -69,10 +69,20 @@ class FavoriteViewModel() : ViewModel() {
     suspend fun Add(location: CustomLocation){
 
         if (!(favouritesUiState.favourites.keys.contains(location))) {
-            val favourite: DataHolder = DataHolder(location)
-            favouritesUiState.favourites.put(location,favourite)
+
+            // Check if the location already exists in favourites
+            if (!favouritesUiState.favourites.containsKey(location)) {
+                // Create a new DataHolder for the location
+                val newFavorite = DataHolder(location)
+
+                // Update the favouritesUiState immutably
+                favouritesUiState = favouritesUiState.copy(
+                    favourites = favouritesUiState.favourites.toMutableMap().apply {
+                        put(location, newFavorite)
+                    }
+                )
+            }
         }
-        println("la ikke til bergen, finnes allerede.")
         //give notice about an already existing favourite
     }
 
