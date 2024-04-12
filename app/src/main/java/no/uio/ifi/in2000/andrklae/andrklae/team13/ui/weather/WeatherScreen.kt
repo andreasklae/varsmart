@@ -33,6 +33,7 @@ fun WeatherScreen(weatherVM: WeatherViewModel, pagerState: PagerState) {
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun MainComponent(weatherViewModel: WeatherViewModel){
+    // test
     val data = weatherViewModel.data.observeAsState().value
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(30.dp),
