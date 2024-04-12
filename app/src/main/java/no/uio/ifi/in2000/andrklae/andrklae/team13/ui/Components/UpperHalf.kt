@@ -3,17 +3,21 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -23,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -46,18 +51,22 @@ fun UpperHalf(homeVM: WeatherViewModel){
             .fillMaxSize()
 
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.flowers),
-            contentDescription = "",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.matchParentSize()
-        )
+        Column {
+            Image(
+                painter = painterResource(id = R.drawable.flowers),
+                contentDescription = "",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(450.dp)
+            )
+        }
 
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(70.dp))
             Text(text = loc.name, fontSize = 35.sp)
             Spacer(modifier = Modifier.height(30.dp))
             when (wStatus) {
@@ -142,12 +151,18 @@ fun GptBox(homeVM: WeatherViewModel, weather: WeatherTimeForecast){
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Text(
-                    text = gptCurrent.value,
-                    fontSize = 14.sp,
-                    lineHeight = 22.sp, // Adjusted for visual consistency
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Column(
+                    modifier = Modifier
+                ) {
+                    Text(
+                        text = gptCurrent.value,
+                        fontSize = 14.sp,
+                        lineHeight = 22.sp, // Adjusted for visual consistency
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                }
+
             }
         }
         ImageIcon(y = 0, x = 0 , symbolId =R.drawable.arrowright , width =30 , height =60 )

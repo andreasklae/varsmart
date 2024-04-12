@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 val fontSize = 20.sp

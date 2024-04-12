@@ -1,5 +1,11 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data
 
+import android.annotation.SuppressLint
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepo
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
@@ -41,8 +47,11 @@ data class DataHolder(
 
     var allWarnings: Warning? = null
     var alertList = listOf<Alert>()
+
+    val status = mutableStateOf("loading")
+    @SuppressLint("MutableCollectionMutableState")
     companion object {
-        val Favourites = mutableListOf<DataHolder>()
+        val Favourites = mutableStateListOf<DataHolder>()
         val wRepo = WeatherRepository()
         val aRepo = WarningRepository()
         val gptRepo = GPTRepo()
@@ -77,72 +86,71 @@ data class DataHolder(
         val newWeather = wRepo.getWeather(location)
         if (newWeather != null){
             lastUpdate = getCurrentTime()
+            weather = newWeather
             currentWeather = WeatherTimeForecast(newWeather, dt, location)
         }
     }
 
     suspend fun updateGPTCurrent(){
-            GPTCurrent = "gptRepo.fetchCurrent(currentWeather!!, next24h)"
+            GPTCurrent = gptRepo.fetchCurrent(currentWeather!!, next24h)
     }
 
     suspend fun updateNext24h(){
-        if (weather != null){
-            val time = dt
-            val hour = dt.hour
+        val time = dt
+        val hour = dt.hour
 
-            // Creates DateTime objects for the next 24 Hours
-            val hours = mutableListOf<DateTime>()
-            for (i in 1..24) {
+        // Creates DateTime objects for the next 24 Hours
+        val hours = mutableListOf<DateTime>()
+        for (i in 1..24) {
 
-                // makes sure that it is the correct day
-                if (hour.toInt() + i < 24){
-                    hours.add(
-                        DateTime(
-                            time.year,
-                            time.month,
-                            time.day,
-                            (time.hour.toInt() + i).toString()
-                        )
+            // makes sure that it is the correct day
+            if (hour.toInt() + i < 24){
+                hours.add(
+                    DateTime(
+                        time.year,
+                        time.month,
+                        time.day,
+                        (time.hour.toInt() + i).toString()
                     )
-                }
-                else{
-                    hours.add(
-                        DateTime(
-                            time.year,
-                            time.month,
-                            (time.day.toInt() + 1).toString(),
-                            (time.hour.toInt() + i - 24).toString()
-                        )
+                )
+            } else{
+                hours.add(
+                    DateTime(
+                        time.year,
+                        time.month,
+                        (time.day.toInt() + 1).toString(),
+                        (time.hour.toInt() + i - 24).toString()
                     )
-                }
+                )
             }
-
-            val newList = mutableListOf<WeatherTimeForecast>()
-            // add a weather object for each hour in a day
-            hours.forEach{
-                newList.add(WeatherTimeForecast(weather!!, it, location))
-            }
-            next24h = newList
         }
+
+        val newList = mutableListOf<WeatherTimeForecast>()
+        // add a weather object for each hour in a day
+        hours.forEach{
+            newList.add(WeatherTimeForecast(weather!!, it, location))
+        }
+        next24h = newList
+
     }
-    suspend fun updateWeek(){
-        if (weather != null){
-            // Creates a list of days for the week
-            var weekDays = mutableListOf<DateTime>()
-            var dayIterator = dt
-            for (i in 0..6) {
-                val nextDay = dt.getNextDay(dayIterator)
-                weekDays.add(nextDay)
-                dayIterator = nextDay
-            }
 
-            val newList = mutableListOf<WeatherTimeForecast>()
-            // add a weather object for each hour in a day
-            weekDays.forEach{
-                newList.add(WeatherTimeForecast(weather!!, it, location))
-            }
-            week = newList
+    suspend fun updateWeek(){
+        // Creates a list of days for the week
+        var weekDays = mutableListOf<DateTime>()
+        var dayIterator = dt
+        for (i in 0..6) {
+            val nextDay = dt.getNextDay(dayIterator)
+            weekDays.add(nextDay)
+            dayIterator = nextDay
         }
+
+        val newList = mutableListOf<WeatherTimeForecast>()
+        // add a weather object for each hour in a day
+        weekDays.forEach{
+            newList.add(WeatherTimeForecast(weather!!, it, location))
+        }
+        week = newList
+
     }
 
     suspend fun updateSunriseAndSunset(){
