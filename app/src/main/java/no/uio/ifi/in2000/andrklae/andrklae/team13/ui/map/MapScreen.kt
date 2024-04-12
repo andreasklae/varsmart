@@ -21,15 +21,21 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.Dash
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.PatternItem
+import com.google.android.gms.maps.model.PolygonOptions
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import com.google.maps.android.ktx.model.polygonOptions
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Polygon
 import java.io.File
+import javax.annotation.Nullable
 
 @Composable
 fun bilde(){
@@ -66,52 +72,48 @@ fun ComposeMapDemoMarkers(mapViewModel: MapViewModel) {
             snippet = "Marker in Singapore",
             icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
         )
-        //Polygon(points = mapViewModel.polygonPoints)
-
     }
 }
 @Composable
-fun MapWithPolygon(polygon: Polygon) {
+fun MapWithPolygon(polygon: List<Polygon>, polygonColor: String, area: String) {
     val polygonPoints = listOf(
         LatLng(37.7749, -122.4194),
         LatLng(37.8049, -122.4400),
         LatLng(37.7949, -122.4100)
     )
+    val centers = mutableListOf<LatLng>()
+    polygon.forEach { poly ->
+        centers.add(calculatePolygonCenter(poly.coordinates))
+    }
 
     // Create a mutable state to track whether the polygon is selected
     var isPolygonSelected by remember { mutableStateOf(false) }
-
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = rememberCameraPositionState {
-            // position = CameraPosition.fromLatLngZoom(LatLng(37.7749, -122.4194), 13f)
-            position = CameraPosition.fromLatLngZoom(calculatePolygonCenter(polygon.coordinates), 30f)
+
+            position = CameraPosition.fromLatLngZoom(calculatePolygonCenter(centers), 10f)
         }
     ) {
-        Polygon(
-            points = polygon.coordinates,
-            clickable = true,
-            fillColor = if (isPolygonSelected) Color.Red else Color.Gray,
-            strokeColor = Color.Blue,
-            strokeWidth = 5f,
-            tag = "San Francisco",
-            onClick = { polygon ->
-                // Handle polygon click event
-                isPolygonSelected = true
+
+        polygon.forEach{ it ->
+            Polygon(
+                points = it.coordinates,
+                clickable = true,
+                fillColor = if (isPolygonSelected) getColorFromString(polygonColor).copy(alpha = 0.3f) else getColorFromString(polygonColor).copy(alpha = 0.7f),
+                strokeColor = Color.Black,
+                strokeWidth = 5f,
+                tag = area,
+                onClick = { polygon ->
+                    // Handle polygon click event
+                    isPolygonSelected = true
+                }
+            )
+            if (isPolygonSelected){
+
             }
-        )
-    }
-    // Add a button to reset the selection
-    Box(contentAlignment = Alignment.BottomCenter) {
-        Button(
-            onClick = {
-                isPolygonSelected = false
-            },
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
-            Text("Reset Selection")
         }
+
     }
 }
 fun calculatePolygonCenter(polygon: List<LatLng>): LatLng {
@@ -127,4 +129,14 @@ fun calculatePolygonCenter(polygon: List<LatLng>): LatLng {
     val centerLng = totalLng / polygon.size
 
     return LatLng(centerLat, centerLng)
+}
+fun getColorFromString(colorString: String): Color {
+    return when (colorString.lowercase()) {
+        "yellow" -> Color.Yellow
+        "green" -> Color.Green
+        "orange" -> Color(0xFFFFA500)
+        "red" -> Color.Red
+        // Add more cases as needed
+        else -> Color.Black // Default color or any other color you prefer
+    }
 }

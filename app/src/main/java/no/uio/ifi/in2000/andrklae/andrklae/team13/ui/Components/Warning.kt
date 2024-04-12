@@ -86,14 +86,14 @@ fun WarningRow(homeVM: WeatherViewModel, range: Int){
                     )
 
             ) { page ->
-                val alert = filteredAlerts[page]
+                val alert = filteredAlerts[pagerState.currentPage]
 
                 DisplayWarning(
                     warningDescription = "${alert.alert.properties.instruction} \n${alert.alert.properties.description} ${alert.alert.properties.consequences}",
                     warningTitle = alert.alert.properties.area,
                     warningLevel = alert.alert.properties.riskMatrixColor,
                     distance = alert.distance,
-                    polygon = alert.polygonList[0]
+                    polygon = alert.polygonList
                 )
             }
             Row(
@@ -132,7 +132,7 @@ fun DisplayWarning(
     warningTitle: String,
     warningLevel: String,
     distance: Double,
-    polygon: Polygon
+    polygon: List<Polygon>
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
@@ -254,7 +254,7 @@ fun DisplayWarning(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    MapWithPolygon(polygon)
+                    MapWithPolygon(polygon, warningLevel, warningTitle)
                 }
             }
         }
