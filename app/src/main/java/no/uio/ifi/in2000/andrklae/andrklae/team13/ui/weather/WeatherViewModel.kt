@@ -60,7 +60,9 @@ class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
     }
     fun updateMainGpt(){
         viewModelScope.launch{
-            data.value!!.updateGPTCurrent()
+            if(data.value!!.mainGpt == ""){
+                data.value!!.updateGPTCurrent()
+            }
         }
     }
     fun updateGPTWeek() {

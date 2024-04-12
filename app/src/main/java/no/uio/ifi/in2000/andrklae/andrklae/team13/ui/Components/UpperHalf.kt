@@ -166,13 +166,14 @@ fun GptBox(weatherVM: WeatherViewModel, data: DataHolder){
                         }
 
                         data.statusStates[1] -> {
-                            LaunchedEffect(key1 = true) {
+                            gptText = data.mainGpt
+                            /*LaunchedEffect(key1 = true) {
                                 gptText = ""
                                 data.mainGpt.forEach {
                                     gptText += it
                                     delay(20)
                                 }
-                            }
+                            }*/
                         }
 
                         data.statusStates[2] -> {
