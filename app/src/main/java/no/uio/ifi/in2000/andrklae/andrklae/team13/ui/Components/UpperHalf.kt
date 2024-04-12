@@ -35,16 +35,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun UpperHalf(homeVM: WeatherViewModel){
-    val loc by homeVM.loc.collectAsState()
+fun UpperHalf(data: DataHolder){
+    val loc = data.location.name
 
-    val wStatus by homeVM.wStatus.collectAsState()
-    val weather by homeVM.currentWeather.collectAsState()
+    val status = data.status
+    val weather = data.currentWeather
 
     Box(
         modifier = Modifier
@@ -67,34 +68,34 @@ fun UpperHalf(homeVM: WeatherViewModel){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(70.dp))
-            Text(text = loc.name, fontSize = 35.sp)
+            Text(text = loc, fontSize = 35.sp)
             Spacer(modifier = Modifier.height(30.dp))
-            when (wStatus) {
-                homeVM.statusStates[0] -> {
+            when (status.value) {
+                "loading" -> {
                     CircularProgressIndicator(
                         color = Color.Black, // Sets the color of the spinner
                         strokeWidth = 4.dp // Sets the stroke width of the spinner
                     )
                 }
 
-                homeVM.statusStates[1] -> {
+                "success" -> {
                     Column(
                         modifier = Modifier
                             .padding(start = 20.dp, end = 20.dp)
                     ) {
                         //WeatherBox(weather!!)
                         //Spacer(modifier = Modifier.height(15.dp))
-                        GptBox(homeVM, weather!!)
+                        GptBox(data)
                     }
                 }
 
-                homeVM.statusStates[2] -> {
+                "failed" -> {
 
                 }
             }
 
         }
-        if (wStatus == homeVM.statusStates[1]){
+        if (status.value == "success"){
             DrawSymbol(
                 weather!!.symbolName,
                 size = 120.dp,
@@ -123,8 +124,8 @@ fun WeatherBox(weather: WeatherTimeForecast){
     }
 }
 @Composable
-fun GptBox(homeVM: WeatherViewModel, weather: WeatherTimeForecast){
-    val gptCurrent = homeVM.gptCurrent.collectAsState()
+fun GptBox(data: DataHolder){
+    val gpt = data.GPTCurrent
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
@@ -139,7 +140,7 @@ fun GptBox(homeVM: WeatherViewModel, weather: WeatherTimeForecast){
         ) {
             Column(Modifier.padding(15.dp)) {
                 Text(
-                    text = "${weather.temperature}°C",
+                    text = "${data.currentWeather!!.temperature}°C",
                     fontSize = 35.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
@@ -155,7 +156,7 @@ fun GptBox(homeVM: WeatherViewModel, weather: WeatherTimeForecast){
                     modifier = Modifier
                 ) {
                     Text(
-                        text = gptCurrent.value,
+                        text = gpt,
                         fontSize = 14.sp,
                         lineHeight = 22.sp, // Adjusted for visual consistency
                         modifier = Modifier.fillMaxWidth()

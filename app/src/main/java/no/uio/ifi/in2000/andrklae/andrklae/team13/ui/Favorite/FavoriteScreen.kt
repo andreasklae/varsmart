@@ -148,7 +148,7 @@ fun FavoriteBox(favVM: FavoriteViewModel, weatherVM: WeatherViewModel, data: Dat
         ){
             val status by data.status
             when (status){
-                "loading" -> {
+                favVM.statusStates[0] -> {
                     Text(
                         text = data.location.name,
                         fontSize = 24.sp

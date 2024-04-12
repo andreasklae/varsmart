@@ -29,8 +29,7 @@ class FavoriteViewModel() : ViewModel() {
                     } else{
                         it.status.value = statusStates[1]
                     }
-                }
-                else{
+                } else{
                     it.status.value = statusStates[1]
                 }
             }
