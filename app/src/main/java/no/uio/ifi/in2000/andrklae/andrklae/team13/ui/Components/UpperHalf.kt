@@ -1,33 +1,33 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -35,16 +35,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun UpperHalf(data: DataHolder){
+fun UpperHalf(weatherVM: WeatherViewModel, data: DataHolder){
     val loc = data.location.name
 
-    val status = data.status
+    val weatherStatus = data.weatherStatus
     val weather = data.currentWeather
 
     Box(
@@ -70,32 +74,27 @@ fun UpperHalf(data: DataHolder){
             Spacer(modifier = Modifier.height(70.dp))
             Text(text = loc, fontSize = 35.sp)
             Spacer(modifier = Modifier.height(30.dp))
-            when (status.value) {
-                "loading" -> {
+            when (weatherStatus.value) {
+                data.statusStates[0] -> {
                     CircularProgressIndicator(
                         color = Color.Black, // Sets the color of the spinner
                         strokeWidth = 4.dp // Sets the stroke width of the spinner
                     )
                 }
 
-                "success" -> {
+                data.statusStates[1] -> {
                     Column(
                         modifier = Modifier
                             .padding(start = 20.dp, end = 20.dp)
                     ) {
-                        //WeatherBox(weather!!)
-                        //Spacer(modifier = Modifier.height(15.dp))
-                        GptBox(data)
+                        weatherVM.updateMainGpt()
+                        GptBox(weatherVM, data)
                     }
-                }
-
-                "failed" -> {
-
                 }
             }
 
         }
-        if (status.value == "success"){
+        if (weatherStatus.value == data.statusStates[1]){
             DrawSymbol(
                 weather!!.symbolName,
                 size = 120.dp,
@@ -123,9 +122,9 @@ fun WeatherBox(weather: WeatherTimeForecast){
 
     }
 }
+@SuppressLint("UnrememberedMutableState", "CoroutineCreationDuringComposition")
 @Composable
-fun GptBox(data: DataHolder){
-    val gpt = data.GPTCurrent
+fun GptBox(weatherVM: WeatherViewModel, data: DataHolder){
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
@@ -155,8 +154,34 @@ fun GptBox(data: DataHolder){
                 Column(
                     modifier = Modifier
                 ) {
+                    var gptText by remember { mutableStateOf("") }
+                    when(data.mainGptStatus.value){
+                        data.statusStates[0] -> {
+                            LaunchedEffect(key1 = true) {
+                                while (isActive) {  // Check if coroutine is still active
+                                    gptText = weatherVM.dotLoading(gptText)
+                                    delay(200)
+                                }
+                            }
+                        }
+
+                        data.statusStates[1] -> {
+                            LaunchedEffect(key1 = true) {
+                                gptText = ""
+                                data.mainGpt.forEach {
+                                    gptText += it
+                                    delay(20)
+                                }
+                            }
+                        }
+
+                        data.statusStates[2] -> {
+
+                        }
+
+                    }
                     Text(
-                        text = gpt,
+                        text = gptText,
                         fontSize = 14.sp,
                         lineHeight = 22.sp, // Adjusted for visual consistency
                         modifier = Modifier.fillMaxWidth()

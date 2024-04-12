@@ -12,10 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun ErrorScreen(homeVM: WeatherViewModel){
+fun ErrorScreen(favVM: FavoriteViewModel){
 Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,7 +36,7 @@ Column(
             modifier = Modifier.padding(bottom = 16.dp)
         )
         Button(
-            onClick = { homeVM.updateAll() }
+            onClick = {favVM.loadData()}
         ) {
             Text(text = "Try Again")
         }

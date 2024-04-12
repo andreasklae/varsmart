@@ -6,7 +6,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForeca
 class GPTRepo {
     val dataSource = GPTDataSource()
     @OptIn(BetaOpenAI::class)
-    suspend fun fetchCurrent(weather: WeatherTimeForecast, next24: List<WeatherTimeForecast>): String {
+    suspend fun fetchCurrent(weather: WeatherTimeForecast, next24: List<WeatherTimeForecast>): String? {
         var prompt = (
                 "oppsumer været og gi relevante råd,maks 30 ord,ett avsnitt. " +
                         "Du er kortfattet,jovial,uformell,enkel å forstå. " +
@@ -27,7 +27,12 @@ class GPTRepo {
                     "regn: ${it.precipitation}mm " +
                     "vind: ${it.windSpeed}m/s }")
         }
-        return dataSource.getGPTResponse(prompt)
+        try {
+            return dataSource.getGPTResponse(prompt)
+        }
+        catch (e: Exception) {
+            return null
+        }
     }
 
     suspend fun fetchWeek(next24h: List<WeatherTimeForecast>): String {

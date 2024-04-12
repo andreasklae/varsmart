@@ -1,5 +1,4 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
-
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -53,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Polygon
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
@@ -61,8 +61,8 @@ import kotlin.math.roundToInt
 var expanded = false
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WarningRow(homeVM: WeatherViewModel, range: Int){
-    val alerts by homeVM.alerts.collectAsState()
+fun WarningRow(data: DataHolder, range: Int){
+    val alerts = data.alertList
     val filteredAlerts = alerts.filter { it.distance <= range }
     if (filteredAlerts.isNotEmpty()) {
         val pagerState = rememberPagerState(pageCount = { filteredAlerts.size })
