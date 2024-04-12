@@ -30,6 +30,7 @@ class FavoriteViewModel() : ViewModel() {
     var locationsUiState by  mutableStateOf(listOf<CustomLocation>())
 
     init{
+        println(favouritesUiState.favourites.size)
     }
 
     fun loadFavourites(location:CustomLocation){
@@ -67,9 +68,17 @@ class FavoriteViewModel() : ViewModel() {
     }*/
 
     suspend fun Add(location: CustomLocation){
+        println(favouritesUiState.favourites.size)
 
         val favourite: DataHolder = DataHolder(location)
+        println("Legger til: ")
+        println(location.name)
+        println("Locations now: ")
         favouritesUiState.favourites.add(favourite)
+        favouritesUiState.favourites.forEach {it ->
+            println(it.location.name)
+        }
+
     }
 
     //give notice about an already existing favourite
@@ -77,8 +86,4 @@ class FavoriteViewModel() : ViewModel() {
     suspend fun Search(locationName: String){
         locationsUiState = locationRepository.getLocations(locationName)
     }
-
-
-
-
 }

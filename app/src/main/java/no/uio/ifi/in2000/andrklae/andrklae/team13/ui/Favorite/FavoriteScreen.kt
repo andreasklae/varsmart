@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -25,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,6 +42,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.home.Components.DrawSymbol
@@ -71,30 +76,39 @@ data class Favorite(
 )
 
 
+@SuppressLint("MutableCollectionMutableState")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteScreen(
     favoriteViewModel: FavoriteViewModel = viewModel()
 ) {
     var favorites by remember { mutableStateOf(favoriteViewModel.favouritesUiState.favourites)}
     // Use LaunchedEffect to observe changes in FavoriteViewModel and update the favoritesList
-
-
+    var antall by remember { mutableIntStateOf(favoriteViewModel.favouritesUiState.favourites.size)}
+    var showSearch by remember { mutableStateOf(false) }
     var showSearchBar by remember { mutableStateOf(false) }
+    var text by remember { mutableStateOf("") }
+    var active by remember { mutableStateOf(false) }
 
     Team13Theme {
         Surface(color = MaterialTheme.colorScheme.background) {
 
             Scaffold(
-
             ) { innerPadding ->
+                println("GRIER")
+                println(antall)
                 LazyColumn(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
+                        .fillMaxSize()
                         .padding(innerPadding)
 
                 ) {
                     item {
+                        Spacer(modifier = Modifier.height(90.dp))
+                    }
+                    /*item {
                         FavoriteTopAppBar()
                     }
                     item {
@@ -103,8 +117,9 @@ fun FavoriteScreen(
 
                         }
                     }
-                    item { FavoriteBoxSwipe("test", "cloudy", 05.5, { showSearchBar = true })  }
-                    favorites.forEach(){
+
+                     */
+                    favorites.forEach{it ->
                         item {
                             FavoriteBoxSwipe(
                                 location = it.location.name,
@@ -116,20 +131,116 @@ fun FavoriteScreen(
                     }
 
                     item {
-                        AddFavorite(onClick = { showSearchBar = true }
+                        AddFavorite(onClick = { showSearch = true }
                         )
 
 
                     }
 
                 }
+                if(showSearch) {
+                    Dialog(onDismissRequest = { showSearch = false }) {
+                        Surface(
+                            color = Color.White,
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .fillMaxWidth(0.9f)
+                                .fillMaxHeight(0.7f)
+                                .clip(RoundedCornerShape(15.dp))
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(15.dp))
+                                    //.padding(10.dp)
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                //Button(onClick = {showSearch = false}){}
+                                //SearchBarField(favoriteViewModel = favoriteViewModel)
+                                SearchBar(
+                                    modifier = Modifier
+                                        .fillMaxSize(),
+                                    query = text,
+                                    onQueryChange = {
+                                        text = it
+                                    },
+                                    onSearch = {
+                                        favoriteViewModel.loadSearch(text)
+                                        active = true
+
+                                        println("trykket sok")
+
+                                    },
+                                    active = active,
+                                    //remember to change functionality
+                                    onActiveChange = {
+                                        active = it
+                                    },
+                                    placeholder = {
+                                        Text(text = "Skriv stedsnavn")
+                                    },
+                                    leadingIcon = {
+                                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
+                                    },
+                                    trailingIcon = {
+                                        if (active) {
+                                            Icon(
+                                                modifier = Modifier.clickable {
+                                                    if (text.isNotEmpty()) {
+                                                        text = ""
+                                                    } else {
+                                                        active = false
+                                                    }
+                                                },
+                                                imageVector = Icons.Default.Close,
+                                                contentDescription = "Close icon"
+                                            )
+                                        }
+                                    }
+                                ) {
+
+                                    LazyColumn {
+                                        favoriteViewModel.locationsUiState.forEach { location ->
+                                            item {
+                                                Box(modifier = Modifier.clickable {
+                                                    active = false
+                                                    favoriteViewModel.loadFavourites(location)
+                                                    showSearch = false
+                                                }) {
+                                                    //updates the list
+                                                    /*LaunchedEffect(location){
+                                                                favoriteViewModel.loadFavourites(location)
+                                                            }*/
+
+                                                    Text(
+                                                        text = "${location.name}, (${location.fylke})",
+                                                        modifier = Modifier.padding(
+                                                            start = 8.dp,
+                                                            top = 4.dp,
+                                                            end = 8.dp,
+                                                            bottom = 4.dp
+                                                        )
+                                                    )
+                                                }
+
+
+                                            }
+                                        }
+
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-
         }
+
     }
-
-
 }
+
 
 @Preview
 @Composable
@@ -235,7 +346,7 @@ fun FavoriteForecast(
             .padding(8.dp)
     ){
         DrawSymbol(
-            weatherIcon!!,
+            weatherIcon,
             size = 80.dp,
             modifier = Modifier
                 .offset(x = -2.dp, y = -3.dp)
@@ -290,9 +401,7 @@ fun SearchBarField(
     var active by remember { mutableStateOf(false) }
     SearchBar(
         modifier = Modifier
-            .width(380.dp)
-            .height(350.dp)
-            .clip(RoundedCornerShape(15.dp)),
+            .fillMaxSize(),
         query = text,
         onQueryChange = {
             text = it
@@ -333,12 +442,12 @@ fun SearchBarField(
     ) {
 
         LazyColumn {
-
             favoriteViewModel.locationsUiState.forEach { location ->
                 item {
                     Box(modifier = Modifier.clickable {
                         active = false
                         favoriteViewModel.loadFavourites(location)
+
                     }) {
                         //updates the list
                         /*LaunchedEffect(location){
@@ -346,7 +455,7 @@ fun SearchBarField(
                                 }*/
 
                         Text(
-                            text = location.name + location.lat,
+                            text = "${location.name}, (${location.fylke})",
                             modifier = Modifier.padding(
                                 start = 8.dp,
                                 top = 4.dp,
@@ -364,8 +473,6 @@ fun SearchBarField(
         }
     }
 }
-
-
 
 
 
