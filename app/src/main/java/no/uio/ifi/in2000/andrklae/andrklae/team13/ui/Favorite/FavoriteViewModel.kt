@@ -18,13 +18,19 @@ class FavoriteViewModel() : ViewModel() {
         viewModelScope.launch {
             favourites.forEach{
                 launch {
-                    it.updateWeather()
+                    if (it.weather == null){
+                        it.updateWeather()
+                    }
                 }
                 launch {
-                    it.updateWarning()
+                    if (it.alertList.isEmpty()){
+                        it.updateWarning()
+                    }
                 }
                 launch {
-                    it.updateSunriseAndSunset()
+                    if (it.set == null){
+                        it.updateSunriseAndSunset()
+                    }
                 }
             }
         }

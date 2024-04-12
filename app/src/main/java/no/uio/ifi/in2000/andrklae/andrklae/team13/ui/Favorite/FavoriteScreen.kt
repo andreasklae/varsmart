@@ -1,10 +1,14 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,25 +21,33 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,7 +74,7 @@ data class Favorite(
     val description: String
 )
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteScreen(
     favVM: FavoriteViewModel,
@@ -71,52 +83,105 @@ fun FavoriteScreen(
     pagerState: PagerState
 )
 {
-    val favorites = DataHolder.Favourites
-    favorites.sortBy { if (it.location.name == "Min posisjon") 0 else 1 }
-    var showSearchBar by remember { mutableStateOf(false) }
-    Column(
+    val favorites = DataHolder.Favourites.sortedBy { if (it.location.name.equals("Min posisjon")) 0 else 1  }
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier
+            .fillMaxSize()
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+
+            )
 
     ) {
-        Spacer(modifier = Modifier.height(90.dp))
-
-        if (showSearchBar) {
-            //SearchBarField()
+        item {
+            Spacer(modifier = Modifier.height(90.dp))
         }
         favorites.forEach {
-            println(favorites.size)
-            FavoriteBox(favVM, weatherVM, it, pagerState)
+            item {
+                FavoriteBox(favVM, weatherVM, it, pagerState)
+            }
         }
 
-        Button(
-            onClick = { activity.getCurrentLocation() },
-            shape = CircleShape,
-            modifier = Modifier.glassEffect().clip(CircleShape),
-            colors = ButtonDefaults.buttonColors(Color.Transparent)
+        item {
+            var isOpen by rememberSaveable {
+                mutableStateOf(false)
+            }
+            Button(
+                onClick = { isOpen = true },
+                shape = CircleShape,
+                modifier = Modifier
+                    .glassEffect()
+                    .clip(CircleShape),
+                colors = ButtonDefaults.buttonColors(Color.Transparent)
 
 
-        ) {
-            Icon(Icons.Filled.Add,"legg til posisjon")
+            ) {
+                Icon(Icons.Filled.Add,"legg til posisjon")
+            }
+
+            val sheetState = rememberModalBottomSheetState()
+            if (isOpen){
+                ModalBottomSheet(
+                    onDismissRequest = { isOpen = false },
+                    sheetState = sheetState,
+                    modifier = Modifier
+                        .animateContentSize(
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioLowBouncy,
+                                stiffness = Spring.StiffnessLow
+                            )
+
+                        )
+
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Column(
+                            Modifier.padding(20.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable {
+                                    activity.getCurrentLocation()
+                                    isOpen = false
+                                }
+                            ) {
+                                Icon(Icons.Filled.Place,"legg til posisjon")
+                                Text(
+                                    text = "Legg til Nåværende posisjon",
+                                    fontSize = 20.sp
+                                )
+
+                            }
+                        }
+                    }
+                }
+            }
+
         }
-
-        Spacer(modifier = Modifier.fillMaxHeight())
+        item {
+            Spacer(modifier = Modifier.fillMaxHeight())
+        }
 
     }
 }
-
-
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FavoriteBox(favVM: FavoriteViewModel, weatherVM: WeatherViewModel, data: DataHolder, pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
     Box(
+        contentAlignment = Alignment.CenterStart,
         modifier = Modifier
             .padding(20.dp)
             .fillMaxWidth()
+            .height(120.dp)
             .glassEffect()
             .clickable {
                 coroutineScope.launch {
@@ -125,6 +190,13 @@ fun FavoriteBox(favVM: FavoriteViewModel, weatherVM: WeatherViewModel, data: Dat
                 }
             }
             .padding(horizontal = 5.dp)
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+
+            )
 
     ){
         Row(
@@ -168,11 +240,7 @@ fun FavoriteBox(favVM: FavoriteViewModel, weatherVM: WeatherViewModel, data: Dat
     }
 }
 
-
-
-
-
-@Composable
+/*@Composable
 fun FavoriteBoxSwipe(
     location: String,
     weatherIcon: Int,
@@ -327,7 +395,7 @@ fun SearchBarField(
         }*/
     }
 
-}
+}*/
 
 
 

@@ -87,7 +87,6 @@ fun UpperHalf(weatherVM: WeatherViewModel, data: DataHolder){
                         modifier = Modifier
                             .padding(start = 20.dp, end = 20.dp)
                     ) {
-                        weatherVM.updateMainGpt()
                         GptBox(weatherVM, data)
                     }
                 }
@@ -158,6 +157,7 @@ fun GptBox(weatherVM: WeatherViewModel, data: DataHolder){
                     when(data.mainGptStatus.value){
                         data.statusStates[0] -> {
                             LaunchedEffect(key1 = true) {
+                                gptText = ""
                                 while (isActive) {  // Check if coroutine is still active
                                     gptText = weatherVM.dotLoading(gptText)
                                     delay(200)
@@ -166,17 +166,13 @@ fun GptBox(weatherVM: WeatherViewModel, data: DataHolder){
                         }
 
                         data.statusStates[1] -> {
-                            gptText = data.mainGpt
-                            /*
-                            LaunchedEffect(key1 = true) {
-
+                            LaunchedEffect(data.mainGpt) {
                                 gptText = ""
-                                data.mainGpt.forEach {
-                                    gptText += it
-                                    delay(20)
+                                data.mainGpt.forEach { char ->
+                                    gptText += char
+                                    delay(20)  // Delay between each character, adjust as needed
                                 }
-                            }*/
-
+                            }
                         }
 
                         data.statusStates[2] -> {

@@ -84,7 +84,6 @@ data class DataHolder(
         updateWeather()
         updateWarning()
         updateSunriseAndSunset()
-        updateGPTCurrent()
     }
 
     suspend fun updateWeather() {
@@ -103,6 +102,9 @@ data class DataHolder(
             updateWeek(newWeather)
             // sets status to success
             weatherStatus.value = statusStates[1]
+            // updates Gpt advice
+            updateGPTCurrent()
+
         }
         else{
             weatherStatus.value = statusStates[2]

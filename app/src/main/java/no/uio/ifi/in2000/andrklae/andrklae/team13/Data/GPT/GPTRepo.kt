@@ -1,9 +1,14 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT
 
 import com.aallam.openai.api.BetaOpenAI
+import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 
 class GPTRepo {
+    val dummyResponse = "dummy response: Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, " +
+            "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum " +
+            "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium " +
+            "optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis"
     val dataSource = GPTDataSource()
     @OptIn(BetaOpenAI::class)
     suspend fun fetchCurrent(weather: WeatherTimeForecast, next24: List<WeatherTimeForecast>): String? {
@@ -28,7 +33,9 @@ class GPTRepo {
                     "vind: ${it.windSpeed}m/s }")
         }
         try {
-            return dataSource.getGPTResponse(prompt)
+            //return dataSource.getGPTResponse(prompt)
+            delay(2000)
+            return dummyResponse
         }
         catch (e: Exception) {
             return null
