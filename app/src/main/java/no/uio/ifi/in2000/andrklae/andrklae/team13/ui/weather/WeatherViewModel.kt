@@ -58,6 +58,7 @@ class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
 
         }
     }
+
     fun updateMainGpt() {
         viewModelScope.launch {
             if (data.value!!.mainGpt == "") {
@@ -66,11 +67,13 @@ class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
         }
 
     }
+
     fun updateGPTWeek() {
         viewModelScope.launch {
             data.value!!.updateGPTWeek()
         }
     }
+
     fun dotLoading(input: String): String {
         var dots = input
         if (dots == ". . . ") {
@@ -80,7 +83,7 @@ class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
         }
         return dots
     }
-        /*
+    /*
 
     fun updateWeather() {
         viewModelScope.launch {
