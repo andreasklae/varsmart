@@ -39,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -56,6 +57,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
@@ -84,6 +86,11 @@ fun FavoriteScreen(
 )
 {
     val favorites = DataHolder.Favourites.sortedBy { if (it.location.name.equals("Min posisjon")) 0 else 1  }
+    val version = 1
+    var showSearch by remember { mutableStateOf(false) }
+    var text by remember { mutableStateOf("") }
+    var active by remember { mutableStateOf(false) }
+
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
@@ -111,8 +118,12 @@ fun FavoriteScreen(
             var isOpen by rememberSaveable {
                 mutableStateOf(false)
             }
+
             Button(
-                onClick = { isOpen = true },
+                onClick = {
+                    isOpen = true
+                    showSearch = true
+                },
                 shape = CircleShape,
                 modifier = Modifier
                     .glassEffect()
@@ -123,46 +134,162 @@ fun FavoriteScreen(
             ) {
                 Icon(Icons.Filled.Add,"legg til posisjon")
             }
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(
+                onClick = {
+                    activity.getCurrentLocation()
+                },
+                shape = CircleShape,
+                modifier = Modifier
+                    .glassEffect()
+                    .clip(CircleShape),
+                colors = ButtonDefaults.buttonColors(Color.Transparent)
+            ){
+                Icon(Icons.Filled.Place, "Min Posisjon")
+            }
+
 
             val sheetState = rememberModalBottomSheetState()
-            if (isOpen){
-                ModalBottomSheet(
-                    onDismissRequest = { isOpen = false },
-                    sheetState = sheetState,
-                    modifier = Modifier
-                        .animateContentSize(
-                            animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioLowBouncy,
-                                stiffness = Spring.StiffnessLow
-                            )
-
-                        )
-
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Column(
-                            Modifier.padding(20.dp)
+            if(version == 1){
+                if(showSearch) {
+                    Dialog(onDismissRequest = { showSearch = false }) {
+                        Surface(
+                            color = Color.White,
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .fillMaxWidth(0.9f)
+                                .fillMaxHeight(0.7f)
+                                .clip(RoundedCornerShape(15.dp))
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.clickable {
-                                    activity.getCurrentLocation()
-                                    isOpen = false
-                                }
+                            Column(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(15.dp))
+                                    //.padding(10.dp)
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
                             ) {
-                                Icon(Icons.Filled.Place,"legg til posisjon")
-                                Text(
-                                    text = "Legg til Nåværende posisjon",
-                                    fontSize = 20.sp
-                                )
+                                //Button(onClick = {showSearch = false}){}
+                                //SearchBarField(favoriteViewModel = favoriteViewModel)
+                                SearchBar(
+                                    modifier = Modifier
+                                        .fillMaxSize(),
+                                    query = text,
+                                    onQueryChange = {
+                                        text = it
+                                    },
+                                    onSearch = {
+                                        favVM.loadSearch(text)
+                                        active = true
 
+                                        println("trykket sok")
+
+                                    },
+                                    active = active,
+                                    //remember to change functionality
+                                    onActiveChange = {
+                                        active = it
+                                    },
+                                    placeholder = {
+                                        Text(text = "Skriv stedsnavn")
+                                    },
+                                    leadingIcon = {
+                                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
+                                    },
+                                    trailingIcon = {
+                                        if (active) {
+                                            Icon(
+                                                modifier = Modifier.clickable {
+                                                    if (text.isNotEmpty()) {
+                                                        text = ""
+                                                    } else {
+                                                        active = false
+                                                    }
+                                                },
+                                                imageVector = Icons.Default.Close,
+                                                contentDescription = "Close icon"
+                                            )
+                                        }
+                                    }
+                                ) {
+
+                                    LazyColumn {
+                                        favVM.locationsUiState.forEach { location ->
+                                            item {
+                                                Box(modifier = Modifier.clickable {
+                                                    active = false
+                                                    DataHolder(location)
+                                                    showSearch = false
+                                                }) {
+                                                    //updates the list
+                                                    /*LaunchedEffect(location){
+                                                                favoriteViewModel.loadFavourites(location)
+                                                            }*/
+
+                                                    Text(
+                                                        text = "${location.name}, (${location.fylke})",
+                                                        modifier = Modifier.padding(
+                                                            start = 8.dp,
+                                                            top = 4.dp,
+                                                            end = 8.dp,
+                                                            bottom = 4.dp
+                                                        )
+                                                    )
+                                                }
+
+
+                                            }
+                                        }
+
+
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+            else{
+                if (isOpen){
+                    ModalBottomSheet(
+                        onDismissRequest = { isOpen = false },
+                        sheetState = sheetState,
+                        modifier = Modifier
+                            .animateContentSize(
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioLowBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+
+                            )
+
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Column(
+                                Modifier.padding(20.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.clickable {
+                                        activity.getCurrentLocation()
+                                        isOpen = false
+                                    }
+                                ) {
+                                    Icon(Icons.Filled.Place,"legg til posisjon")
+                                    Text(
+                                        text = "Legg til Nåværende posisjon",
+                                        fontSize = 20.sp
+                                    )
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
 
         }
         item {
