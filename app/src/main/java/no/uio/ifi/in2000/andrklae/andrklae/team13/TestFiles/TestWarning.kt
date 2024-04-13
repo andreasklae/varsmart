@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 import kotlin.math.roundToInt
 
@@ -21,7 +22,11 @@ suspend fun testWarning(){
 
     val warningRepo = WarningRepository()
     val allWarnings = warningRepo.fetchAllWarnings()
-    val alerts = warningRepo.fetchAlertList(allWarnings, customLocation)
+    var alerts = listOf<Alert>()
+    if (allWarnings != null){
+        alerts = warningRepo.fetchAlertList(allWarnings, customLocation)
+
+    }
 
     if (alerts.isNotEmpty()){
         alerts.forEach {

@@ -18,21 +18,20 @@ import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun Next24(weatherVM: WeatherViewModel){
-    val wStatus by weatherVM.wStatus.collectAsState()
-    val next24 by weatherVM.next24.collectAsState()
-    val gptWeek by weatherVM.gptWeek.collectAsState()
+fun Next24(weatherVM: WeatherViewModel, data: DataHolder){
+    val weatherStatus = data.weatherStatus
+    val next24 = data.next24h
+    val gptWeek = data.weekGpt
     val scrollState = rememberScrollState()
 
 
@@ -56,8 +55,8 @@ fun Next24(weatherVM: WeatherViewModel){
             .horizontalScroll(scrollState),
         verticalAlignment = Alignment.CenterVertically
     ){
-        when (wStatus) {
-            weatherVM.statusStates[0] -> {
+        when (weatherStatus.value) {
+            data.statusStates[0] -> {
                 CircularProgressIndicator(
                     color = Color.Black,
                     strokeWidth = 4.dp,
@@ -65,7 +64,7 @@ fun Next24(weatherVM: WeatherViewModel){
                 )
             }
 
-            weatherVM.statusStates[1] -> {
+            data.statusStates[1] -> {
                 next24.forEach {
                     Spacer(modifier = Modifier.width(20.dp))
                     HourlyForecast(it)
@@ -73,7 +72,7 @@ fun Next24(weatherVM: WeatherViewModel){
                 }
             }
 
-            weatherVM.statusStates[2] -> {
+            data.statusStates[2] -> {
 
             }
         }

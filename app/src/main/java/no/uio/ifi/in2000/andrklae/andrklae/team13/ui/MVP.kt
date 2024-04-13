@@ -41,10 +41,15 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
+/*
+
+    Commented out because its outdated and causes running error
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
+
 fun MVP(homeVM: WeatherViewModel, activity: MainActivity) {
+
     val loc by homeVM.loc.collectAsState()
     val scrollState = rememberScrollState()
 
@@ -334,3 +339,4 @@ fun DrawSymbol(symbol: String, size: Dp) {
 
     }
 }
+*/

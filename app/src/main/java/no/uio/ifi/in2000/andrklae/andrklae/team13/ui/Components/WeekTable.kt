@@ -10,8 +10,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,13 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun WeekTable(homeVM: WeatherViewModel){
-    val wStatus by homeVM.wStatus.collectAsState()
-    val week by homeVM.week.collectAsState()
+fun WeekTable(weatherVM: WeatherViewModel, data: DataHolder){
+    val status = data.weatherStatus
+    val week = data.week
 
     Box(
         modifier = Modifier
@@ -48,8 +47,8 @@ fun WeekTable(homeVM: WeatherViewModel){
                 color = Color.Black,
                 thickness = 1.dp,
                 modifier = Modifier.padding(horizontal = 15.dp))
-            when (wStatus) {
-                homeVM.statusStates[0] ->{
+            when (status.value) {
+                data.statusStates[0] ->{
                     CircularProgressIndicator(
                         color = Color.Black,
                         strokeWidth = 4.dp,
@@ -57,7 +56,7 @@ fun WeekTable(homeVM: WeatherViewModel){
                     )
                 }
 
-                homeVM.statusStates[1] -> {
+                data.statusStates[1] -> {
                     Row(
                         modifier = Modifier
                             .padding(vertical = 8.dp, horizontal = 15.dp)
@@ -104,7 +103,7 @@ fun WeekTable(homeVM: WeatherViewModel){
                     }
                 }
 
-                homeVM.statusStates[2] ->{
+                data.statusStates[2] ->{
 
                 }
             }

@@ -5,15 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.LocationRepository
+import java.io.IOException
 
 
 class FavoriteViewModel() : ViewModel() {
     val locationRepository: LocationRepository = LocationRepository()
     var favourites = DataHolder.Favourites
-    val statusStates = listOf<String>("loading", "success", "failed")
+    var locationsUiState by mutableStateOf(listOf<CustomLocation>())
     init{
         loadData()
     }
@@ -21,25 +24,40 @@ class FavoriteViewModel() : ViewModel() {
     fun loadData(){
         viewModelScope.launch {
             favourites.forEach{
-                if (it.weather == null){
-                    it.status.value = statusStates[0]
-                    it.updateAll()
+                launch {
                     if (it.weather == null){
-                        it.status.value = statusStates[2]
-                    } else{
-                        it.status.value = statusStates[1]
+                        it.updateWeather()
                     }
                 }
-                else{
-                    it.status.value = statusStates[1]
+                launch {
+                    if (it.alertList.isEmpty()){
+                        it.updateWarning()
+                    }
+                }
+                launch {
+                    if (it.set == null){
+                        it.updateSunriseAndSunset()
+                    }
                 }
             }
-
         }
-
     }
 
     fun updateFavouriteList(){
         favourites = DataHolder.Favourites
+    }
+    fun loadSearch(text: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try{
+                Search(text)
+            }
+            catch (e: IOException){
+
+            }
+        }
+    }
+
+    suspend fun Search(locationName: String){
+        locationsUiState = locationRepository.getLocations(locationName)
     }
 }
