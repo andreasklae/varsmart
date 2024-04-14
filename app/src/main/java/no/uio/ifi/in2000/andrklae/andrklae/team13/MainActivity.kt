@@ -25,7 +25,6 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MasterUi
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.status.ErrorScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.MainComponent
 
 class MainActivity : ComponentActivity() {
     //private val mapViewModel = MapViewModel()

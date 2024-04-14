@@ -1,4 +1,5 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
+
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -53,25 +54,27 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Polygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import kotlin.math.roundToInt
 
 var expanded = false
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WarningRow(data: DataHolder, range: Int){
+fun WarningRow(data: DataHolder, range: Int) {
     val alerts = data.alertList
     val filteredAlerts = alerts.filter { it.distance <= range }
     if (filteredAlerts.isNotEmpty()) {
         val pagerState = rememberPagerState(pageCount = { filteredAlerts.size })
 
-        Column (
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-        ){
+        ) {
             HorizontalPager(
                 verticalAlignment = Alignment.Top,
                 state = pagerState,
@@ -85,15 +88,11 @@ fun WarningRow(data: DataHolder, range: Int){
 
                     )
 
-            ) { page ->
+            ) {
                 val alert = filteredAlerts[pagerState.currentPage]
 
                 DisplayWarning(
-                    warningDescription = "${alert.alert.properties.instruction} \n${alert.alert.properties.description} ${alert.alert.properties.consequences}",
-                    warningTitle = alert.alert.properties.area,
-                    warningLevel = alert.alert.properties.riskMatrixColor,
-                    distance = alert.distance,
-                    polygon = alert.polygonList
+                    alert
                 )
             }
             Row(
@@ -122,18 +121,19 @@ fun WarningRow(data: DataHolder, range: Int){
                 }
             }
         }
-    }else EmptyWarning()
+    } else EmptyWarning()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayWarning(
-    warningDescription: String,
-    warningTitle: String,
-    warningLevel: String,
-    distance: Double,
-    polygon: List<Polygon>
+    alert: Alert
 ) {
+    val warningDescription = "${alert.alert.properties.instruction}" +
+            " \n${alert.alert.properties.description} ${alert.alert.properties.consequences}"
+    val warningTitle = alert.alert.properties.area
+    val warningLevel = alert.alert.properties.riskMatrixColor
+    val distance = alert.distance
     var showDialog by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     val alpha = remember { Animatable(1f) }
@@ -181,8 +181,6 @@ fun DisplayWarning(
                         tint = Color.Black
                     )
                 }
-                //MapButton2(showDialog = showDialog,
-                //    onDismiss = { showDialog = false })
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded,
                 )
@@ -203,10 +201,9 @@ fun DisplayWarning(
                     text = warningDescription,
                     fontSize = 18.sp
                 )
-            }
-            else{
+            } else {
                 var title = warningTitle
-                if (title.length > 25){
+                if (title.length > 25) {
                     title = title.take(25) + "..."
                 }
                 Text(
@@ -238,7 +235,7 @@ fun DisplayWarning(
         }
 
     }
-    if(showDialog){
+    if (showDialog) {
         Dialog(onDismissRequest = { showDialog = false }) {
             Surface(
                 color = Color.White,
@@ -254,20 +251,22 @@ fun DisplayWarning(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    MapWithPolygon(polygon, warningLevel, warningTitle)
+                    MapWithPolygon(alert)
                 }
             }
         }
     }
 }
+
 @Composable
-fun EmptyWarning(){
+fun EmptyWarning() {
     val alpha = remember { Animatable(1f) }
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 20.dp)
-        .glassEffect()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .glassEffect()
     ) {
         Box(
             modifier = Modifier
@@ -292,15 +291,15 @@ fun EmptyWarning(){
 
             }
 
-            Divider(
-                color = Color.Black,
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 15.dp),
                 thickness = 1.dp,
-                modifier = Modifier.padding(horizontal = 15.dp)
+                color = Color.Black
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = 20.dp)
-            ){
+            ) {
                 Spacer(Modifier.height(4.dp))
                 Box(
                     modifier = Modifier
@@ -324,7 +323,7 @@ fun EmptyWarning(){
 }
 
 @Composable
-fun WarningIcon(warningLevel: String){
+fun WarningIcon(warningLevel: String) {
     when (warningLevel) {
         "Green" ->
             ImageIcon(

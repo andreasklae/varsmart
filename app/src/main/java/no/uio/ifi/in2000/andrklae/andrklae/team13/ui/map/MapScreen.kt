@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,54 +32,24 @@ import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import com.google.maps.android.ktx.model.polygonOptions
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Polygon
 import java.io.File
 import javax.annotation.Nullable
 
 @Composable
-fun bilde(){
-    Box(modifier = Modifier.fillMaxSize()){
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                //.data("file:///android_asset/symbols/fog.svg")
-                .data(File("file:///android_asset/NSA.JPG"))
-                .crossfade(true)
-                .build()
-        )
-        Image(
-            painter = painter,
-            contentDescription = "test"
-        )
+fun AllPolygons(list: List<Alert>) {
+    val polys = mutableListOf<Polygon>()
+    list.forEach {
+
     }
 }
 
-
 @Composable
-fun ComposeMapDemoMarkers(mapViewModel: MapViewModel) {
-    val singapore = LatLng(1.3554117053046808, 103.86454252780209)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 10f)
-    }
-    GoogleMap(
-        modifier = Modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState
-    ) {
-
-        Marker(
-            state = rememberMarkerState(position = singapore),
-            title = "Marker1",
-            snippet = "Marker in Singapore",
-            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
-        )
-    }
-}
-@Composable
-fun MapWithPolygon(polygon: List<Polygon>, polygonColor: String, area: String) {
-    val polygonPoints = listOf(
-        LatLng(37.7749, -122.4194),
-        LatLng(37.8049, -122.4400),
-        LatLng(37.7949, -122.4100)
-    )
+fun MapWithPolygon(alert: Alert) {
+    val polygon = alert.polygonList
+    val polygonColor = alert.alert.properties.riskMatrixColor
+    val area = alert.alert.properties.area
     val centers = mutableListOf<LatLng>()
     polygon.forEach { poly ->
         centers.add(calculatePolygonCenter(poly.coordinates))
@@ -96,26 +65,41 @@ fun MapWithPolygon(polygon: List<Polygon>, polygonColor: String, area: String) {
         }
     ) {
 
-        polygon.forEach{ it ->
+        polygon.forEach { it ->
             Polygon(
                 points = it.coordinates,
                 clickable = true,
-                fillColor = if (isPolygonSelected) getColorFromString(polygonColor).copy(alpha = 0.3f) else getColorFromString(polygonColor).copy(alpha = 0.7f),
+                fillColor = if (isPolygonSelected)
+                    getColorFromString(polygonColor).copy(alpha = 0.8f)
+                else getColorFromString(polygonColor).copy(alpha = 0.5f),
                 strokeColor = Color.Black,
                 strokeWidth = 5f,
                 tag = area,
-                onClick = { polygon ->
+                onClick = {
                     // Handle polygon click event
-                    isPolygonSelected = true
+                    if (isPolygonSelected) {
+                        isPolygonSelected = false
+                    } else {
+                        isPolygonSelected = true
+                    }
                 }
             )
-            if (isPolygonSelected){
-
+            if (isPolygonSelected) {
+                Marker(
+                    state = rememberMarkerState(position = centers[polygon.indexOf(it)]),
+                    title = area,
+                    snippet = "${alert.alert.properties.eventAwarenessName}: " +
+                            "${alert.alert.properties.triggerLevel}",
+                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED),
+                    alpha = 0.8f
+                )
             }
+
         }
 
     }
 }
+
 fun calculatePolygonCenter(polygon: List<LatLng>): LatLng {
     var totalLat = 0.0
     var totalLng = 0.0
@@ -130,6 +114,7 @@ fun calculatePolygonCenter(polygon: List<LatLng>): LatLng {
 
     return LatLng(centerLat, centerLng)
 }
+
 fun getColorFromString(colorString: String): Color {
     return when (colorString.lowercase()) {
         "yellow" -> Color.Yellow

@@ -58,9 +58,8 @@ fun MasterUi(
     ) { page ->
         if (page == 0){
             FavoriteScreen(favVM, weatherVM, activity, pagerState)
-        }
-        else {
-            WeatherScreen(weatherVM = weatherVM, pagerState)
+        } else {
+            WeatherScreen(weatherViewModel = weatherVM, pagerState)
         }
 
     }
