@@ -8,12 +8,16 @@ data class DateTime(
     val year: String,
     val initMonth: String,
     val intiDay: String,
-    val intiHour: String
+    val intiHour: String,
+    val initMinute: String = "00"
 ) {
-    // Ensure day is two digits
+
+
+    // Ensure each value are two digits
     val day = if (intiDay.length == 1) "0$intiDay" else intiDay
     val hour = if (intiHour.length == 1) "0$intiHour" else intiHour
     val month = if (initMonth.length == 1) "0$initMonth" else initMonth
+    val minute = if (initMinute.length == 1) "0$initMinute" else initMinute
 
     // Use formattedDay for isoFormat and date
     val isoFormat: String = "$year-$month-${day}T${hour}:00:00Z"

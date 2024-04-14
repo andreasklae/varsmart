@@ -8,10 +8,6 @@ suspend fun main(){
     println("Testing location Repository")
     println()
 
-    println("Testing searchKnownCities")
-    searchKnownCities()
-    println()
-
     println("Testing Api-call")
     testAPI()
     println()
@@ -20,12 +16,10 @@ suspend fun main(){
 }
 
 suspend fun testAPI(){
-
-
-    val list = locationRepo.getLocations("St. hanshaugen")
+    val list = locationRepo.getLocations("sagtomtveien")
     if(list.isNotEmpty()){
-        println("Success. Found: ${list.size} locations. First is: \n" +
-                "${list.first()}")
+        println("Success. Found: ${list.size} locations.")
+        list.forEach { println(); println(it) }
     }
     else{
         println("Failed")

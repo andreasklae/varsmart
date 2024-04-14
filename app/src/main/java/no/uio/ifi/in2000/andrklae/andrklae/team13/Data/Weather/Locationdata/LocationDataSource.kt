@@ -20,18 +20,28 @@ class LocationDataSource() {
     }
 
     suspend fun fetchAddresses(search:String): List<CustomLocation> {
+        val APIKey = "AIzaSyBofr2wZtjab3DBuYh46BDxeUWUit5l-sw"
+        val path= "https://maps.googleapis.com/maps/api/geocode/json?components=route:$search|country:NO&language=no&key=$APIKey"
 
-        val path="https://api.kartverket.no/stedsnavn/v1/navn?sok=$search&utkoordsys=4258&treffPerSide=10&side=1"
-        val response: ApiResponse = client.get(path).body()
-        return response.navn.map { navnItem ->
-            CustomLocation(
-                name = navnItem.skrivemåte,
-                lon = navnItem.representasjonspunkt.øst,
-                lat = navnItem.representasjonspunkt.nord,
-                type = navnItem.navneobjekttype,
-                fylke = navnItem.fylker.joinToString(separator = ", ") { it.fylkesnavn } // Assumes there can be more than one fylke; adjust as needed
-            )
+        try {
+            val response: Root = client.get(path).body()
+            return response.results.map { result ->
+                CustomLocation(
+                    name = result.formatted_address.split(", ").first() ,
+                    lon = result.geometry.location.lng,
+                    lat = result.geometry.location.lat,
+                    postSted = result.formatted_address
+                        .split(", ")
+                        [result.formatted_address.split(", ").size - 2]
+                        .replace("[0-9\\s]+".toRegex(), ""),
+                    fylke = result.address_components.find { it.types.first() == "administrative_area_level_1" }!!.short_name
+                )
+            }
         }
+        catch (e: Exception){
+            return emptyList()
+        }
+
     }
 }
 

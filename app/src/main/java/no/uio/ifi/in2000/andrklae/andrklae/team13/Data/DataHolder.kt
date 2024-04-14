@@ -49,11 +49,13 @@ data class DataHolder(
     var currentMonth = current.monthValue.toString()
     var currentDay = current.dayOfMonth.toString()
     var currentHour = current.hour.toString()
+    var currentMinute = current.minute.toString()
     var dt = DateTime(
         currentYear,
         currentMonth,
         currentDay,
-        currentHour
+        currentHour,
+        currentMinute
     )
     var lastUpdate = dt
 
@@ -84,6 +86,7 @@ data class DataHolder(
         updateWeather()
         updateWarning()
         updateSunriseAndSunset()
+        updateGPTCurrent()
     }
 
     suspend fun updateWeather() {
@@ -230,11 +233,13 @@ data class DataHolder(
         var currentMonth = current.monthValue.toString()
         var currentDay = current.dayOfMonth.toString()
         var currentHour = current.hour.toString()
+        var currentMinute = current.minute.toString()
         var dt = DateTime(
             currentYear,
             currentMonth,
             currentDay,
-            currentHour
+            currentHour,
+            currentMinute
         )
         return dt
     }

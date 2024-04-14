@@ -25,7 +25,6 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MasterUi
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.status.ErrorScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.MainComponent
 
 class MainActivity : ComponentActivity() {
     //private val mapViewModel = MapViewModel()
@@ -53,7 +52,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val alesund = CustomLocation("Ålesund", 62.47, 6.13, "By", "")
+        val alesund = CustomLocation("Ålesund", 62.47, 6.15, "Ålesund", "Møre og Romsdal")
         DataHolder(alesund)
         super.onCreate(savedInstanceState)
 

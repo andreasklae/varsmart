@@ -8,69 +8,56 @@ data class CustomLocation (
     val name: String,
     val lat: Double,
     val lon: Double,
-    val type: String, // By / Bydel / fylke osv.
+    val postSted: String,
     val fylke: String
 ) {
     override fun toString(): String {
         return "Location = $name \n" +
                 "Lat = $lat \n" +
                 "Lon = $lon \n" +
-                "Type = $type \n" +
-                "Fylke = $fylke"
+                "PostSted = $postSted\n"+
+                "fylke = $fylke"
+
     }
 
 
 }
 
-
-
-
-
 @Serializable
-data class ApiResponse(
-    val metadata: Metadata,
-    val navn: List<Navn>
+data class Root(
+    val results: List<Result>,
+    val status: String
 )
 
 @Serializable
-data class Metadata(
-    val side: Int,
-    val sokeStreng: String,
-    val totaltAntallTreff: Int,
-    val treffPerSide: Int,
-    val viserFra: Int,
-    val viserTil: Int
+data class Result(
+    val address_components: List<AddressComponent>,
+    val formatted_address: String,
+    val geometry: Geometry,
+    val place_id: String,
+    val types: List<String>
 )
 
 @Serializable
-data class Navn(
-    val fylker: List<Fylke>,
-    val kommuner: List<Kommune>,
-    val navneobjekttype: String,
-    val navnestatus: String,
-    val representasjonspunkt: Representasjonspunkt,
-    val skrivemåte: String,
-    val skrivemåtestatus: String,
-    val språk: String,
-    val stedsnummer: Long,
-    val stedstatus: String
+data class AddressComponent(
+    val long_name: String,
+    val short_name: String,
+    val types: List<String>
 )
 
 @Serializable
-data class Fylke(
-    val fylkesnavn: String,
-    val fylkesnummer: String
+data class Geometry(
+    val location: Location,
 )
 
 @Serializable
-data class Kommune(
-    val kommunenavn: String,
-    val kommunenummer: String
+data class Bounds(
+    val northeast: Location,
+    val southwest: Location
 )
 
 @Serializable
-data class Representasjonspunkt(
-    val koordsys: Int,
-    val nord: Double,
-    val øst: Double
+data class Location(
+    val lat: Double,
+    val lng: Double
 )
