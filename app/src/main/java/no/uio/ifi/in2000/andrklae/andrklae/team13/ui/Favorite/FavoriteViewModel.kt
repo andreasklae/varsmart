@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.LocationRepository
 
@@ -32,7 +33,7 @@ class FavoriteViewModel() : ViewModel() {
     val isSearching = _isSearching.asStateFlow()
 
     val statusStates = listOf("loading", "success", "failed")
-    private val _searchStatus = MutableStateFlow(statusStates[0])
+    private val _searchStatus = MutableStateFlow(statusStates[1])
     val searchStatus = _searchStatus.asStateFlow()
 
 
@@ -99,9 +100,21 @@ class FavoriteViewModel() : ViewModel() {
         }
     }
 
-    fun updateFavouriteList(){
-        favourites = DataHolder.Favourites
+    private val _lastUpdate = MutableStateFlow(
+        DataHolder.Favourites.sortedWith(
+            compareBy<DataHolder> {it.lastUpdate.hour.toInt() }.thenBy { it.lastUpdate.minute.toInt()}
+        ).first().lastUpdate
+    )
+
+    fun updateWeather(){
+        favourites.forEach{
+            viewModelScope.launch {
+                it.updateAll()
+            }
+        }
+
     }
+
     fun emptySearchresults(){
         // empties the list
         _searchResults.value = listOf()

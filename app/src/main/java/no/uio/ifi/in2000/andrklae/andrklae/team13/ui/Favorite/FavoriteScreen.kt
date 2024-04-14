@@ -1,10 +1,12 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,7 +32,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -40,6 +44,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -51,6 +56,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -80,9 +87,10 @@ fun FavoriteScreen(
     weatherVM: WeatherViewModel,
     activity: MainActivity,
     pagerState: PagerState
-)
-{
+) {
+    // sorts favorite list to put current location at the top of the list
     val favorites = DataHolder.Favourites.sortedBy { if (it.location.name.equals("Min posisjon")) 0 else 1 }
+    // column of all favourites
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
@@ -97,25 +105,43 @@ fun FavoriteScreen(
             )
 
     ) {
+        // spacer
         item {
             Spacer(modifier = Modifier.height(90.dp))
         }
+        // Row for refreshing and editing list
+        item {
+            FunctionRow(favVM)
+        }
+        // boxes for each favourite
         favorites.forEach {
             item {
-                FavoriteBox(favVM, weatherVM, it, pagerState)
+                FavoriteBox(weatherVM, it, pagerState)
             }
         }
 
+        // button for adding new locations
         item {
-            // adding new location button
-            ElevatedButton(
-                onClick = {
-                    favVM.toggleBottomSheet()
-                },
-                shape = CircleShape,
+            Box(
                 modifier = Modifier
-                    .clip(CircleShape),
-                colors = ButtonDefaults.buttonColors(Color.Transparent)
+                    .clip(CircleShape)
+                    .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(15.dp))
+                    .border(2.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(15.dp))
+                    .border(3.dp, Color.White.copy(alpha = 0.02f), RoundedCornerShape(15.dp))
+                    .border(4.dp, Color.White.copy(alpha = 0.03f), RoundedCornerShape(15.dp))
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.4f),
+                                Color.White.copy(alpha = 0.4f),
+                                Color.White.copy(alpha = 0.6f)
+                            ),
+                        )
+                    )
+                    .padding(15.dp)
+                    .clickable {
+                        favVM.toggleBottomSheet()
+                    },
 
             ) {
                 Icon(Icons.Filled.Add,"legg til posisjon")
@@ -137,6 +163,21 @@ fun FavoriteScreen(
             Spacer(modifier = Modifier.fillMaxHeight())
         }
 
+    }
+}
+
+@Composable
+fun FunctionRow(favVM: FavoriteViewModel) {
+    Row {
+        Icon(
+            Icons.Filled.Refresh,
+            "refresh",
+            modifier = Modifier
+                .clickable {
+                    favVM.updateWeather()
+                }
+            )
+        Icon(Icons.Filled.Edit,"refresh")
     }
 }
 
@@ -222,6 +263,7 @@ fun BottomSheet(favVM: FavoriteViewModel, activity: MainActivity) {
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchDialog(favVM: FavoriteViewModel) {
@@ -253,22 +295,45 @@ fun SearchDialog(favVM: FavoriteViewModel) {
                 )
                 {
                     SearchBox(favVM)
-                    Spacer(modifier = Modifier.height(20.dp))
                     when (searchStatus){
                         // loading searches
                         favVM.statusStates[0] -> {
+                            Spacer(modifier = Modifier.height(20.dp))
                             CircularProgressIndicator(color = Color.Black)
                         }
                         // found location(s)
                         favVM.statusStates[1] -> {
-                            val scrollState = rememberScrollState()
-                            Column (modifier = Modifier.verticalScroll(scrollState)) {
-                                Surface {
-
-                                }
+                            Box (
+                                modifier = Modifier
+                                    .drawWithContent {
+                                        drawContent()
+                                        drawRect(
+                                            brush = Brush.verticalGradient(
+                                                colors = listOf(
+                                                    Color.White,
+                                                    Color.White.copy(alpha = 0.3f),
+                                                    Color.Transparent,
+                                                    Color.Transparent,
+                                                    Color.Transparent,
+                                                    Color.Transparent,
+                                                    Color.Transparent,
+                                                    Color.Transparent,
+                                                    Color.Transparent,
+                                                    Color.Transparent,
+                                                    Color.Transparent,
+                                                    Color.Transparent,
+                                                    Color.White.copy(alpha = 0.5f),
+                                                    Color.White
+                                                ),
+                                                startY = 0f,
+                                                endY = size.height
+                                            ),
+                                            alpha = 1f
+                                        )
+                                    }
+                            ) {
                                 SearchResults(favVM)
                             }
-
                         }
                         // found no location
                         favVM.statusStates[2] -> {
@@ -284,7 +349,7 @@ fun SearchDialog(favVM: FavoriteViewModel) {
                     .clip(CircleShape)
                     .background(Color.White)
                     .wrapContentWidth()
-                    .clickable { favVM.toggleBottomSheet() }
+                    .clickable { favVM.toggleSearchDialog() }
                     .padding(15.dp)
 
             ) {
@@ -299,11 +364,13 @@ fun SearchDialog(favVM: FavoriteViewModel) {
 
 @Composable
 fun SearchResults(favVM: FavoriteViewModel) {
-    val searchText by favVM.searchText.collectAsState()
     val searchResults by favVM.searchResults.collectAsState()
+    val scrollState = rememberScrollState()
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.verticalScroll(scrollState)
     ) {
+        Spacer(modifier = Modifier.height(30.dp))
         searchResults.forEach { location ->
             Row (
                 verticalAlignment = Alignment.CenterVertically,
@@ -365,7 +432,10 @@ fun SearchResults(favVM: FavoriteViewModel) {
 
             }
             Spacer(modifier = Modifier.height(10.dp))
+
         }
+        Spacer(modifier = Modifier.height(50.dp))
+
     }
 }
 
@@ -409,7 +479,7 @@ fun SearchBox(favVM: FavoriteViewModel) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FavoriteBox(favVM: FavoriteViewModel, weatherVM: WeatherViewModel, data: DataHolder, pagerState: PagerState) {
+fun FavoriteBox(weatherVM: WeatherViewModel, data: DataHolder, pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
     Box(
         contentAlignment = Alignment.CenterStart,
@@ -456,7 +526,7 @@ fun FavoriteBox(favVM: FavoriteViewModel, weatherVM: WeatherViewModel, data: Dat
                             fontSize = 24.sp
                         )
                         Text(
-                            text = data.currentWeather!!.symbolName.toString(),
+                            text = "sist oppdatert: ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
                             fontSize = 15.sp
                         )
                     }
@@ -474,163 +544,6 @@ fun FavoriteBox(favVM: FavoriteViewModel, weatherVM: WeatherViewModel, data: Dat
         }
     }
 }
-
-/*@Composable
-fun FavoriteBoxSwipe(
-    location: String,
-    weatherIcon: Int,
-    midDayTemp: String,
-    description: String,
-    onClick: () -> Unit
-) {
-    val offsetX = remember { mutableStateOf(0f) }
-
-    Box(
-        modifier = Modifier
-            .padding(16.dp)
-            .glassEffect()
-            .width(380.dp)
-            .height(91.dp)
-            //.clip(RoundedCornerShape(15.dp))
-            //.background(Color.White.copy(alpha = 0.5f))
-            .clickable { onClick() }
-            .draggable(
-                state = rememberDraggableState { delta ->
-                    offsetX.value += delta
-                },
-                orientation = Orientation.Horizontal,
-                onDragStopped = {
-                    if (offsetX.value.absoluteValue > 200) {
-                        // If the user swipes more than 200 dp, remove the item
-                        // You can define your own threshold here
-                        // For simplicity, let's call the onClick callback
-                        onClick()
-                    } else {
-                        // Otherwise, reset the offset
-                        offsetX.value = 0f
-                    }
-                }
-            )
-            .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-    ) {
-        FavoriteForecast(
-            location = location,
-            weatherIcon = weatherIcon,
-            midDayTemp = midDayTemp,
-            description = description
-        )
-    }
-}
-
-@Composable
-fun FavoriteForecast(location: String, weatherIcon: Int, midDayTemp: String, description: String){
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(8.dp)
-    ){
-        ImageIcon(y = -3, x = -2, symbolId = weatherIcon, 79, 81)
-
-        Spacer(modifier = Modifier.weight(0.1f))
-        Column(
-            modifier = Modifier
-
-        ) {
-            Text(
-                text = location,
-                fontSize = 24.sp,
-
-                )
-            Text(
-                text = description,
-                fontSize = 15.sp
-            )
-
-
-        }
-        Spacer(modifier = Modifier.weight(1f))
-
-
-        Text(
-            text = midDayTemp,
-            fontSize = 24.sp,
-        )
-    }
-}
-
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBarField(
-    favoriteViewModel: FavoriteViewModel
-){
-    var text by remember { mutableStateOf("") }
-    var active by remember { mutableStateOf(false) }
-
-
-    SearchBar(
-        modifier = Modifier
-            .width(380.dp)
-            .height(350.dp)
-            .clip(RoundedCornerShape(15.dp)),
-        query = text,
-        onQueryChange = {
-            text= it
-        },
-        onSearch = {},
-        active = active,
-        //remember to change functionality
-        onActiveChange = {
-            active= it
-        },
-        placeholder = {
-            Text(text = "Skriv stedsnavn")
-        },
-        leadingIcon = {
-            Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
-        },
-        trailingIcon = {
-            if (active) {
-                Icon(
-                    modifier = Modifier.clickable {
-                        if(text.isNotEmpty()){
-                            text = ""
-                        } else{
-                            active = false
-                        }
-                    },
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close icon"
-                )
-            }
-        }
-    ){
-        /*LazyColumn {
-
-            favoriteViewModel.locationsUiState?.forEach { location ->
-                item {
-                    Box(modifier = Modifier.clickable {
-                        active=false
-                        favoriteViewModel.loadFavourites(location)}){
-                        Text(
-                            text = location.name + location.lat,
-                            modifier = Modifier.padding(
-                                start = 8.dp,
-                                top = 4.dp,
-                                end = 8.dp,
-                                bottom = 4.dp
-                            )
-                        )
-                    }
-
-
-                }
-            }
-        }*/
-    }
-
-}*/
 
 
 
