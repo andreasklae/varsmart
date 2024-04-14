@@ -22,16 +22,23 @@ class LocationDataSource() {
     suspend fun fetchAddresses(search:String): List<CustomLocation> {
 
         val path="https://api.kartverket.no/stedsnavn/v1/navn?sok=$search&utkoordsys=4258&treffPerSide=10&side=1"
-        val response: ApiResponse = client.get(path).body()
-        return response.navn.map { navnItem ->
-            CustomLocation(
-                name = navnItem.skrivemåte,
-                lon = navnItem.representasjonspunkt.øst,
-                lat = navnItem.representasjonspunkt.nord,
-                type = navnItem.navneobjekttype,
-                fylke = navnItem.fylker.joinToString(separator = ", ") { it.fylkesnavn } // Assumes there can be more than one fylke; adjust as needed
-            )
+
+        try {
+            val response: ApiResponse = client.get(path).body()
+            return response.navn.map { navnItem ->
+                CustomLocation(
+                    name = navnItem.skrivemåte,
+                    lon = navnItem.representasjonspunkt.øst,
+                    lat = navnItem.representasjonspunkt.nord,
+                    type = navnItem.navneobjekttype,
+                    fylke = navnItem.fylker.joinToString(separator = ", ") { it.fylkesnavn } // Assumes there can be more than one fylke; adjust as needed
+                )
+            }
         }
+        catch (e: Exception){
+            return emptyList()
+        }
+
     }
 }
 

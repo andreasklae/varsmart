@@ -4,11 +4,9 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,43 +16,52 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -63,10 +70,8 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.glassEffect
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ImageIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
-import kotlin.math.absoluteValue
-import kotlin.math.roundToInt
+import java.nio.file.WatchEvent
 
 //A data class for dummy data
 data class Favorite(
@@ -85,12 +90,7 @@ fun FavoriteScreen(
     pagerState: PagerState
 )
 {
-    val favorites = DataHolder.Favourites.sortedBy { if (it.location.name.equals("Min posisjon")) 0 else 1  }
-    val version = 1
-    var showSearch by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf("") }
-    var active by remember { mutableStateOf(false) }
-
+    val favorites = DataHolder.Favourites.sortedBy { if (it.location.name.equals("Min posisjon")) 0 else 1 }
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
@@ -115,181 +115,30 @@ fun FavoriteScreen(
         }
 
         item {
-            var isOpen by rememberSaveable {
-                mutableStateOf(false)
-            }
-
-            Button(
+            // adding new location button
+            ElevatedButton(
                 onClick = {
-                    isOpen = true
-                    showSearch = true
+                    favVM.toggleBottomSheet()
                 },
                 shape = CircleShape,
                 modifier = Modifier
-                    .glassEffect()
                     .clip(CircleShape),
                 colors = ButtonDefaults.buttonColors(Color.Transparent)
-
 
             ) {
                 Icon(Icons.Filled.Add,"legg til posisjon")
             }
             Spacer(modifier = Modifier.height(12.dp))
-            Button(
-                onClick = {
-                    activity.getCurrentLocation()
-                },
-                shape = CircleShape,
-                modifier = Modifier
-                    .glassEffect()
-                    .clip(CircleShape),
-                colors = ButtonDefaults.buttonColors(Color.Transparent)
-            ){
-                Icon(Icons.Filled.Place, "Min Posisjon")
+
+            val showBottomSheet by favVM.showBottomSheet.collectAsState()
+
+            if (showBottomSheet){
+                BottomSheet(favVM, activity)
             }
-
-
-            val sheetState = rememberModalBottomSheetState()
-            if(version == 1){
-                if(showSearch) {
-                    Dialog(onDismissRequest = { showSearch = false }) {
-                        Surface(
-                            color = Color.White,
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .fillMaxWidth(0.9f)
-                                .fillMaxHeight(0.7f)
-                                .clip(RoundedCornerShape(15.dp))
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(15.dp))
-                                    //.padding(10.dp)
-                                    .fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                //Button(onClick = {showSearch = false}){}
-                                //SearchBarField(favoriteViewModel = favoriteViewModel)
-                                SearchBar(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                    query = text,
-                                    onQueryChange = {
-                                        text = it
-                                    },
-                                    onSearch = {
-                                        favVM.loadSearch(text)
-                                        active = true
-
-                                        println("trykket sok")
-
-                                    },
-                                    active = active,
-                                    //remember to change functionality
-                                    onActiveChange = {
-                                        active = it
-                                    },
-                                    placeholder = {
-                                        Text(text = "Skriv stedsnavn")
-                                    },
-                                    leadingIcon = {
-                                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
-                                    },
-                                    trailingIcon = {
-                                        if (active) {
-                                            Icon(
-                                                modifier = Modifier.clickable {
-                                                    if (text.isNotEmpty()) {
-                                                        text = ""
-                                                    } else {
-                                                        active = false
-                                                    }
-                                                },
-                                                imageVector = Icons.Default.Close,
-                                                contentDescription = "Close icon"
-                                            )
-                                        }
-                                    }
-                                ) {
-
-                                    LazyColumn {
-                                        favVM.locationsUiState.forEach { location ->
-                                            item {
-                                                Box(modifier = Modifier.clickable {
-                                                    active = false
-                                                    DataHolder(location)
-                                                    showSearch = false
-                                                }) {
-                                                    //updates the list
-                                                    /*LaunchedEffect(location){
-                                                                favoriteViewModel.loadFavourites(location)
-                                                            }*/
-
-                                                    Text(
-                                                        text = "${location.name}, (${location.fylke})",
-                                                        modifier = Modifier.padding(
-                                                            start = 8.dp,
-                                                            top = 4.dp,
-                                                            end = 8.dp,
-                                                            bottom = 4.dp
-                                                        )
-                                                    )
-                                                }
-
-
-                                            }
-                                        }
-
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            val showDialog by favVM.showSearch.collectAsState()
+            if (showDialog){
+                SearchDialog(favVM)
             }
-            else{
-                if (isOpen){
-                    ModalBottomSheet(
-                        onDismissRequest = { isOpen = false },
-                        sheetState = sheetState,
-                        modifier = Modifier
-                            .animateContentSize(
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioLowBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-
-                            )
-
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Column(
-                                Modifier.padding(20.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.clickable {
-                                        activity.getCurrentLocation()
-                                        isOpen = false
-                                    }
-                                ) {
-                                    Icon(Icons.Filled.Place,"legg til posisjon")
-                                    Text(
-                                        text = "Legg til Nåværende posisjon",
-                                        fontSize = 20.sp
-                                    )
-
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
 
         }
         item {
@@ -298,6 +147,255 @@ fun FavoriteScreen(
 
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheet(favVM: FavoriteViewModel, activity: MainActivity) {
+    val sheetState = rememberModalBottomSheetState()
+    ModalBottomSheet(
+        onDismissRequest = { favVM.toggleBottomSheet() },
+        sheetState = sheetState,
+    ) {
+        Column(
+            Modifier
+                .padding(horizontal = 20.dp)
+                .fillMaxSize()
+        ) {
+            // header
+            Row {
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "Legg til sted",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.weight(1f))
+
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // current location
+            if (!DataHolder.Favourites.any{it.location.name == "Min posisjon"}){
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.LightGray.copy(alpha = 0.3f))
+                        .clickable {
+                            activity.getCurrentLocation()
+                            favVM.toggleBottomSheet()
+                        }
+                        .padding(15.dp)
+
+
+                ) {
+                    Icon(Icons.Filled.Place,"legg til posisjon")
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(
+                        text = "Nåværende posisjon",
+                        fontSize = 20.sp
+                    )
+
+                }
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.LightGray.copy(alpha = 0.3f))
+                    .clickable {
+                        favVM.toggleBottomSheet()
+                        favVM.toggleSearchDialog()
+                    }
+                    .padding(15.dp)
+
+
+            ) {
+                Icon(Icons.Filled.Search,"legg til posisjon")
+                Spacer(modifier = Modifier.width(20.dp))
+                Text(
+                    text = "Søk",
+                    fontSize = 20.sp
+                )
+
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchDialog(favVM: FavoriteViewModel) {
+    Dialog(onDismissRequest = {
+        favVM.toggleSearchDialog()
+        favVM.emptySearchresults()
+    }) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Surface(
+                color = Color.White,
+                modifier = Modifier
+                    .fillMaxWidth(0.95f)
+                    .fillMaxHeight(0.8f)
+                    .clip(RoundedCornerShape(15.dp))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(15.dp))
+                        .padding(20.dp)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                )
+                {
+                    SearchBox(favVM)
+                    SearchResults(favVM)
+                }
+
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .wrapContentWidth()
+                    .clickable { favVM.toggleBottomSheet() }
+                    .padding(15.dp)
+
+            ) {
+                Icon(Icons.Filled.Close,"fjern fra favoritter")
+            }
+            Spacer(modifier = Modifier.weight(1f))
+
+        }
+
+    }
+}
+
+@Composable
+fun SearchResults(favVM: FavoriteViewModel) {
+    val searchText by favVM.searchText.collectAsState()
+    val searchResults by favVM.searchResults.collectAsState()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (searchText.isNotEmpty() && searchResults.isEmpty()) {
+             Text(text = "Fant ingen resultater")
+        }
+        searchResults.forEach { location ->
+            Spacer(modifier = Modifier.height(10.dp))
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFFF5F5F5))
+                    .padding(15.dp)
+
+            ){
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "${location.name}",
+                        fontSize = 20.sp,
+                    )
+                    Text(
+                        text = "${location.type} i ${location.fylke} ",
+                        fontSize = 10.sp,
+                    )
+                }
+                Spacer(modifier = Modifier.width(5.dp))
+                // if location allready exists
+                if (DataHolder.Favourites.any{it.location == location}){
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFFFE0E0))
+                            .wrapContentWidth()
+                            .clickable {
+                                DataHolder.Favourites.remove(
+                                    DataHolder.Favourites.find {
+                                        it.location == location
+                                    }
+                                )
+                            }
+                            .padding(10.dp)
+                    ) {
+                        Icon(Icons.Filled.Close,"fjern fra favoritter")
+                    }
+                } else{
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFE0FFE0))
+                            .wrapContentWidth()
+                            .clickable {
+                                DataHolder(location)
+                            }
+                            .padding(10.dp)
+                    ) {
+                        Icon(Icons.Filled.Add,"legg til sted i favoritter")
+                    }
+                }
+
+            }
+
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBox(favVM: FavoriteViewModel) {
+    val searchText by favVM.searchText.collectAsState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    OutlinedTextField(
+        value = searchText,
+        onValueChange = { favVM.changeSearchText(it) },
+        modifier = Modifier.fillMaxWidth(),
+        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
+        trailingIcon = {
+            if (searchText.isNotEmpty()) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Clear Text",
+                    modifier = Modifier.clickable {
+                        favVM.changeSearchText("")
+                        keyboardController?.hide()  // Optionally hide the keyboard when clearing text
+                    }
+                )
+            }
+        },
+        placeholder = { Text("Søk...") },
+        singleLine = true,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Color.Blue,
+            unfocusedBorderColor = Color.Gray
+        ),
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = {
+            favVM.toggleSearching(false)
+            keyboardController?.hide()  // Hide the keyboard when the user confirms the search
+        })
+    )
+}
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
