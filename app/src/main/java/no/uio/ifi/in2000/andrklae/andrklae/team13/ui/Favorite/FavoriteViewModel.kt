@@ -31,6 +31,12 @@ class FavoriteViewModel() : ViewModel() {
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
 
+    val statusStates = listOf("loading", "success", "failed")
+    private val _searchStatus = MutableStateFlow(statusStates[0])
+    val searchStatus = _searchStatus.asStateFlow()
+
+
+    // variables for bottom sheet
     val _showBottomSheet = MutableStateFlow(false)
     val showBottomSheet = _showBottomSheet.asStateFlow()
 
@@ -51,9 +57,23 @@ class FavoriteViewModel() : ViewModel() {
     fun changeSearchText(text: String){
         emptySearchresults()
         _searchText.value = text
-        // if its not an empty search
+        // if its not an empty string, search on text change
         if (text != ""){
             loadSearch(text)
+        }
+    }
+
+    fun loadSearch(search: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            _searchStatus.value = statusStates[0]
+            val newList = locationRepository.getLocations(search)
+            if (newList.isNotEmpty()){
+                _searchResults.value = newList
+                _searchStatus.value = statusStates[1]
+            }
+            else{
+                _searchStatus.value = statusStates[2]
+            }
         }
     }
 
@@ -81,12 +101,6 @@ class FavoriteViewModel() : ViewModel() {
 
     fun updateFavouriteList(){
         favourites = DataHolder.Favourites
-    }
-    fun loadSearch(search: String){
-        viewModelScope.launch(Dispatchers.IO) {
-            // fetches from api
-            _searchResults.value = locationRepository.getLocations(search)
-        }
     }
     fun emptySearchresults(){
         // empties the list

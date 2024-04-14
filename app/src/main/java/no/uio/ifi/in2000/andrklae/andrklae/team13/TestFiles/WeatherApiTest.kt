@@ -10,12 +10,10 @@ suspend fun main() {
 
     // specifies time and location
     val name = "Oslo"
-    val type = "By"
-    val fylke = "Oslo"
     val lat = 59.91
     val lon = 10.71
 
-    val customLocation = CustomLocation(name, lat, lon, type, fylke)
+    val customLocation = CustomLocation(name, lat, lon, "","")
 
     val year = "2024"
     val month = "03"

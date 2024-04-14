@@ -5,7 +5,6 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,27 +16,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
@@ -46,7 +40,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -71,7 +64,6 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
-import java.nio.file.WatchEvent
 
 //A data class for dummy data
 data class Favorite(
@@ -233,6 +225,7 @@ fun BottomSheet(favVM: FavoriteViewModel, activity: MainActivity) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchDialog(favVM: FavoriteViewModel) {
+    val searchStatus by favVM.searchStatus.collectAsState()
     Dialog(onDismissRequest = {
         favVM.toggleSearchDialog()
         favVM.emptySearchresults()
@@ -252,14 +245,36 @@ fun SearchDialog(favVM: FavoriteViewModel) {
                 Column(
                     modifier = Modifier
                         .clip(RoundedCornerShape(15.dp))
-                        .padding(20.dp)
+                        .padding(top = 20.dp, bottom = 0.dp)
+                        .padding(horizontal = 20.dp)
                         .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top
                 )
                 {
                     SearchBox(favVM)
-                    SearchResults(favVM)
+                    Spacer(modifier = Modifier.height(20.dp))
+                    when (searchStatus){
+                        // loading searches
+                        favVM.statusStates[0] -> {
+                            CircularProgressIndicator(color = Color.Black)
+                        }
+                        // found location(s)
+                        favVM.statusStates[1] -> {
+                            val scrollState = rememberScrollState()
+                            Column (modifier = Modifier.verticalScroll(scrollState)) {
+                                Surface {
+
+                                }
+                                SearchResults(favVM)
+                            }
+
+                        }
+                        // found no location
+                        favVM.statusStates[2] -> {
+                            Text(text = "Fant ingen resultater")
+                        }
+                    }
                 }
 
             }
@@ -289,11 +304,7 @@ fun SearchResults(favVM: FavoriteViewModel) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (searchText.isNotEmpty() && searchResults.isEmpty()) {
-             Text(text = "Fant ingen resultater")
-        }
         searchResults.forEach { location ->
-            Spacer(modifier = Modifier.height(10.dp))
             Row (
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -313,7 +324,7 @@ fun SearchResults(favVM: FavoriteViewModel) {
                         fontSize = 20.sp,
                     )
                     Text(
-                        text = "${location.type} i ${location.fylke} ",
+                        text = location.postSted + ", " + location.fylke,
                         fontSize = 10.sp,
                     )
                 }
@@ -353,8 +364,7 @@ fun SearchResults(favVM: FavoriteViewModel) {
                 }
 
             }
-
-
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }

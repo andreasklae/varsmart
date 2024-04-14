@@ -41,7 +41,7 @@ object LocationUtil {
                 val fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
                     location?.let {
-                        callback(CustomLocation("Min posisjon", it.latitude, it.longitude, "", ""))
+                        callback(CustomLocation("Min posisjon", it.latitude, it.longitude, "",""))
                     } ?: run {
                         // Location was null, handle accordingly
                         callback(null)

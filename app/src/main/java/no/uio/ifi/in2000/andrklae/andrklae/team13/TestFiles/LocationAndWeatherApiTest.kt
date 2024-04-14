@@ -1,9 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.LocationDataSource
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.LocationRepository
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherDataSource
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 
@@ -15,7 +13,7 @@ suspend fun main(){
     val list = LRepo.getLocations("Sagene")
     if(list.isNotEmpty()){
         val location = list.first()
-        println("Success. Found: ${location.name} in ${location.fylke}"
+        println("Success. Found: ${location.name} in ${location.postSted}"
         )
         println()
         val year = "2024"

@@ -13,12 +13,10 @@ suspend fun main(){
 suspend fun testWarning(){
 
     val name = "Custom location"
-    val type = "By"
-    val fylke = ""
     val lat = 58.0377
     val lon = 7.1592
 
-    val customLocation = CustomLocation(name, lat, lon, type, fylke)
+    val customLocation = CustomLocation(name, lat, lon, "","")
 
     val warningRepo = WarningRepository()
     val allWarnings = warningRepo.fetchAllWarnings()
