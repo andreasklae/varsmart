@@ -132,10 +132,8 @@ fun DisplayAllWarning() {
                     Marker(
                         state =
                         rememberMarkerState(
-                            position = LatLng(
-                                polygon.coordinates[0].latitude,
-                                polygon.coordinates[0].longitude
-                            )
+                            position = calculatePolygonCenter(polygon.coordinates)
+
                         ),
                         title = area,
                         snippet = "${it.alert.properties.eventAwarenessName}: " +
@@ -144,6 +142,7 @@ fun DisplayAllWarning() {
                             .defaultMarker(BitmapDescriptorFactory.HUE_RED),
                         alpha = 0.8f
                     )
+
                 }
 
             }
@@ -224,4 +223,30 @@ fun LoadWarningScreen(
 fun WarningBox(feature: Feature) {
     Text(text = feature.properties.area)
     Spacer(modifier = Modifier.height(30.dp))
+}
+
+fun calculatePolygonCenter(polygon: List<LatLng>): LatLng {
+    var totalLat = 0.0
+    var totalLng = 0.0
+
+    for (point in polygon) {
+        totalLat += point.latitude
+        totalLng += point.longitude
+    }
+
+    val centerLat = totalLat / polygon.size
+    val centerLng = totalLng / polygon.size
+
+    return LatLng(centerLat, centerLng)
+}
+
+fun getColorFromString(colorString: String): Color {
+    return when (colorString.lowercase()) {
+        "yellow" -> Color.Yellow
+        "green" -> Color.Green
+        "orange" -> Color(0xFFFFA500)
+        "red" -> Color.Red
+        // Add more cases as needed
+        else -> Color.Black // Default color or any other color you prefer
+    }
 }
