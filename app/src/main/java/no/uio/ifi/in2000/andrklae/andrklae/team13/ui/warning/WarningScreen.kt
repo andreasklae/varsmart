@@ -1,15 +1,20 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -26,22 +31,26 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.getColorFromString
 @Composable
 fun WarningScreen(warningViewModel: WarningViewModel = WarningViewModel()) {
     val warningStatus by warningViewModel.loadingStatus.collectAsState()
-
-    when (warningStatus) {
-        warningViewModel.statusStates[0] -> {
-
-        }
-
-        warningViewModel.statusStates[1] -> {
-
-        }
-
-        warningViewModel.statusStates[2] -> {
-
-        }
-    }
+    var test by remember { mutableIntStateOf(0) }
     Column(modifier = Modifier.fillMaxSize()) {
-        DisplayAllWarning()
+        when (warningStatus) {
+            warningViewModel.statusStates[0] -> {
+                Text(text = "Loading")
+            }
+
+            warningViewModel.statusStates[1] -> {
+                Text(text = "Success")
+                Spacer(modifier = Modifier.height(100.dp))
+                Text(text = test.toString())
+                test++
+            }
+
+            warningViewModel.statusStates[2] -> {
+                Text(text = "Failed")
+            }
+        }
+
+        //DisplayAllWarning()
     }
 }
 
