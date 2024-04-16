@@ -3,11 +3,14 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,102 +23,72 @@ import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
+import kotlin.math.roundToInt
 
 @Composable
-fun WeekTable(weatherVM: WeatherViewModel, data: DataHolder){
-    val status = data.weatherStatus
+fun WeekTable(data: DataHolder){
     val week = data.week
+    Column {
+        Header(header = "Været til uka")
+        Spacer(modifier = Modifier.height(10.dp))
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .glassEffect(),
+            contentAlignment = Alignment.Center
 
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 20.dp)
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .glassEffect(),
-        contentAlignment = Alignment.Center
+        ){
+            Column(
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 15.dp)
+                ) {
+                    Text(
+                        text = "Dag",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = "Temp",
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
 
-    ){
-        Column(
-        ) {
-            Text(
-                text = "Været den neste uken",
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(start = 20.dp, top = 20.dp, bottom = 5.dp)
-            )
-            Divider(
-                color = Color.Black,
-                thickness = 1.dp,
-                modifier = Modifier.padding(horizontal = 15.dp))
-            when (status.value) {
-                data.statusStates[0] ->{
-                    CircularProgressIndicator(
-                        color = Color.Black,
-                        strokeWidth = 4.dp,
-                        modifier = Modifier.padding(20.dp)
+                    Text(
+                        text = "Vær",
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
                     )
                 }
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 10.dp), thickness = 1.dp,
+                    color = Color.Black
+                )
 
-                data.statusStates[1] -> {
-                    Row(
-                        modifier = Modifier
-                            .padding(vertical = 8.dp, horizontal = 15.dp)
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Dag",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .weight(0.12f)
-                        )
-
-                        Text(
-                            text = "Vær",
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .weight(0.15f)
-                        )
-
-                        Text(
-                            text = "Temp",
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .weight(0.15f)
-                                .fillMaxWidth()
-                        )
-                        Text(
-                            text = "Regn",
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .weight(0.2f)
-                        )
-                    }
-                    week.forEach{
-                        val symbol = it.symbolName
-                        DayRow(it)
-                    }
-                }
-
-                data.statusStates[2] ->{
-
+                week.forEach{
+                    DayRow(it)
                 }
             }
-
-
         }
-
     }
+
 }
+
 @Composable
 fun DayRow(weather: WeatherTimeForecast){
     Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(vertical = 8.dp, horizontal = 15.dp)
             .fillMaxWidth()
@@ -123,32 +96,15 @@ fun DayRow(weather: WeatherTimeForecast){
         Text(
             text = weather.time.dayOfWeek.take(3),
             fontSize = 20.sp,
-            modifier = Modifier
-                .weight(0.12f)
         )
-
-        DrawSymbol(
-            weather.symbolName, 30.dp,
-            modifier = Modifier
-                .weight(0.15f)
-        )
-
+        Spacer(modifier = Modifier.weight(1f))
         Text(
             text = weather.temperature.toString() + "°C",
             textAlign = TextAlign.Center,
             fontSize = 20.sp,
-            modifier = Modifier
-                .weight(0.15f)
-                .fillMaxWidth()
         )
-        Text(
-            text = weather.precipitation.toString() + "mm",
-            textAlign = TextAlign.End,
-            fontSize = 20.sp,
-            modifier = Modifier
-                .weight(0.2f)
-        )
-
+        Spacer(modifier = Modifier.weight(1f))
+        DrawSymbol(weather.symbolName, 60.dp)
     }
 
 }

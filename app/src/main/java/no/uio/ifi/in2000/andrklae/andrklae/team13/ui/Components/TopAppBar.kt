@@ -55,17 +55,7 @@ fun TopAppBar(weatherVM: WeatherViewModel, pagerState: PagerState) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 60.dp)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White,
-                        Color.White.copy(alpha = 0.8f),
-                        Color.White.copy(alpha = 0.3f),
-                        Color.White.copy(alpha = 0.3f),// Light blue
-                        Color.White.copy(alpha = 1f)  // Dark blue
-                    )
-                )
-            )
+            .background(Color.White.copy(alpha = 0.6f))
     ) {
         FavouriteButton(pagerState)
         MapButton(weatherVM)

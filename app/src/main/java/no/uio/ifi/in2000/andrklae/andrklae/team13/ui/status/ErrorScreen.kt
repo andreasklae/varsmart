@@ -16,7 +16,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun ErrorScreen(favVM: FavoriteViewModel){
+fun ErrorScreen(weatherVM: WeatherViewModel){
 Column(
         modifier = Modifier
             .fillMaxSize()
@@ -36,7 +36,7 @@ Column(
             modifier = Modifier.padding(bottom = 16.dp)
         )
         Button(
-            onClick = {favVM.loadData()}
+            onClick = {weatherVM.updateAll()}
         ) {
             Text(text = "Try Again")
         }

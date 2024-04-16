@@ -177,7 +177,7 @@ fun FunctionRow(favVM: FavoriteViewModel) {
                     favVM.updateWeather()
                 }
             )
-        Icon(Icons.Filled.Edit,"refresh")
+        Icon(Icons.Filled.Edit,"edit")
     }
 }
 
@@ -494,7 +494,7 @@ fun FavoriteBox(weatherVM: WeatherViewModel, data: DataHolder, pagerState: Pager
                     pagerState.animateScrollToPage(1)
                 }
             }
-            .padding(horizontal = 5.dp)
+            .padding(10.dp)
             .animateContentSize(
                 animationSpec = spring(
                     dampingRatio = Spring.DampingRatioLowBouncy,
@@ -513,31 +513,45 @@ fun FavoriteBox(weatherVM: WeatherViewModel, data: DataHolder, pagerState: Pager
                 data.statusStates[0] -> {
                     Text(
                         text = data.location.name,
-                        fontSize = 24.sp
+                        fontSize = 30.sp
                     )
                     CircularProgressIndicator(color = Color.Black)
                 }
 
                 data.statusStates[1] -> {
-                    DrawSymbol(symbol = data.currentWeather!!.symbolName, size = 100.dp )
-                    Column{
+                    Spacer(modifier = Modifier.weight(2f))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
                         Text(
                             text = data.location.name,
-                            fontSize = 24.sp
+                            fontSize = 30.sp
                         )
+
                         Text(
-                            text = "sist oppdatert: ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
+                            text = "Oppdatert ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
                             fontSize = 15.sp
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
+                    Box (
+                        contentAlignment = Alignment.Center
+                    ){
+                        Column {
+                            Spacer(modifier = Modifier.weight(1f))
+                            DrawSymbol(symbol = data.currentWeather!!.symbolName, size = 90.dp )
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                        Column {
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = data.currentWeather!!.temperature.toString() + "°C",
+                                fontSize = 12.sp,
+                            )
+                        }
 
+                    }
 
-                    Text(
-                        text = data.currentWeather!!.temperature.toString() + "°C",
-                        fontSize = 24.sp,
-                    )
-                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                 }
             }
 

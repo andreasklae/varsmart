@@ -20,17 +20,17 @@ fun Modifier.glassEffect(): Modifier {
         .border(4.dp, Color.White.copy(alpha = 0.03f), RoundedCornerShape(15.dp))
         .background(brush = Brush.verticalGradient(
                 colors = listOf(
-                    Color.White.copy(alpha = 0.3f),
-                    Color.White.copy(alpha = 0.12f),
-                    Color.White.copy(alpha = 0.3f)
+                    Color.White.copy(alpha = 0.7f),
+                    Color.White.copy(alpha = 0.4f),
+                    Color.White.copy(alpha = 0.7f)
                 ),
             )
         )
         .background(brush = Brush.horizontalGradient(
                 colors = listOf(
-                    Color.White.copy(alpha = 0.25f),
-                    Color.White.copy(alpha = 0.12f),
-                    Color.White.copy(alpha = 0.25f)
+                    Color.White.copy(alpha = 0.7f),
+                    Color.White.copy(alpha = 0.4f),
+                    Color.White.copy(alpha = 0.7f)
                 ),
             )
         )

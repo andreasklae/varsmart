@@ -95,31 +95,35 @@ fun WarningRow(data: DataHolder, range: Int) {
                     alert
                 )
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(top = 15.dp)
-                    .glassEffect()
-                    .padding(5.dp)
-            ) {
-                filteredAlerts.forEach {
-                    var dotModifier = Modifier
-                        .padding(2.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.5f))
-                        .size(10.dp)
-                    if (pagerState.currentPage == filteredAlerts.indexOf(it)) {
-                        dotModifier = Modifier
+
+            // if there are more than one alert, show page indicator
+            if (filteredAlerts.size > 1){
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(top = 15.dp)
+                        .glassEffect()
+                        .padding(5.dp)
+                ) {
+                    filteredAlerts.forEach {
+                        var dotModifier = Modifier
                             .padding(2.dp)
                             .clip(CircleShape)
-                            .background(Color.Black)
-                            .size(12.dp)
+                            .background(Color.Black.copy(alpha = 0.5f))
+                            .size(10.dp)
+                        if (pagerState.currentPage == filteredAlerts.indexOf(it)) {
+                            dotModifier = Modifier
+                                .padding(2.dp)
+                                .clip(CircleShape)
+                                .background(Color.Black)
+                                .size(12.dp)
 
+                        }
+                        Box(modifier = dotModifier)
                     }
-
-                    Box(modifier = dotModifier)
                 }
             }
+
         }
     } else EmptyWarning()
 }
@@ -159,6 +163,7 @@ fun DisplayWarning(
                 .padding(horizontal = 20.dp, vertical = 10.dp)
         ) {
             Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
@@ -169,8 +174,6 @@ fun DisplayWarning(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
-
-                Spacer(Modifier.weight(1f))
                 IconButton(
                     onClick = { showDialog = true },
                     modifier = Modifier.size(50.dp)
@@ -181,9 +184,11 @@ fun DisplayWarning(
                         tint = Color.Black
                     )
                 }
+                Spacer(Modifier.weight(1f))
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded,
                 )
+
 
             }
             HorizontalDivider(
