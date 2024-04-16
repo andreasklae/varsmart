@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,8 +47,7 @@ val iconSize = 35.dp
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomAppBar(weatherVM: WeatherViewModel, pagerState: PagerState) {
-    Column(modifier = Modifier.fillMaxHeight()){
-        Spacer(modifier = Modifier.weight(1f))
+    Column(verticalArrangement = Arrangement.Bottom){
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
