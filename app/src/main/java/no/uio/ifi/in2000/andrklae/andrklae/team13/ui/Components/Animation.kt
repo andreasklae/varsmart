@@ -22,7 +22,7 @@ fun Chicken() {
         LottieCompositionSpec.RawRes(R.raw.chicken)
     )
 
-
+    // Test
     Box(
         modifier = Modifier,
         contentAlignment = Alignment.TopEnd) {
