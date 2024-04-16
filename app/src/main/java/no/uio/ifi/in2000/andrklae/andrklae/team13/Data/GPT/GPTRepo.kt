@@ -30,9 +30,9 @@ class GPTRepo {
                     "regn: ${it.precipitation}mm " +
                     "vind: ${it.windSpeed}m/s }")
         }
-        //return dataSource.getGPTResponse(prompt)
-        delay(2000)
-        return dummyResponse
+        return dataSource.getGPTResponse(prompt)
+        //delay(2000)
+        //return dummyResponse
 
     }
 
@@ -48,9 +48,9 @@ class GPTRepo {
                     "regn: ${it.precipitation}mm " +
                     "vind: ${it.windSpeed}m/s }")
         }
-        //return dataSource.getGPTResponse(prompt)
-        delay(2000)
-        return dummyResponse
+        return dataSource.getGPTResponse(prompt)
+        //delay(2000)
+        //return dummyResponse
     }
 
 }

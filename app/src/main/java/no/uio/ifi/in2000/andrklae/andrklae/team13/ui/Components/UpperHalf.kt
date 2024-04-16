@@ -64,58 +64,67 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 @Composable
 fun UpperHalf(weatherVM: WeatherViewModel, data: DataHolder){
     val loc = data.location.name
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(80.dp))
-        Box (
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .glassEffect()
-                .padding(vertical = 20.dp)
+    Box {
+        // background image
+        Image(
+            painter = painterResource(id = R.drawable.space),
+            contentDescription = "Background",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
-        {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(50.dp))
+            Box (
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .width(180.dp)
-            ) {
-                Text(text = loc, fontSize = 35.sp, textAlign = TextAlign.Center)
-                Text(
-                    text = "Oppdatert: ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
-                    fontSize = 15.sp,
-                    textAlign = TextAlign.Center
-                )
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .clickable {
-                        weatherVM.updateAll()
-                    }
-                    .clip(CircleShape)
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 20.dp)
-            ) {
-                Icon(
-                    Icons.Filled.Refresh,
-                    "refresh",
-                    Modifier.size(40.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .glassEffect()
+                    .padding(vertical = 20.dp)
+            )
+            {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .width(180.dp)
+                ) {
+                    Text(text = loc, fontSize = 35.sp, textAlign = TextAlign.Center)
+                    Text(
+                        text = "Oppdatert: ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
+                        fontSize = 15.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .clickable {
+                            weatherVM.updateAll()
+                        }
+                        .clip(CircleShape)
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 20.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.Refresh,
+                        "refresh",
+                        Modifier.size(40.dp)
 
 
-                )
+                    )
+                }
+
             }
+            WeatherBox(weatherVM, data)
+            Spacer(modifier = Modifier.height(20.dp))
+            val GPTMain by weatherVM.GPTMain.collectAsState()
+            GptSpeechBubble(GPTMain, { weatherVM.updateMainGpt() })
 
         }
-        WeatherBox(weatherVM, data)
-        Spacer(modifier = Modifier.height(20.dp))
-        val GPTMain by weatherVM.GPTMain.collectAsState()
-        GptSpeechBubble(GPTMain, { weatherVM.updateMainGpt() })
-
     }
 }
 

@@ -54,6 +54,7 @@ class WeatherViewModel(
             var loading = true
             _GPTMain.value = ""
             launch {
+                // simulates three dots loading
                 while (loading){
                     _GPTMain.value = dotLoading(_GPTMain.value)
                     delay(200)
@@ -64,9 +65,10 @@ class WeatherViewModel(
                 // done loading
                 loading = false
                 _GPTMain.value = ""
+                // simulates writing
                 data.value!!.mainGpt.value.forEach {
                     _GPTMain.value += it
-                    delay(15)
+                    delay(10)
 
                 }
             }

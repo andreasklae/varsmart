@@ -26,7 +26,6 @@ fun MasterUi(
 ) {
     val pagerState = rememberPagerState(
         pageCount = { 2 },
-        initialPage = 1
     )
     HorizontalPager(
         state = pagerState,
@@ -41,7 +40,7 @@ fun MasterUi(
                 )
             )
     ) { page ->
-        if (page == 0){
+        if (page == 1){
             FavoriteScreen(favVM, weatherVM, activity, pagerState)
         } else {
             WeatherScreen(weatherViewModel = weatherVM)

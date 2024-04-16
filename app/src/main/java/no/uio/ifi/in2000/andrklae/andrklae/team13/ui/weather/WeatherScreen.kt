@@ -51,14 +51,6 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
     val data = weatherViewModel.data.observeAsState().value
     val scrollState = rememberScrollState()
     Box {
-        // background image
-        Image(
-            painter = painterResource(id = R.drawable.space),
-            contentDescription = "Background",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-
         // contents
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -67,6 +59,7 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
+
             // keeps track of the status of the data
             when (data!!.weatherStatus.value) {
                 // loading
