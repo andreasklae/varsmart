@@ -180,7 +180,7 @@ fun ProfileButton(pagerState: PagerState) {
     ) {
         Icon(
             imageVector = icon(),
-            contentDescription = "Kart skjerm",
+            contentDescription = "Profil skjerm",
             modifier = Modifier.size(iconSize)
         )
 
