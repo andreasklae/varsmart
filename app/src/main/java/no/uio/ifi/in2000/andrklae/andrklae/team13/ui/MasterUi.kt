@@ -6,16 +6,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.BottomAppBar
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapScreen

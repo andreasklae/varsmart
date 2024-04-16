@@ -23,7 +23,6 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MasterUi
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.status.ErrorScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
 
