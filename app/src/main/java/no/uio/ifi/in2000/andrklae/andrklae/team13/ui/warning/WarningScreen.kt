@@ -25,11 +25,20 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.getColorFromString
 
 @Composable
 fun WarningScreen(warningViewModel: WarningViewModel = WarningViewModel()) {
-    val warningStatus = warningViewModel.loadingStatus.collectAsState()
-    val warningStat = warningViewModel.statusStates
+    val warningStatus by warningViewModel.loadingStatus.collectAsState()
 
-    when(warningStatus){
+    when (warningStatus) {
+        warningViewModel.statusStates[0] -> {
 
+        }
+
+        warningViewModel.statusStates[1] -> {
+
+        }
+
+        warningViewModel.statusStates[2] -> {
+
+        }
     }
     Column(modifier = Modifier.fillMaxSize()) {
         DisplayAllWarning()
