@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,8 +25,12 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.getColorFromString
 
 @Composable
 fun WarningScreen(warningViewModel: WarningViewModel = WarningViewModel()) {
+    val warningStatus = warningViewModel.loadingStatus.collectAsState()
+    val warningStat = warningViewModel.statusStates
 
+    when(warningStatus){
 
+    }
     Column(modifier = Modifier.fillMaxSize()) {
         DisplayAllWarning()
     }

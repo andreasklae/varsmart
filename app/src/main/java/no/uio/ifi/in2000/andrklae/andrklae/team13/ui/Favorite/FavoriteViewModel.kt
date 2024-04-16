@@ -15,7 +15,8 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Loca
 class FavoriteViewModel() : ViewModel() {
     val locationRepository: LocationRepository = LocationRepository()
     var favourites = DataHolder.Favourites
-    init{
+
+    init {
         loadData()
     }
 
