@@ -1,7 +1,6 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,9 +19,11 @@ import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.getColorFromString
 
 @Composable
-fun MapScreen(mapViewModel: MapViewModel = MapViewModel()){
+fun WarningScreen(mapViewModel: WarningViewModel = WarningViewModel()){
     Column(modifier = Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
