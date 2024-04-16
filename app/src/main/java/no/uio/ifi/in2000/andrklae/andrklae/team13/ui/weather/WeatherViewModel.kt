@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather
 
+import android.annotation.SuppressLint
 import android.util.TypedValue
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.lifecycle.LiveData
@@ -19,6 +20,7 @@ class WeatherViewModel(
     index: Int,
     activity: MainActivity,
 ) : ViewModel() {
+    @SuppressLint("StaticFieldLeak")
     val activity = activity
     private val _data = MutableLiveData<DataHolder>(DataHolder.Favourites[index])
     val data: LiveData<DataHolder> = _data
@@ -37,9 +39,13 @@ class WeatherViewModel(
             _GPTWeek.value = "Trykk på meg for å spørre om været det neste døgnet"
         }
     }
+
     @OptIn(ExperimentalFoundationApi::class)
     fun setLocation(i: Int) {
-        print("Changing location from ${_data.value?.location?.name} to ${DataHolder.Favourites[i].location.name}")
+        print(
+            "Changing location from ${_data.value?.location?.name}" +
+                    " to ${DataHolder.Favourites[i].location.name}"
+        )
         val isSame = data.value!!.location == DataHolder.Favourites[i].location
 
         if (!isSame) {
@@ -48,6 +54,7 @@ class WeatherViewModel(
             }
         }
     }
+
     fun updateMainGpt() {
         viewModelScope.launch {
             // to keep track of loading status
@@ -55,7 +62,7 @@ class WeatherViewModel(
             _GPTMain.value = ""
             launch {
                 // simulates three dots loading
-                while (loading){
+                while (loading) {
                     _GPTMain.value = dotLoading(_GPTMain.value)
                     delay(200)
                 }
@@ -74,13 +81,14 @@ class WeatherViewModel(
             }
         }
     }
+
     fun updateGPTWeek() {
         viewModelScope.launch {
             // to keep track of loading status
             var loading = true
             _GPTWeek.value = ""
             launch {
-                while (loading){
+                while (loading) {
                     _GPTWeek.value = dotLoading(_GPTWeek.value)
                     delay(200)
                 }
