@@ -65,6 +65,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3:1.2.1")
+    implementation ("androidx.compose.material:material-icons-core:1.6.5")
+    implementation ("androidx.compose.material:material-icons-extended:1.6.5")
     implementation ("org.slf4j:slf4j-log4j12:1.7.30")
     implementation("androidx.room:room-ktx:2.6.1")
     testImplementation("junit:junit:4.13.2")
@@ -86,7 +88,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
     implementation("io.ktor:ktor-client-core:2.3.8")
     implementation("io.ktor:ktor-client-cio:2.3.8")
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.4")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.5")
 
     implementation("io.coil-kt:coil-compose:2.5.0")
 

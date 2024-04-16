@@ -26,7 +26,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -36,7 +35,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
@@ -52,12 +49,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Polygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import kotlin.math.roundToInt
 
 var expanded = false
@@ -95,31 +91,35 @@ fun WarningRow(data: DataHolder, range: Int) {
                     alert
                 )
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(top = 15.dp)
-                    .glassEffect()
-                    .padding(5.dp)
-            ) {
-                filteredAlerts.forEach {
-                    var dotModifier = Modifier
-                        .padding(2.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.5f))
-                        .size(10.dp)
-                    if (pagerState.currentPage == filteredAlerts.indexOf(it)) {
-                        dotModifier = Modifier
+
+            // if there are more than one alert, show page indicator
+            if (filteredAlerts.size > 1){
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(top = 15.dp)
+                        .glassEffect()
+                        .padding(5.dp)
+                ) {
+                    filteredAlerts.forEach {
+                        var dotModifier = Modifier
                             .padding(2.dp)
                             .clip(CircleShape)
-                            .background(Color.Black)
-                            .size(12.dp)
+                            .background(Color.Black.copy(alpha = 0.5f))
+                            .size(10.dp)
+                        if (pagerState.currentPage == filteredAlerts.indexOf(it)) {
+                            dotModifier = Modifier
+                                .padding(2.dp)
+                                .clip(CircleShape)
+                                .background(Color.Black)
+                                .size(12.dp)
 
+                        }
+                        Box(modifier = dotModifier)
                     }
-
-                    Box(modifier = dotModifier)
                 }
             }
+
         }
     } else EmptyWarning()
 }
@@ -159,6 +159,7 @@ fun DisplayWarning(
                 .padding(horizontal = 20.dp, vertical = 10.dp)
         ) {
             Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
@@ -169,8 +170,6 @@ fun DisplayWarning(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
-
-                Spacer(Modifier.weight(1f))
                 IconButton(
                     onClick = { showDialog = true },
                     modifier = Modifier.size(50.dp)
@@ -181,9 +180,11 @@ fun DisplayWarning(
                         tint = Color.Black
                     )
                 }
+                Spacer(Modifier.weight(1f))
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded,
                 )
+
 
             }
             HorizontalDivider(

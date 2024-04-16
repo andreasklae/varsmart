@@ -36,15 +36,12 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -69,7 +66,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.glassEffect
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 //A data class for dummy data
@@ -177,7 +174,7 @@ fun FunctionRow(favVM: FavoriteViewModel) {
                     favVM.updateWeather()
                 }
             )
-        Icon(Icons.Filled.Edit,"refresh")
+        Icon(Icons.Filled.Edit,"edit")
     }
 }
 
@@ -491,10 +488,10 @@ fun FavoriteBox(weatherVM: WeatherViewModel, data: DataHolder, pagerState: Pager
             .clickable {
                 coroutineScope.launch {
                     weatherVM.setLocation(DataHolder.Favourites.indexOf(data))
-                    pagerState.animateScrollToPage(1)
+                    pagerState.animateScrollToPage(0)
                 }
             }
-            .padding(horizontal = 5.dp)
+            .padding(10.dp)
             .animateContentSize(
                 animationSpec = spring(
                     dampingRatio = Spring.DampingRatioLowBouncy,
@@ -513,31 +510,45 @@ fun FavoriteBox(weatherVM: WeatherViewModel, data: DataHolder, pagerState: Pager
                 data.statusStates[0] -> {
                     Text(
                         text = data.location.name,
-                        fontSize = 24.sp
+                        fontSize = 30.sp
                     )
                     CircularProgressIndicator(color = Color.Black)
                 }
 
                 data.statusStates[1] -> {
-                    DrawSymbol(symbol = data.currentWeather!!.symbolName, size = 100.dp )
-                    Column{
+                    Spacer(modifier = Modifier.weight(2f))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
                         Text(
                             text = data.location.name,
-                            fontSize = 24.sp
+                            fontSize = 30.sp
                         )
+
                         Text(
-                            text = "sist oppdatert: ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
+                            text = "Oppdatert ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
                             fontSize = 15.sp
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
+                    Box (
+                        contentAlignment = Alignment.Center
+                    ){
+                        Column {
+                            Spacer(modifier = Modifier.weight(1f))
+                            DrawSymbol(symbol = data.currentWeather!!.symbolName, size = 90.dp )
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                        Column {
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = data.currentWeather!!.temperature.toString() + "°C",
+                                fontSize = 12.sp,
+                            )
+                        }
 
+                    }
 
-                    Text(
-                        text = data.currentWeather!!.temperature.toString() + "°C",
-                        fontSize = 24.sp,
-                    )
-                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                 }
             }
 

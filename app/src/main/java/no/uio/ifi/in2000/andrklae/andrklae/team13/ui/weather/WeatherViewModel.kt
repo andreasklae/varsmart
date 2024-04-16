@@ -1,76 +1,114 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather
 
 import android.annotation.SuppressLint
+import android.util.TypedValue
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
-import kotlinx.coroutines.delay
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 
-class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
-
-
+class WeatherViewModel(
+    index: Int,
+    activity: MainActivity,
+) : ViewModel() {
+    @SuppressLint("StaticFieldLeak")
+    val activity = activity
     private val _data = MutableLiveData<DataHolder>(DataHolder.Favourites[index])
     val data: LiveData<DataHolder> = _data
 
-    //val activity = activity
+    private val _GPTMain = MutableStateFlow("Trykk på meg for å spørre om praktiske tips!")
+    val GPTMain = _GPTMain.asStateFlow()
 
-    /* init {
-        updateAll()
+
+    private val _GPTWeek = MutableStateFlow("Trykk på meg for å spørre om været det neste døgnet")
+    val GPTWeek = _GPTWeek.asStateFlow()
+
+    fun updateAll() {
+        viewModelScope.launch {
+            data.value!!.updateAll()
+            _GPTMain.value = "Trykk på meg for å spørre om praktiske tips!"
+            _GPTWeek.value = "Trykk på meg for å spørre om været det neste døgnet"
+        }
     }
-    fun updateAll(){
-        if (activity.isOnline()){
-            println("has internet")
-            println("Updating data for ${_data.value?.location?.name}")
-            updateWeather()
-            updateWarning()
-            updateSunriseAndSunset()
-        }
-        else{
-            _wStatus.value = statusStates [2]
-            _sunStatus.value = statusStates [2]
-        }
 
-    }*/
     @OptIn(ExperimentalFoundationApi::class)
     fun setLocation(i: Int) {
-        print("Changing location from ${_data.value?.location?.name} to ${DataHolder.Favourites[i].location.name}")
+        print(
+            "Changing location from ${_data.value?.location?.name}" +
+                    " to ${DataHolder.Favourites[i].location.name}"
+        )
         val isSame = data.value!!.location == DataHolder.Favourites[i].location
 
         if (!isSame) {
             viewModelScope.launch {
                 _data.value = DataHolder.Favourites[i]
-            }
+                _GPTMain.value = data.value!!.mainGpt.value
+                _GPTWeek.value = data.value!!.weekGpt.value
 
+            }
         }
     }
+
     fun updateMainGpt() {
         viewModelScope.launch {
-            if (data.value!!.mainGpt == "") {
+            // to keep track of loading status
+            var loading = true
+            _GPTMain.value = ""
+            launch {
+                // simulates three dots loading
+                while (loading) {
+                    _GPTMain.value = dotLoading(_GPTMain.value)
+                    delay(200)
+                }
+            }
+            launch {
                 data.value!!.updateGPTCurrent()
+                // done loading
+                loading = false
+                _GPTMain.value = ""
+                // simulates writing
+                data.value!!.mainGpt.value.forEach {
+                    _GPTMain.value += it
+                    delay(10)
+
+                }
             }
         }
-
     }
+
     fun updateGPTWeek() {
         viewModelScope.launch {
-            data.value!!.updateGPTWeek()
+            // to keep track of loading status
+            var loading = true
+            _GPTWeek.value = ""
+            launch {
+                while (loading) {
+                    _GPTWeek.value = dotLoading(_GPTWeek.value)
+                    delay(200)
+                }
+            }
+            launch {
+                data.value!!.updateGPTWeek()
+                // done loading
+                loading = false
+                _GPTWeek.value = ""
+                data.value!!.weekGpt.value.forEach {
+                    _GPTWeek.value += it
+                    delay(15)
+                }
+            }
         }
     }
+
     fun dotLoading(input: String): String {
         var dots = input
         if (dots == ". . . ") {
@@ -80,71 +118,11 @@ class WeatherViewModel(index: Int, activity: MainActivity): ViewModel() {
         }
         return dots
     }
-        /*
 
-    fun updateWeather() {
-        viewModelScope.launch {
-
-            // loading dots while waiting for GPT response
-            launch {
-                while (data.value!!.GPTCurrent == ""){
-                    _gptCurrent.value = dotLoading(_gptCurrent.value)
-                    delay(500)
-                }
-            }
-
-            launch {
-                _wStatus.value = statusStates[0]
-                data.value!!.updateAll()
-                val weather = data.value!!.currentWeather
-
-                if (weather != null) {
-                    _currentWeather.value = weather
-                    _symbol.value = weather.symbolName.toString()
-                    _next24.value = data.value!!.next24h
-                    _week.value = data.value!!.week
-                    _wStatus.value = statusStates[1]
-
-                    data.value!!.updateGPTCurrent()
-                    val response = data.value!!.GPTCurrent
-                    _gptCurrent.value = ""
-
-                    // simulate writing
-                    response.forEach {
-                        _gptCurrent.value += it
-                        delay(20)
-                    }
-                } else {
-                    println("Failed fetching current weather for ${data.value!!.location.name}")
-                    _wStatus.value = statusStates[2]
-                }
-            }
-
-        }
+    // function for converting sp to dp
+    fun spToDp(sp: Float): Float {
+        val metrics = activity.resources.displayMetrics
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, metrics) / metrics.density
     }
-
-    fun updateSunriseAndSunset() {
-        viewModelScope.launch {
-            _sunStatus.value = statusStates[0]
-            data.value!!.updateSunriseAndSunset()
-            _rise.value = data.value!!.rise.toString()
-            _set.value = data.value!!.set.toString()
-
-            if (data.value!!.rise == null || data.value!!.set == null){
-                _sunStatus.value = statusStates[2]
-            }
-            else{
-                _sunStatus.value = statusStates[1]
-            }
-
-        }
-    }
-    fun updateWarning() {
-        viewModelScope.launch {
-            data.value!!.updateWarning()
-            _alerts.value = data.value!!.alertList
-
-        }
-    } */
 
 }

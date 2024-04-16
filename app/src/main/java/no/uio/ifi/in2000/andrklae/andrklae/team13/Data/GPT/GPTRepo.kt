@@ -6,12 +6,10 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForeca
 
 class GPTRepo {
     val dummyResponse = "dummy response: Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, " +
-            "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum " +
-            "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium " +
-            "optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis"
+            "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum "
     val dataSource = GPTDataSource()
     @OptIn(BetaOpenAI::class)
-    suspend fun fetchCurrent(weather: WeatherTimeForecast, next24: List<WeatherTimeForecast>): String? {
+    suspend fun fetchCurrent(weather: WeatherTimeForecast, next24: List<WeatherTimeForecast>): String {
         var prompt = (
                 "oppsumer været og gi relevante råd,maks 30 ord,ett avsnitt. " +
                         "Du er kortfattet,jovial,uformell,enkel å forstå. " +
@@ -32,14 +30,10 @@ class GPTRepo {
                     "regn: ${it.precipitation}mm " +
                     "vind: ${it.windSpeed}m/s }")
         }
-        try {
-            //return dataSource.getGPTResponse(prompt)
-            delay(2000)
-            return dummyResponse
-        }
-        catch (e: Exception) {
-            return null
-        }
+        return dataSource.getGPTResponse(prompt)
+        //delay(2000)
+        //return dummyResponse
+
     }
 
     suspend fun fetchWeek(next24h: List<WeatherTimeForecast>): String {
@@ -55,6 +49,8 @@ class GPTRepo {
                     "vind: ${it.windSpeed}m/s }")
         }
         return dataSource.getGPTResponse(prompt)
+        //delay(2000)
+        //return dummyResponse
     }
 
 }

@@ -2,7 +2,7 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map
 
 import com.google.android.gms.maps.model.PolygonOptions
 import com.google.maps.android.clustering.ClusterItem
-
+/*
 data class ZoneClusterItem(
     val id: String,
     private val title: String,
@@ -20,3 +20,5 @@ data class ZoneClusterItem(
 
     override fun getPosition() = polygonOptions.points.getCenterOfPolygon().center
 }
+
+ */

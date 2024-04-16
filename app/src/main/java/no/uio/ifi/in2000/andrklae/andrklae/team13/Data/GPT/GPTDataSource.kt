@@ -26,7 +26,7 @@ class GPTDataSource {
             val completion: ChatCompletion = apiKey.chatCompletion(chatCompletionRequest)
             return completion.choices.first().message?.content.toString()
         } catch (e: Exception) {
-            return "failed"
+            return "Kunne ikke generere tekt. Har du internett tilgang?"
         }
 
     }

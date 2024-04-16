@@ -6,7 +6,7 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map
  */
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-
+/*
 fun List<LatLng>.getCenterOfPolygon(): LatLngBounds {
     val centerBuilder: LatLngBounds.Builder = LatLngBounds.builder()
     forEach { centerBuilder.include(LatLng(it.latitude, it.longitude)) }
@@ -73,3 +73,5 @@ private fun List<LatLng>.findMaxMins(): CameraViewCoord {
     }
     return viewCoord ?: throw IllegalStateException("viewCoord cannot be null.")
 }
+
+ */

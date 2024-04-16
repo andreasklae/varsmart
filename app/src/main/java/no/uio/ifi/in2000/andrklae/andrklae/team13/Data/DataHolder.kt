@@ -26,12 +26,11 @@ data class DataHolder(
     val weatherStatus = mutableStateOf(statusStates[0])
     var currentWeather: WeatherTimeForecast? = null
 
-    val mainGptStatus = mutableStateOf(statusStates[0])
-    var mainGpt = ""
+    val mainGpt = mutableStateOf("")
 
     var next24h: List<WeatherTimeForecast> = listOf()
     var week: List<WeatherTimeForecast> = listOf()
-    var weekGpt = ""
+    val weekGpt = mutableStateOf("")
 
     // variables for sunrise and sunset
     var rise: String? = null
@@ -64,6 +63,16 @@ data class DataHolder(
     @SuppressLint("MutableCollectionMutableState")
     companion object {
         val Favourites = mutableStateListOf<DataHolder>()
+        // initializes
+        val initLocation = DataHolder(
+            CustomLocation(
+                "Ålesund",
+                62.47,
+                6.15,
+                "Ålesund",
+                "Møre og Romsdal"
+            )
+        )
         val wRepo = WeatherRepository()
         val aRepo = WarningRepository()
         val gptRepo = GPTRepo()
@@ -86,7 +95,21 @@ data class DataHolder(
         updateWeather()
         updateWarning()
         updateSunriseAndSunset()
-        updateGPTCurrent()
+    }
+
+    fun findHighestAndLowestTemp (): List<String>{
+        val templist = mutableListOf<Double>(currentWeather!!.temperature!!.toDouble())
+        next24h.forEach {
+            // makes sure that it only fetches the temperatures for this day and not tomorrow
+            // note: the api doesnt fetch data in the past, so the highest and lowest will not include past temperatures
+            if (it.time.hour.toInt() < currentHour.toInt() || it.time.hour.toInt() == 0){
+                templist.add(it.temperature!!.toDouble())
+            }
+        }
+
+        val highest = templist.max()
+        val lowest = templist.min()
+        return listOf(lowest.toString(), highest.toString())
     }
 
     suspend fun updateWeather() {
@@ -105,9 +128,6 @@ data class DataHolder(
             updateWeek(newWeather)
             // sets status to success
             weatherStatus.value = statusStates[1]
-            // updates Gpt advice
-            updateGPTCurrent()
-
         }
         else{
             weatherStatus.value = statusStates[2]
@@ -115,18 +135,13 @@ data class DataHolder(
     }
 
     suspend fun updateGPTCurrent(){
-        // sets status to loading
-        mainGptStatus.value = statusStates[0]
-
+        mainGpt.value = ""
         // fetches from api
-        val newResponse = gptRepo.fetchCurrent(currentWeather!!, next24h)
-        if (newResponse != null){
-            mainGpt = newResponse
-            mainGptStatus.value = statusStates[1]
-        }
-        else{
-            mainGptStatus.value = statusStates[2]
-        }
+        mainGpt.value = gptRepo.fetchCurrent(currentWeather!!, next24h)
+    }
+    suspend fun updateGPTWeek() {
+        weekGpt.value = ""
+        weekGpt.value = gptRepo.fetchWeek(next24h)
     }
 
     suspend fun updateNext24h(newWeather: WeatherForecast){
@@ -227,7 +242,7 @@ data class DataHolder(
         }
     }
 
-    fun getCurrentTime(): DateTime{
+    fun getCurrentTime(): DateTime {
         var current = LocalDateTime.now()
         var currentYear = current.year.toString()
         var currentMonth = current.monthValue.toString()
@@ -242,9 +257,5 @@ data class DataHolder(
             currentMinute
         )
         return dt
-    }
-
-    suspend fun updateGPTWeek() {
-        weekGpt = "gptRepo.fetchWeek(next24h)"
     }
 }
