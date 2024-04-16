@@ -26,10 +26,11 @@ class WarningViewModel() : ViewModel() {
     val loadingStatus = _loadingStatus.asStateFlow()
 
     init {
-        loadWarnings()
+        println("INITIATE")
+        loadWarnings1()
     }
 
-    fun loadWarnings() {
+    fun loadWarnings1() {
         viewModelScope.launch(Dispatchers.IO) {
             _loadingStatus.value = statusStates[0]
             val newList = listOf(warningRepository.fetchAllWarnings())
