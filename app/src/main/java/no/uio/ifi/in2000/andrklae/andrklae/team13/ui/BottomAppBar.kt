@@ -16,10 +16,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -154,9 +156,9 @@ fun ProfileButton(pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
     val icon = {
         if (pagerState.currentPage == 3) {
-            Icons.Filled.AccountCircle
+            Icons.Filled.Settings
         }
-        else Icons.Outlined.AccountCircle
+        else Icons.Outlined.Settings
     }
     IconButton(
         onClick = {
@@ -169,7 +171,7 @@ fun ProfileButton(pagerState: PagerState) {
     ) {
         Icon(
             imageVector = icon(),
-            contentDescription = "Profil skjerm",
+            contentDescription = "Innstillinger skjerm",
             modifier = Modifier.size(iconSize)
         )
 
