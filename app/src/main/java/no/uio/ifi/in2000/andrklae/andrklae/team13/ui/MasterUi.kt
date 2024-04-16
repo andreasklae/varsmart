@@ -16,6 +16,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsScreen
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
@@ -26,7 +27,8 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 fun MasterUi(
     activity: MainActivity,
     weatherVM: WeatherViewModel = WeatherViewModel(0, activity),
-    favVM: FavoriteViewModel = FavoriteViewModel()
+    favVM: FavoriteViewModel = FavoriteViewModel(),
+    settingsVM: SettingsViewModel = SettingsViewModel()
 ) {
     val pagerState = rememberPagerState(
         pageCount = { 4 },
@@ -51,7 +53,7 @@ fun MasterUi(
                 0 -> WeatherScreen(weatherViewModel = weatherVM)
                 1 -> FavoriteScreen(favVM, weatherVM, activity, pagerState)
                 2 -> WarningScreen()
-                3 -> SettingsScreen()
+                3 -> SettingsScreen(settingsVM)
 
             }
 

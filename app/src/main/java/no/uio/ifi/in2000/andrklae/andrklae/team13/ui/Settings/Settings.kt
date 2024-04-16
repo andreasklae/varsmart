@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,37 +10,50 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.SportsSoccer
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.flow.collect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.MrPraktisk
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
-@Preview(showSystemUi = true)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    settingsVm: SettingsViewModel = SettingsViewModel()
+    settingsVm: SettingsViewModel
 ){
+    val scrollState = rememberScrollState()
     Column(
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
+            .verticalScroll(scrollState)
             .fillMaxSize()
             .background(Color.White)
             .padding(horizontal = 20.dp)
@@ -115,7 +129,7 @@ fun SettingsScreen(
         }
         Spacer(modifier = Modifier.height(15.dp))
 
-        // Hobbys
+        // Hobbies
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -127,36 +141,48 @@ fun SettingsScreen(
                 text = "Har du noen hobbyer?",
                 fontSize = 15.sp
             )
-            Text(
-                text = "Blir brukt for at Mr. praktisk skal gi bedre svar",
-                fontSize = 10.sp
-            )
-            var sliderPosition by remember { mutableFloatStateOf(0f) }
-            val alder by settingsVm.age.collectAsState()
-            Slider(
-                value = sliderPosition,
-                onValueChange = {
-                    sliderPosition = it
+            var text by remember { mutableStateOf("") }
+            val keyboardController = LocalSoftwareKeyboardController.current
+            val focusManager = LocalFocusManager.current
+            val hobbies by settingsVm.hobbies.collectAsState()
+            OutlinedTextField(
+                value = text,
+                onValueChange = {text = it},
+                modifier = Modifier
+                    .fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Default.SportsSoccer, contentDescription = "Search Icon") },
+                trailingIcon = {
+                    if (text.isNotEmpty()) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Clear Text",
+                            modifier = Modifier.clickable {
+                                text = ""
+                            }
+                        )
+                    }
                 },
-                colors = SliderColors(
-                    thumbColor = Color.Black,
-                    activeTrackColor = Color.White,
-                    inactiveTrackColor = Color.White,
-                    activeTickColor = Color.Black,
-                    inactiveTickColor = Color.Black,
-                    disabledThumbColor = Color.Black,
-                    disabledActiveTrackColor = Color.White,
-                    disabledActiveTickColor = Color.White,
-                    disabledInactiveTrackColor = Color.White,
-                    disabledInactiveTickColor = Color.White
+                placeholder = { Text("Skriv en hobby...") },
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Blue,
+                    unfocusedBorderColor = Color.Gray
+                ),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                        settingsVm.addHobby(text)
+                        println(hobbies)
+                        text = ""
+                    }
                 )
             )
-            settingsVm.changeAgeByFraction(sliderPosition.toDouble())
-            val text = {
-                if (alder == 25) "25+ år"
-                else alder.toString() + " år"
+            hobbies.forEach{
+                Text(text = it)
             }
-            Text(text = text())
+
 
         }
 
