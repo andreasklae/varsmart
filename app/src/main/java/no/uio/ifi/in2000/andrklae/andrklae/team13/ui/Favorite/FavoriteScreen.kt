@@ -488,7 +488,7 @@ fun FavoriteBox(weatherVM: WeatherViewModel, data: DataHolder, pagerState: Pager
             .clickable {
                 coroutineScope.launch {
                     weatherVM.setLocation(DataHolder.Favourites.indexOf(data))
-                    pagerState.animateScrollToPage(1)
+                    pagerState.animateScrollToPage(0)
                 }
             }
             .padding(10.dp)

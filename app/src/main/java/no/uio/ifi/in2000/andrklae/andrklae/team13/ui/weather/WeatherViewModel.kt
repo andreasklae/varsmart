@@ -51,6 +51,9 @@ class WeatherViewModel(
         if (!isSame) {
             viewModelScope.launch {
                 _data.value = DataHolder.Favourites[i]
+                _GPTMain.value = data.value!!.mainGpt.value
+                _GPTWeek.value = data.value!!.weekGpt.value
+
             }
         }
     }
