@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

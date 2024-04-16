@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,18 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.Next24
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.RainWind
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.UpperHalf
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.WarningRow
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.WeekTable
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.glassEffect
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 
 @SuppressLint(

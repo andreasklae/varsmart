@@ -36,15 +36,12 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -69,7 +66,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.glassEffect
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 //A data class for dummy data
