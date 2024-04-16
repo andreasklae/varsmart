@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.TopAppBar
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.BottomAppBar
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherScreen
@@ -48,7 +48,7 @@ fun MasterUi(
         }
 
     }
-    TopAppBar(weatherVM, pagerState)
+    BottomAppBar(weatherVM, pagerState)
 
 
 

@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Settings
@@ -34,7 +31,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -47,21 +43,33 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TopAppBar(weatherVM: WeatherViewModel, pagerState: PagerState) {
-
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.Top,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 60.dp)
-            .background(Color.White.copy(alpha = 0.6f))
-    ) {
-        FavouriteButton(pagerState)
-        MapButton(weatherVM)
+fun BottomAppBar(weatherVM: WeatherViewModel, pagerState: PagerState) {
+    Column(modifier = Modifier.fillMaxHeight()){
         Spacer(modifier = Modifier.weight(1f))
-        SettingsButton()
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            Color.Yellow.copy(alpha = 0.7f),
+                            Color.Red.copy(alpha = 0.7f),
+                            Color.Blue.copy(alpha = 0.7f)
+                        )
+                    )
+                )
+        ) {
+            FavouriteButton(pagerState)
+            Spacer(modifier = Modifier.weight(1f))
+            MapButton(weatherVM)
+            Spacer(modifier = Modifier.weight(1f))
+            SettingsButton()
+        }
     }
+
 
 
 }
@@ -88,10 +96,8 @@ fun FavouriteButton(pagerState: PagerState) {
         Image(
             painter = painterResource(id = R.drawable.favoritt),
             contentDescription = "Image Description",
-
             modifier = Modifier
                 .size(40.dp)
-
         )
 
     }
