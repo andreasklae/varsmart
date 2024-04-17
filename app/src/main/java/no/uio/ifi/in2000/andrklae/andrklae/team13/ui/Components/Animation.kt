@@ -16,8 +16,7 @@ class Animation {
 }
 
 @Composable
-fun Blink(modifier: Modifier) {
-
+fun Blink() {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.blink)
     )
