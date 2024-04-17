@@ -23,8 +23,6 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,29 +30,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
 fun UpperHalf(
-    weatherVM: WeatherViewModel,
     data: DataHolder,
     background: Background,
+    updateAll: () -> Unit,
     age: Int,
-    hobbies: List<String>
+    gptText: String,
+    hobbies: List<String>,
+    updateMainGpt: (Int, List<String>) -> Unit
 ){
     val loc = data.location.name
-    val sunStatus = data.sunStatus
-    val set = data.set
-    val rise = data.rise
 
     Box {
         // background image
@@ -63,7 +57,7 @@ fun UpperHalf(
             contentDescription = "Background",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(550.dp),
+                .height(570.dp),
             contentScale = ContentScale.Crop
         )
         // main components of the screen
@@ -75,7 +69,7 @@ fun UpperHalf(
 
             // row for actions
             ActionRow(
-                updateAll = { weatherVM.updateAll() },
+                updateAll = { updateAll() },
                 addToFavourites = { data.addToFavourites() },
                 removeFromFavourites = { data.removeFromFavorites() },
                 isInFavourites = DataHolder.Favourites.contains(data)
@@ -97,12 +91,8 @@ fun UpperHalf(
                 temperature = data.currentWeather!!.temperature!!,
                 loc,
             )
-
-
-            //WeatherBox(weatherVM, data)
-            Spacer(modifier = Modifier.height(20.dp))
-            val GPTMain by weatherVM.GPTMain.collectAsState()
-            GPTBox(GPTMain, { weatherVM.updateMainGpt(age, hobbies) })
+            Spacer(modifier = Modifier.height(10.dp))
+            GPTBox(gptText, { updateMainGpt(age, hobbies) } )
         }
     }
 }
@@ -110,21 +100,24 @@ fun UpperHalf(
 @Composable
 fun GPTBox(content: String, function: () -> Unit) {
     Column(
-        //verticalAlignment = Alignment.CenterVertically,
-        //horizontalArrangement = Arrangement.Start,
+        horizontalAlignment = Alignment.End,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.White)
                 .padding(10.dp)
         ) {
-            Text(text = content)
+            Text(
+                text = content,
+                fontSize = 12.sp
+            )
         }
+        ImageIcon(y = 0, x = -20 , symbolId =R.drawable.arrowdown , width =60 , height =25 )
         MrPraktiskBlink({ function()})
     }
 }
@@ -236,7 +229,7 @@ fun BasicInfo(
                 .padding(bottom = 10.dp)
         ) {
             Spacer(modifier = Modifier.weight(1f))
-            DrawSymbol(symbol = symbolName, size = 80.dp)
+            DrawSymbol(symbol = symbolName, size = 85.dp)
             Spacer(modifier = Modifier.weight(1f))
             Text(text = temperature.toString() + "°C")
         }

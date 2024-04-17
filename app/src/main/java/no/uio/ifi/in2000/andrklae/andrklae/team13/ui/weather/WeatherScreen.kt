@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.Next24
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.RainWind
@@ -45,12 +46,16 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun WeatherScreen(
-    weatherViewModel: WeatherViewModel,
+    data: DataHolder,
     background: Background,
+    updateAll: () -> Unit,
     age: Int,
-    hobbies: List<String>
+    gptMain: String,
+    hobbies: List<String>,
+    updateMainGpt: (Int, List<String>) -> Unit,
+    gpt24h: String,
+    update24hGpt: (Int) -> Unit
 ) {
-    val data = weatherViewModel.data.observeAsState().value
     val scrollState = rememberScrollState()
     Box {
         // contents
@@ -63,7 +68,7 @@ fun WeatherScreen(
         ) {
 
             // keeps track of the status of the data
-            when (data!!.weatherStatus.value) {
+            when (data.weatherStatus.value) {
                 // loading
                 data.statusStates[0] -> {
 
@@ -77,14 +82,25 @@ fun WeatherScreen(
                 }
                 // success
                 data.statusStates[1] -> {
-                    UpperHalf(weatherViewModel, data, background, age, hobbies)
+                    UpperHalf(
+                        data = data,
+                        background = background,
+                        updateAll = { updateAll() },
+                        age = age,
+                        gptText = gptMain,
+                        hobbies = hobbies,
+                        updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) }
+                    )
 
                     if (data.alertStatus.value == data.statusStates[1]) {
-
                         WarningRow(data, 500)
-
                     }
-                    Next24(weatherViewModel, data, age)
+                    Next24(
+                        data = data,
+                        age = age,
+                        gpt24h = gpt24h,
+                        updateGpt = { update24hGpt(age) }
+                    )
 
                     RainWind(data)
                     WeekTable(data)
@@ -119,9 +135,9 @@ fun WeatherScreen(
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
-                                .glassEffect()
-                                .background(Color.Red.copy(alpha = 0.3f))
-                                .padding(20.dp)
+                                    .glassEffect()
+                                    .background(Color.Red.copy(alpha = 0.3f))
+                                    .padding(20.dp)
                             ) {
                                 Text(text = "Feilet", fontSize = 25.sp)
                                 Spacer(modifier = Modifier.height(10.dp))
@@ -133,7 +149,7 @@ fun WeatherScreen(
                                         .padding(3.dp)
                                         .clip(RoundedCornerShape(13.dp))
                                         .background(Color.White)
-                                        .clickable { weatherViewModel.updateAll() }
+                                        .clickable { updateAll }
                                         .padding(10.dp)
                                 ) {
 
@@ -149,11 +165,24 @@ fun WeatherScreen(
                     }
                     // if it has previous data
                     else {
-                        UpperHalf(weatherViewModel, data, background, age, hobbies)
+                        UpperHalf(
+                            data = data,
+                            background = background,
+                            updateAll = { updateAll() },
+                            age = age,
+                            gptText = gptMain,
+                            hobbies = hobbies,
+                            updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) }
+                        )
 
                         WarningRow(data, 500)
 
-                        Next24(weatherViewModel, data, age)
+                        Next24(
+                            data = data,
+                            age = age,
+                            gpt24h = gpt24h,
+                            updateGpt = { update24hGpt(age) }
+                        )
 
                         RainWind(data)
 

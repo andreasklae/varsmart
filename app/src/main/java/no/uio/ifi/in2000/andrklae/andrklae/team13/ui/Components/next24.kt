@@ -23,12 +23,15 @@ import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun Next24(weatherVM: WeatherViewModel, data: DataHolder, age: Int){
+fun Next24(
+    data: DataHolder,
+    age: Int,
+    gpt24h: String,
+    updateGpt: (Int) -> Unit
+){
     val next24 = data.next24h
-    val GPTWeek by weatherVM.GPTWeek.collectAsState()
     val scrollState = rememberScrollState()
     Column {
         Header("Været det neste døgnet")
@@ -49,7 +52,7 @@ fun Next24(weatherVM: WeatherViewModel, data: DataHolder, age: Int){
 
         }
         Spacer(modifier = Modifier.height(10.dp))
-        GptSpeechBubble(GPTWeek, { weatherVM.updateGPT24h(age) })
+        GptSpeechBubble(gpt24h, { updateGpt(age) })
     }
 
 }

@@ -22,8 +22,8 @@ class WeatherViewModel(
 ) : ViewModel() {
     @SuppressLint("StaticFieldLeak")
     val activity = activity
-    private val _data = MutableLiveData<DataHolder>(dataHolder)
-    val data: LiveData<DataHolder> = _data
+    private val _data = MutableStateFlow(dataHolder)
+    val data = _data.asStateFlow()
 
     private val _GPTMain = MutableStateFlow("Trykk på meg for å spørre om praktiske tips!")
     val GPTMain = _GPTMain.asStateFlow()

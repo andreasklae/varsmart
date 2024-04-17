@@ -22,10 +22,12 @@ import androidx.compose.ui.Modifier
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MasterUi
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -53,8 +55,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val settingsVM = SettingsViewModel()
+        val favVM = FavoriteViewModel()
+        val weatherVM = WeatherViewModel(DataHolder.initLocation, this)
+        val warningVM = WarningViewModel()
+
         setContent {
-            MasterUi(this,settingsVM = SettingsViewModel())
+            MasterUi(
+                activity = this,
+                settingsVM = settingsVM,
+                favVM = favVM,
+                weatherVM = weatherVM,
+                warningVM = warningVM
+            )
         }
     }
 
