@@ -12,12 +12,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun MrPraktisk(generateText:() -> Unit){
-    Icon(
-        imageVector = Icons.Filled.Face,
-        contentDescription = "Play",
-        tint = Color.Black,
+    Blink(
         modifier = Modifier
-            .size(48.dp)
             .clickable { generateText() }
     )
 }

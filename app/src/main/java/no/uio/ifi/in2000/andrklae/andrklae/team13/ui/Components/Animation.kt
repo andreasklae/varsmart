@@ -16,19 +16,18 @@ class Animation {
 }
 
 @Composable
-fun Chicken() {
+fun Blink(modifier: Modifier) {
 
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.chicken)
+        LottieCompositionSpec.RawRes(R.raw.blink)
     )
 
-    // Test
     Box(
         modifier = Modifier,
         contentAlignment = Alignment.TopEnd) {
         LottieAnimation(
             composition = composition,
-            iterations = 1,
+            iterations = Int.MAX_VALUE,
             modifier = Modifier.size(120.dp)
         )
 
