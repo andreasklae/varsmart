@@ -101,14 +101,14 @@ dependencies {
     implementation("com.google.maps.android:maps-compose:4.3.3")
     implementation("com.google.maps.android:maps-ktx:5.0.0")
     implementation("com.google.maps.android:maps-utils-ktx:5.0.0")
-    implementation("com.google.dagger:hilt-android:2.44.2")
+    implementation("com.google.dagger:hilt-android:2.49")
 
     // For SVG
     implementation ("io.coil-kt:coil-compose:2.5.0")
     implementation ("io.coil-kt:coil-svg:2.1.0")
 
     // Kapt
-    kapt("com.google.dagger:hilt-compiler:2.44.2")
+    kapt("com.google.dagger:hilt-compiler:2.45")
 
     implementation("com.airbnb.android:lottie-compose:5.2.0")
 
@@ -124,7 +124,7 @@ dependencies {
     implementation ("com.aallam.openai:openai-client:3.0.0")
 
     // Hilt
-    implementation ("com.google.dagger:hilt-android:2.45")
+    implementation ("com.google.dagger:hilt-android:2.49")
     implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
     kapt ("com.google.dagger:hilt-compiler:2.45")
 

@@ -17,12 +17,12 @@ class WarningViewModel() : ViewModel() {
 
     val warningRepository: WarningRepository = WarningRepository()
 
-    private val _data = MutableStateFlow(listOf<Warning?>())
+    private val _data = MutableStateFlow(emptyList<Warning?>())
     val data = _data.asStateFlow()
 
 
     val statusStates = listOf("loading", "success", "failed")
-    private val _loadingStatus = MutableStateFlow(statusStates[1])
+    private val _loadingStatus = MutableStateFlow(statusStates[0])
     val loadingStatus = _loadingStatus.asStateFlow()
 
     init {
@@ -34,7 +34,7 @@ class WarningViewModel() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             _loadingStatus.value = statusStates[0]
             val newList = listOf(warningRepository.fetchAllWarnings())
-            if (newList.isNotEmpty()) {
+            if (!newList.contains(null)) {
                 _data.value = newList
                 _loadingStatus.value = statusStates[1]
             } else {

@@ -131,7 +131,7 @@ fun DisplayWarning(
 ) {
     val warningDescription = "${alert.alert.properties.instruction}" +
             " \n${alert.alert.properties.description} ${alert.alert.properties.consequences}"
-    val warningTitle = alert.alert.properties.area
+    val warningTitle = alert.alert.properties.thing(alert.alert.properties.area)
     val warningLevel = alert.alert.properties.riskMatrixColor
     val distance = alert.distance
     var showDialog by remember { mutableStateOf(false) }

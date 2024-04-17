@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -54,8 +55,10 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Properties
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.BottomSheet
@@ -65,12 +68,13 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FunctionRow
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.SearchDialog
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.getColorFromString
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.coloredGlassEffect
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
 fun WarningScreen(warningViewModel: WarningViewModel) {
     val warningStatus by warningViewModel.loadingStatus.collectAsState()
-    var test by remember { mutableIntStateOf(0) }
     val data by warningViewModel.data.collectAsState()
 
     when (warningStatus) {
@@ -86,18 +90,16 @@ fun WarningScreen(warningViewModel: WarningViewModel) {
 
         warningViewModel.statusStates[2] -> {
             Text(text = "Failed")
-            println("Testerr33")
         }
     }
-
-    //DisplayAllWarning()
-
 }
 
 @Composable
 fun DisplayAllWarning() {
     GoogleMap(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(5.dp),
         uiSettings = MapUiSettings(zoomControlsEnabled = true),
         cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(LatLng(59.9, 10.7), 5f)
@@ -221,8 +223,35 @@ fun LoadWarningScreen(
 
 @Composable
 fun WarningBox(feature: Feature) {
-    Text(text = feature.properties.area)
-    Spacer(modifier = Modifier.height(30.dp))
+    Box(
+        contentAlignment = Alignment.CenterStart,
+        modifier = Modifier
+            .padding(20.dp)
+            .fillMaxWidth()
+            .height(120.dp)
+            .glassEffect(color = getColorFromString(feature.properties.riskMatrixColor))
+            .clickable {
+                /* to do*/
+            }
+            .padding(10.dp)
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
+    )
+    {
+        Column {
+            Row {
+
+                Text(text = feature.properties.thing(feature.properties.area))
+            }
+            Row {
+                Text(text = feature.properties.description)
+            }
+        }
+    }
 }
 
 fun calculatePolygonCenter(polygon: List<LatLng>): LatLng {

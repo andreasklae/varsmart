@@ -11,7 +11,34 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-fun Modifier.glassEffect(): Modifier {
+fun Modifier.glassEffect(color: Color = Color.White): Modifier {
+    return this
+        .clip(RoundedCornerShape(15.dp))
+        .border(1.dp, color.copy(alpha = 0.3f), RoundedCornerShape(15.dp))
+        .border(2.dp, color.copy(alpha = 0.05f), RoundedCornerShape(15.dp))
+        .border(3.dp, color.copy(alpha = 0.02f), RoundedCornerShape(15.dp))
+        .border(4.dp, color.copy(alpha = 0.03f), RoundedCornerShape(15.dp))
+        .background(brush = Brush.verticalGradient(
+                colors = listOf(
+                    color.copy(alpha = 0.7f),
+                    Color.White.copy(alpha = 0.4f),
+                    color.copy(alpha = 0.7f)
+                ),
+            )
+        )
+        .background(brush = Brush.horizontalGradient(
+                colors = listOf(
+                    Color.White.copy(alpha = 0.7f),
+                    Color.White.copy(alpha = 0.4f),
+                    Color.White.copy(alpha = 0.7f)
+                ),
+            )
+        )
+
+
+}
+
+fun Modifier.coloredGlassEffect(color: Color): Modifier {
     return this
         .clip(RoundedCornerShape(15.dp))
         .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(15.dp))
@@ -20,9 +47,9 @@ fun Modifier.glassEffect(): Modifier {
         .border(4.dp, Color.White.copy(alpha = 0.03f), RoundedCornerShape(15.dp))
         .background(brush = Brush.verticalGradient(
                 colors = listOf(
-                    Color.White.copy(alpha = 0.7f),
-                    Color.White.copy(alpha = 0.4f),
-                    Color.White.copy(alpha = 0.7f)
+                    color.copy(alpha = 0.7f),
+                    color.copy(alpha = 0.4f),
+                    color.copy(alpha = 0.7f)
                 ),
             )
         )
