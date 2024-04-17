@@ -9,9 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.BackgroundImage
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
@@ -35,6 +36,7 @@ fun MasterUi(
     val pagerState = rememberPagerState(
         pageCount = { 4 },
     )
+    val background = settingsVM.background.collectAsState()
     Column(verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxSize()) {
         HorizontalPager(
@@ -43,16 +45,14 @@ fun MasterUi(
             modifier = Modifier
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFFB3E5FC), // Light blue
-                            Color(0xFF01579B)  // Dark blue
-                        )
+                        colors = background.value.gradientList
                     )
                 )
                 .weight(1f)
-        ) { page ->
+        ) {
+            page ->
             when (page){
-                0 -> WeatherScreen(weatherViewModel = weatherVM)
+                0 -> WeatherScreen(weatherViewModel = weatherVM, background.value)
                 1 -> FavoriteScreen(favVM, weatherVM, activity, pagerState)
                 2 -> WarningScreen(warningVM)
                 3 -> SettingsScreen(settingsVM)

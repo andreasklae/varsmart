@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.BackgroundImage
 
 class SettingsViewModel(): ViewModel() {
     private val _age = MutableStateFlow(9)
@@ -13,6 +13,9 @@ class SettingsViewModel(): ViewModel() {
 
     private var _hobbies = MutableStateFlow(listOf<String>())
     val hobbies = _hobbies.asStateFlow()
+
+    private var _background = MutableStateFlow(BackgroundImage.images.first())
+    val background = _background.asStateFlow()
 
     fun changeAgeByFraction(fraction: Double){
         _age.value = 9 + (16 * fraction).toInt()
@@ -29,6 +32,12 @@ class SettingsViewModel(): ViewModel() {
         viewModelScope.launch {
             val currentHobbies = hobbies.value
             _hobbies.value = currentHobbies.filter { it != hobby }
+        }
+    }
+
+    fun changeBackround(background: BackgroundImage){
+        viewModelScope.launch {
+            _background.value = background
         }
     }
 

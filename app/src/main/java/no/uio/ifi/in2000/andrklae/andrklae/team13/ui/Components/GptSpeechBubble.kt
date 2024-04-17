@@ -51,6 +51,6 @@ fun GptSpeechBubble(content: String, function:() -> Unit) {
             }
         }
         ImageIcon(y = 0, x = 0 , symbolId =R.drawable.arrowright , width =30 , height =60 )
-        MrPraktisk({ function()})
+        MrPraktiskBlink({ function()})
     }
 }

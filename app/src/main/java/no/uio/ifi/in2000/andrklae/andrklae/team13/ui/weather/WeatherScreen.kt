@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.BackgroundImage
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.Next24
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.RainWind
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.UpperHalf
@@ -43,7 +44,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 )
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun WeatherScreen(weatherViewModel: WeatherViewModel) {
+fun WeatherScreen(weatherViewModel: WeatherViewModel, background: BackgroundImage) {
     val data = weatherViewModel.data.observeAsState().value
     val scrollState = rememberScrollState()
     Box {
@@ -71,7 +72,7 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
                 }
                 // success
                 data.statusStates[1] -> {
-                    UpperHalf(weatherViewModel, data)
+                    UpperHalf(weatherViewModel, data, background)
 
                     if (data.alertStatus.value == data.statusStates[1]) {
 
@@ -143,7 +144,7 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
                     }
                     // if it has previous data
                     else {
-                        UpperHalf(weatherViewModel, data)
+                        UpperHalf(weatherViewModel, data, background)
 
                         WarningRow(data, 500)
 

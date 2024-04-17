@@ -31,19 +31,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.BackgroundImage
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun UpperHalf(weatherVM: WeatherViewModel, data: DataHolder){
+fun UpperHalf(weatherVM: WeatherViewModel, data: DataHolder, background: BackgroundImage){
     val loc = data.location.name
     Box {
         // background image
         Image(
-            painter = painterResource(id = R.drawable.space),
+            painter = painterResource(background.imageId),
             contentDescription = "Background",
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp),
             contentScale = ContentScale.Crop
         )
         Column(
