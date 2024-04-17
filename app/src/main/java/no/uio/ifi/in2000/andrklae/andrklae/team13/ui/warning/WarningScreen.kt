@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -54,8 +57,10 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Properties
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.BottomSheet
@@ -65,12 +70,13 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FunctionRow
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.SearchDialog
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.getColorFromString
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.coloredGlassEffect
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
 fun WarningScreen(warningViewModel: WarningViewModel) {
     val warningStatus by warningViewModel.loadingStatus.collectAsState()
-    var test by remember { mutableIntStateOf(0) }
     val data by warningViewModel.data.collectAsState()
 
     when (warningStatus) {
@@ -86,18 +92,16 @@ fun WarningScreen(warningViewModel: WarningViewModel) {
 
         warningViewModel.statusStates[2] -> {
             Text(text = "Failed")
-            println("Testerr33")
         }
     }
-
-    //DisplayAllWarning()
-
 }
 
 @Composable
 fun DisplayAllWarning() {
     GoogleMap(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(5.dp),
         uiSettings = MapUiSettings(zoomControlsEnabled = true),
         cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(LatLng(59.9, 10.7), 5f)
@@ -177,15 +181,19 @@ fun LoadWarningScreen(
         item {
             Spacer(modifier = Modifier.height(90.dp))
         }
+        item { 
+            Text(text = "Se i kart")
+        }
         // Row for refreshing and editing list
         item {
             Icon(
-                Icons.Filled.LocationOn,
+                Icons.Filled.Map,
                 "show all in map",
                 modifier = Modifier
                     .clickable {
                         showMap = true
                     }
+                    .size(50.dp, 50.dp)
             )
             Spacer(modifier = Modifier.height(40.dp))
         }
@@ -221,8 +229,38 @@ fun LoadWarningScreen(
 
 @Composable
 fun WarningBox(feature: Feature) {
-    Text(text = feature.properties.area)
-    Spacer(modifier = Modifier.height(30.dp))
+    Box(
+        contentAlignment = Alignment.CenterStart,
+        modifier = Modifier
+            .padding(20.dp)
+            .fillMaxWidth()
+            .height(120.dp)
+            .coloredGlassEffect(
+                color = getColorFromString(feature.properties.riskMatrixColor)
+                    .copy(0.2f)
+            )
+            .clickable {
+                /* to do*/
+            }
+            .padding(10.dp)
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
+    )
+    {
+        Column {
+            Row {
+
+                Text(text = feature.properties.thing(feature.properties.area))
+            }
+            Row {
+                Text(text = feature.properties.description)
+            }
+        }
+    }
 }
 
 fun calculatePolygonCenter(polygon: List<LatLng>): LatLng {
