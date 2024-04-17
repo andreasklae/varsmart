@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -179,15 +181,19 @@ fun LoadWarningScreen(
         item {
             Spacer(modifier = Modifier.height(90.dp))
         }
+        item { 
+            Text(text = "Se i kart")
+        }
         // Row for refreshing and editing list
         item {
             Icon(
-                Icons.Filled.LocationOn,
+                Icons.Filled.Map,
                 "show all in map",
                 modifier = Modifier
                     .clickable {
                         showMap = true
                     }
+                    .size(50.dp, 50.dp)
             )
             Spacer(modifier = Modifier.height(40.dp))
         }
@@ -229,7 +235,10 @@ fun WarningBox(feature: Feature) {
             .padding(20.dp)
             .fillMaxWidth()
             .height(120.dp)
-            .glassEffect(color = getColorFromString(feature.properties.riskMatrixColor))
+            .coloredGlassEffect(
+                color = getColorFromString(feature.properties.riskMatrixColor)
+                    .copy(0.2f)
+            )
             .clickable {
                 /* to do*/
             }
