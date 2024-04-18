@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchDialog
@@ -100,7 +101,7 @@ fun UpperHalf(
             var set = ""
 
             // if sunrise api is successful
-            if (data.sunStatus.value == data.statusStates[1]) {
+            if (data.sunStatus.value == Status.SUCCESS) {
                 rise = data.rise!!.substringAfter("T").substringBefore("+")
                 set = data.set!!.substringAfter("T").substringBefore("+")
             }

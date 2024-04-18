@@ -9,13 +9,14 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 
 class SearchViewModel: ViewModel() {
     val locationRepository: LocationRepository = LocationRepository()
     var favourites = DataHolder.Favourites
 
     val statusStates = listOf("loading", "success", "failed")
-    private val _searchStatus = MutableStateFlow(statusStates[1])
+    private val _searchStatus = MutableStateFlow(Status.SUCCESS)
     val searchStatus = _searchStatus.asStateFlow()
 
     private val _showSearchDialog = MutableStateFlow(false)
@@ -48,14 +49,14 @@ class SearchViewModel: ViewModel() {
     }
     fun loadSearch(search: String){
         viewModelScope.launch(Dispatchers.IO) {
-            _searchStatus.value = statusStates[0]
+            _searchStatus.value = Status.LOADING
             val newList = locationRepository.getLocations(search)
             if (newList.isNotEmpty()){
                 _searchResults.value = newList
-                _searchStatus.value = statusStates[1]
+                _searchStatus.value = Status.SUCCESS
             }
             else{
-                _searchStatus.value = statusStates[2]
+                _searchStatus.value = Status.FAILED
             }
         }
     }

@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,12 +96,12 @@ fun SearchDialog(
                     )
                     when (searchStatus){
                         // loading searches
-                        searchVm.statusStates[0] -> {
+                        Status.LOADING -> {
                             Spacer(modifier = Modifier.height(20.dp))
                             CircularProgressIndicator(color = Color.Black)
                         }
                         // found location(s)
-                        searchVm.statusStates[1] -> {
+                        Status.SUCCESS -> {
                             Box (
                                 modifier = Modifier
                                     // creates a fade on the top and bottom of the scrolling column
@@ -139,7 +140,7 @@ fun SearchDialog(
                             }
                         }
                         // found no location
-                        searchVm.statusStates[2] -> {
+                        Status.FAILED -> {
                             Text(text = "Fant ingen resultater")
                         }
                     }

@@ -59,6 +59,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Properties
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
@@ -79,17 +80,17 @@ fun WarningScreen(warningViewModel: WarningViewModel) {
     val data by warningViewModel.data.collectAsState()
 
     when (warningStatus) {
-        warningViewModel.statusStates[0] -> {
+        Status.LOADING -> {
             Text(text = "Loading")
             CircularProgressIndicator(color = Color.Black)
         }
 
-        warningViewModel.statusStates[1] -> {
+        Status.SUCCESS-> {
             data[0]?.let { LoadWarningScreen(it) }
 
         }
 
-        warningViewModel.statusStates[2] -> {
+        Status.FAILED -> {
             Text(text = "Failed")
         }
     }
