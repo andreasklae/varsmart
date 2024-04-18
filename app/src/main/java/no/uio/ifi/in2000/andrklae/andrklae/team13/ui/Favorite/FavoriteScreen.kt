@@ -7,6 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,18 +18,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CancelPresentation
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DisabledByDefault
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.DisabledByDefault
+import androidx.compose.material.icons.outlined.InsertDriveFile
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -45,7 +60,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
@@ -105,7 +122,16 @@ fun FavoriteScreen(
         // boxes for each favourite
         favorites.forEach {
             item {
-                FavoriteBox({ data -> setHomeLocation(data) }, it, pagerState)
+                val listState = rememberLazyListState()
+                val snap = rememberSnapFlingBehavior(lazyListState = listState)
+                LazyRow(
+                    modifier = Modifier.wrapContentWidth(),
+                    state = listState,
+                    flingBehavior = snap
+                ) {
+                    item { FavoriteBox({ data -> setHomeLocation(data) }, it, pagerState) }
+                    item { DeleteBox(it) }
+                }
             }
         }
 
@@ -157,6 +183,30 @@ fun FavoriteScreen(
         item {
             Spacer(modifier = Modifier.fillMaxHeight())
         }
+
+    }
+}
+
+@Composable
+fun DeleteBox(data: DataHolder) {
+    Row {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .clickable { data.toggleInFavourites() }
+                .size(120.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.Red)
+        ){
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Fjern",
+                tint = Color.White,
+                modifier = Modifier.size(40.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(20.dp))
 
     }
 }
@@ -272,8 +322,8 @@ fun FavoriteBox(
     Box(
         contentAlignment = Alignment.CenterStart,
         modifier = Modifier
-            .padding(20.dp)
-            .fillMaxWidth()
+            .width(LocalConfiguration.current.screenWidthDp.dp)
+            .padding(horizontal = 20.dp)
             .height(120.dp)
             .glassEffect()
             .clickable {
@@ -299,18 +349,13 @@ fun FavoriteBox(
             val status = data.weatherStatus
             when (status.value) {
                 Status.LOADING -> {
-                    Spacer(modifier = Modifier.weight(2f))
+                    Spacer(modifier = Modifier.weight(1f))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = data.location.name,
                             fontSize = 30.sp
-                        )
-
-                        Text(
-                            text = " f",
-                            fontSize = 15.sp
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -323,18 +368,20 @@ fun FavoriteBox(
                 }
 
                 Status.SUCCESS -> {
-                    Spacer(modifier = Modifier.weight(2f))
+                    Spacer(modifier = Modifier.weight(1f))
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxHeight()
                     ) {
+                        Spacer(modifier = Modifier.weight(2f))
                         Text(
                             text = data.location.name,
                             fontSize = 30.sp
                         )
-
+                        Spacer(modifier = Modifier.weight(1f))
                         Text(
                             text = "Oppdatert ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
-                            fontSize = 15.sp
+                            fontSize = 15.sp,
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -358,7 +405,54 @@ fun FavoriteBox(
                     }
 
                 }
+
                 Status.FAILED ->{
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxHeight()
+                    ) {
+                        Spacer(modifier = Modifier.weight(2f))
+                        Text(
+                            text = data.location.name,
+                            fontSize = 30.sp
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(
+                            text = "Feilet.\n" +
+                                    "Sjekk internett",
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Center,
+                            color = Color.Red
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.width(90.dp)
+                    ) {
+                        Column {
+                            Spacer(modifier = Modifier.weight(1f))
+                            val updateScope = rememberCoroutineScope()
+                            Box(
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.InsertDriveFile,
+                                    contentDescription = "Last på nytt",
+                                    modifier = Modifier
+                                        .size(70.dp)
+                                )
+                                Icon(
+                                    imageVector = Icons.Outlined.Close,
+                                    contentDescription = "Last på nytt",
+                                    modifier = Modifier
+                                        .size(25.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                    }
 
                 }
             }
