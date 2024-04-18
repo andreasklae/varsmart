@@ -3,10 +3,9 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data
 import android.annotation.SuppressLint
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import kotlinx.coroutines.time.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepo
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
@@ -14,8 +13,9 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 import java.time.LocalDateTime
-import kotlin.time.Duration
 
+// holds on to data for a given location.
+// puts weather, gpt messages, location, sunrise/set, warnings and time in one object
 data class DataHolder(
     val location: CustomLocation
 ){
@@ -30,7 +30,7 @@ data class DataHolder(
 
     var next24h: List<WeatherTimeForecast> = listOf()
     var week: List<WeatherTimeForecast> = listOf()
-    val weekGpt = mutableStateOf("")
+    val gpt24h = mutableStateOf("")
 
     // variables for sunrise and sunset
     var rise: String? = null
@@ -76,8 +76,16 @@ data class DataHolder(
         val aRepo = WarningRepository()
         val gptRepo = GPTRepo()
     }
-    fun removeFromFavorites(){
-        Favourites.remove(this)
+
+    // function to either add or remove object from favourite list
+    fun toggleInFavourites() {
+        //if the location is in the list
+        if (!Favourites.contains(this)){
+            Favourites.add(this)
+        }
+        else{
+            Favourites.remove(this)
+        }
     }
 
     suspend fun updateAll() {
@@ -129,8 +137,8 @@ data class DataHolder(
         mainGpt.value = gptRepo.fetchCurrent(currentWeather!!, next24h, age, hobbies)
     }
     suspend fun updateGPT24h(age: Int) {
-        weekGpt.value = ""
-        weekGpt.value = gptRepo.fetch24h(next24h, age)
+        gpt24h.value = ""
+        gpt24h.value = gptRepo.fetch24h(next24h, age)
     }
 
     suspend fun updateNext24h(newWeather: WeatherForecast){
@@ -246,9 +254,5 @@ data class DataHolder(
             currentMinute
         )
         return dt
-    }
-
-    fun addToFavourites() {
-        Favourites.add(this)
     }
 }

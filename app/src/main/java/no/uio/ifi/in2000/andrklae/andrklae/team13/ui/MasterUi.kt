@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Brush
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningScreen
@@ -37,13 +38,14 @@ fun MasterUi(
         pageCount = { 4 },
     )
 
-    // hoisted for high cohesion
+    // hoisted for low coupling
     val background = settingsVM.background.collectAsState()
     val age = settingsVM.age.collectAsState()
     val sliderPosition = settingsVM.sliderPosition.collectAsState()
     var hobbies = settingsVM.hobbies.collectAsState()
+
     val gptMain by weatherVM.GPTMain.collectAsState()
-    val gpt24h by weatherVM.GPTWeek.collectAsState()
+    val gpt24h by weatherVM.GPT24h.collectAsState()
     val currentData by weatherVM.data.collectAsState()
 
     println("test")
@@ -64,6 +66,7 @@ fun MasterUi(
             when (page){
                 0 -> {
                     WeatherScreen(
+                        activity = activity,
                         data = currentData,
                         background = background.value,
                         updateAll = { weatherVM.updateAll() },
@@ -72,10 +75,20 @@ fun MasterUi(
                         hobbies = hobbies.value,
                         updateMainGpt = { age, list -> weatherVM.updateMainGpt(age, list) },
                         gpt24h = gpt24h,
-                        update24hGpt = { age -> weatherVM.updateGPT24h(age) }
+                        update24hGpt = { age -> weatherVM.updateGPT24h(age) },
+                        searchVm = SearchViewModel(),
+                        setLocation = { newLocationData -> weatherVM.setLocation(newLocationData) }
                     )
                 }
-                1 -> FavoriteScreen(favVM, weatherVM, activity, pagerState)
+
+                1 -> FavoriteScreen(
+                    favVM,
+                    SearchViewModel(),
+                    setHomeLocation = { data -> weatherVM.setLocation(data) },
+                    activity,
+                    pagerState
+                )
+
                 2 -> WarningScreen(warningVM)
                 3 -> {
                     SettingsScreen(

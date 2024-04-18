@@ -31,11 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
+import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.Next24
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.RainWind
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.UpperHalf
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.WarningRow
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.WeekTable
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 
@@ -46,6 +48,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun WeatherScreen(
+    activity: MainActivity,
     data: DataHolder,
     background: Background,
     updateAll: () -> Unit,
@@ -54,7 +57,9 @@ fun WeatherScreen(
     hobbies: List<String>,
     updateMainGpt: (Int, List<String>) -> Unit,
     gpt24h: String,
-    update24hGpt: (Int) -> Unit
+    update24hGpt: (Int) -> Unit,
+    searchVm: SearchViewModel,
+    setLocation: (DataHolder) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Box {
@@ -71,7 +76,6 @@ fun WeatherScreen(
             when (data.weatherStatus.value) {
                 // loading
                 data.statusStates[0] -> {
-
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Spacer(modifier = Modifier.height(70.dp))
                         Text(text = data.location.name, fontSize = 35.sp)
@@ -83,13 +87,16 @@ fun WeatherScreen(
                 // success
                 data.statusStates[1] -> {
                     UpperHalf(
+                        activity = activity,
                         data = data,
                         background = background,
                         updateAll = { updateAll() },
                         age = age,
                         gptText = gptMain,
                         hobbies = hobbies,
-                        updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) }
+                        updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) },
+                        searchVm = searchVm,
+                        setLocation = { newLocationData -> setLocation(newLocationData) }
                     )
 
                     if (data.alertStatus.value == data.statusStates[1]) {
@@ -166,13 +173,16 @@ fun WeatherScreen(
                     // if it has previous data
                     else {
                         UpperHalf(
+                            activity = activity,
                             data = data,
                             background = background,
                             updateAll = { updateAll() },
                             age = age,
                             gptText = gptMain,
                             hobbies = hobbies,
-                            updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) }
+                            updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) },
+                            searchVm = searchVm,
+                            setLocation = { newLocationData -> setLocation(newLocationData) }
                         )
 
                         WarningRow(data, 500)

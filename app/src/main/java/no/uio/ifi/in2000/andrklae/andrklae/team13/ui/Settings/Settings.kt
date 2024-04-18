@@ -240,7 +240,9 @@ fun HobbyBox(
                 onDone = {
                     focusManager.clearFocus()
                     keyboardController?.hide()
-                    addToHobbies(hobbyText)
+                    if (hobbyText.isNotEmpty()){
+                        addToHobbies(hobbyText)
+                    }
                     onTextChange("")
                 }
             )

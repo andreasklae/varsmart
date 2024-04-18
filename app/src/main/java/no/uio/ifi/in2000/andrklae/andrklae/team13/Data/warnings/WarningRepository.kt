@@ -1,7 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings
 
 import com.google.android.gms.maps.model.LatLng
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 
 class WarningRepository {
     companion object{

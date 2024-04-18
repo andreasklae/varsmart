@@ -67,7 +67,6 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.BottomSheet
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteBox
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FunctionRow
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.SearchDialog
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.getColorFromString
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.coloredGlassEffect

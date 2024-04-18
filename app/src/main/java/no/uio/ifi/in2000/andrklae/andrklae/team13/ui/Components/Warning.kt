@@ -26,6 +26,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -175,9 +176,10 @@ fun DisplayWarning(
                     modifier = Modifier.size(50.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.LocationOn,
+                        imageVector = Icons.Outlined.Map,
                         contentDescription = "Settings",
-                        tint = Color.Black
+                        tint = Color.Black,
+                        modifier = Modifier.size(30.dp)
                     )
                 }
                 Spacer(Modifier.weight(1f))

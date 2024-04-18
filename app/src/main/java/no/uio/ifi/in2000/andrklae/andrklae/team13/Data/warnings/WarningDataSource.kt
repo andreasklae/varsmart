@@ -8,7 +8,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 
 // Class which uses a Ktor client and a proxy to return weather warning data from a MET API call
 class WarningDataSource{

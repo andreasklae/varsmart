@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.LocationRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 

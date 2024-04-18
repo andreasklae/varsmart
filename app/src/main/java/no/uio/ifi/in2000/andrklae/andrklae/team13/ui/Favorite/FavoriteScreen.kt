@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -20,20 +19,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
@@ -43,10 +34,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -55,21 +43,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchDialog
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 //A data class for dummy data
 data class Favorite(
@@ -83,10 +68,13 @@ data class Favorite(
 @Composable
 fun FavoriteScreen(
     favVM: FavoriteViewModel,
-    weatherVM: WeatherViewModel,
+    searchVm: SearchViewModel,
+    setHomeLocation: (DataHolder) -> Unit,
     activity: MainActivity,
     pagerState: PagerState
 ) {
+    // loads the list every time the ui changes (ie a new favourite is added)
+    favVM.loadData()
     // sorts favorite list to put current location at the top of the list
     val favorites = DataHolder.Favourites.sortedBy { if (it.location.name.equals("Min posisjon")) 0 else 1 }
     // column of all favourites
@@ -115,7 +103,7 @@ fun FavoriteScreen(
         // boxes for each favourite
         favorites.forEach {
             item {
-                FavoriteBox(weatherVM, it, pagerState)
+                FavoriteBox( { data -> setHomeLocation(data) }, it, pagerState)
             }
         }
 
@@ -150,12 +138,18 @@ fun FavoriteScreen(
             val showBottomSheet by favVM.showBottomSheet.collectAsState()
 
             if (showBottomSheet){
-                BottomSheet(favVM, activity)
+                BottomSheet(favVM, activity, searchVm)
             }
-            val showDialog by favVM.showSearch.collectAsState()
-            if (showDialog){
-                SearchDialog(favVM)
+
+            val showSearchDialog = searchVm.showSearchDialog.collectAsState()
+
+            if (showSearchDialog.value){
+                SearchDialog(
+                    searchVm = searchVm,
+                    functionToPerform = { data -> data.toggleInFavourites() }
+                )
             }
+
 
         }
         item {
@@ -182,7 +176,11 @@ fun FunctionRow(favVM: FavoriteViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(favVM: FavoriteViewModel, activity: MainActivity) {
+fun BottomSheet(
+    favVM: FavoriteViewModel,
+    activity: MainActivity,
+    searchVm: SearchViewModel
+) {
     val sheetState = rememberModalBottomSheetState()
     ModalBottomSheet(
         onDismissRequest = { favVM.toggleBottomSheet() },
@@ -208,7 +206,7 @@ fun BottomSheet(favVM: FavoriteViewModel, activity: MainActivity) {
             HorizontalDivider()
             Spacer(modifier = Modifier.height(20.dp))
 
-            // current location
+            // Give option to add current location if the user hasn't done it already
             if (!DataHolder.Favourites.any{it.location.name == "Min posisjon"}){
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -244,7 +242,7 @@ fun BottomSheet(favVM: FavoriteViewModel, activity: MainActivity) {
                     .background(Color.LightGray.copy(alpha = 0.3f))
                     .clickable {
                         favVM.toggleBottomSheet()
-                        favVM.toggleSearchDialog()
+                        searchVm.toggleSearchDialog()
                     }
                     .padding(15.dp)
 
@@ -262,230 +260,15 @@ fun BottomSheet(favVM: FavoriteViewModel, activity: MainActivity) {
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchDialog(favVM: FavoriteViewModel) {
-    val searchStatus by favVM.searchStatus.collectAsState()
-    Dialog(onDismissRequest = {
-        favVM.toggleSearchDialog()
-        favVM.emptySearchresults()
-    }) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            Spacer(modifier = Modifier.height(20.dp))
-            Surface(
-                color = Color.White,
-                modifier = Modifier
-                    .fillMaxWidth(0.95f)
-                    .fillMaxHeight(0.8f)
-                    .clip(RoundedCornerShape(15.dp))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(15.dp))
-                        .padding(top = 20.dp, bottom = 0.dp)
-                        .padding(horizontal = 20.dp)
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top
-                )
-                {
-                    SearchBox(favVM)
-                    when (searchStatus){
-                        // loading searches
-                        favVM.statusStates[0] -> {
-                            Spacer(modifier = Modifier.height(20.dp))
-                            CircularProgressIndicator(color = Color.Black)
-                        }
-                        // found location(s)
-                        favVM.statusStates[1] -> {
-                            Box (
-                                modifier = Modifier
-                                    .drawWithContent {
-                                        drawContent()
-                                        drawRect(
-                                            brush = Brush.verticalGradient(
-                                                colors = listOf(
-                                                    Color.White,
-                                                    Color.White.copy(alpha = 0.3f),
-                                                    Color.Transparent,
-                                                    Color.Transparent,
-                                                    Color.Transparent,
-                                                    Color.Transparent,
-                                                    Color.Transparent,
-                                                    Color.Transparent,
-                                                    Color.Transparent,
-                                                    Color.Transparent,
-                                                    Color.Transparent,
-                                                    Color.Transparent,
-                                                    Color.White.copy(alpha = 0.5f),
-                                                    Color.White
-                                                ),
-                                                startY = 0f,
-                                                endY = size.height
-                                            ),
-                                            alpha = 1f
-                                        )
-                                    }
-                            ) {
-                                SearchResults(favVM)
-                            }
-                        }
-                        // found no location
-                        favVM.statusStates[2] -> {
-                            Text(text = "Fant ingen resultater")
-                        }
-                    }
-                }
 
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .wrapContentWidth()
-                    .clickable { favVM.toggleSearchDialog() }
-                    .padding(15.dp)
-
-            ) {
-                Icon(Icons.Filled.Close,"fjern fra favoritter")
-            }
-            Spacer(modifier = Modifier.weight(1f))
-
-        }
-
-    }
-}
-
-@Composable
-fun SearchResults(favVM: FavoriteViewModel) {
-    val searchResults by favVM.searchResults.collectAsState()
-    val scrollState = rememberScrollState()
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.verticalScroll(scrollState)
-    ) {
-        Spacer(modifier = Modifier.height(30.dp))
-        searchResults.forEach { location ->
-            Row (
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFF5F5F5))
-                    .padding(15.dp)
-
-            ){
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "${location.name}",
-                        fontSize = 20.sp,
-                    )
-                    Text(
-                        text = location.postSted + ", " + location.fylke,
-                        fontSize = 10.sp,
-                    )
-                }
-                Spacer(modifier = Modifier.width(5.dp))
-                // if location allready exists
-                if (DataHolder.Favourites.any{
-                        it.location.name == location.name
-                                &&
-                        it.location.fylke == location.fylke
-                }){
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Color(0xFFE1E1E1))
-                            .wrapContentWidth()
-                            .clickable {
-                                DataHolder.Favourites.remove(
-                                    DataHolder.Favourites.find {
-                                        it.location.name == location.name
-                                                &&
-                                        it.location.fylke == location.fylke
-                                    }
-                                )
-                            }
-                            .padding(10.dp)
-                    ) {
-                        Icon(Icons.Filled.Bookmark,"fjern fra favoritter")
-                    }
-                } else{
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Color(0xFFE1E1E1))
-                            .wrapContentWidth()
-                            .clickable {
-                                val newLocation = DataHolder(location)
-                                newLocation.addToFavourites()
-                            }
-                            .padding(10.dp)
-                    ) {
-                        Icon(Icons.Filled.BookmarkBorder,"legg til sted i favoritter")
-                    }
-                }
-
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-
-        }
-        Spacer(modifier = Modifier.height(50.dp))
-
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBox(favVM: FavoriteViewModel) {
-    val searchText by favVM.searchText.collectAsState()
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    OutlinedTextField(
-        value = searchText,
-        onValueChange = { favVM.changeSearchText(it) },
-        modifier = Modifier.fillMaxWidth(),
-        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
-        trailingIcon = {
-            if (searchText.isNotEmpty()) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Clear Text",
-                    modifier = Modifier.clickable {
-                        favVM.changeSearchText("")
-                        keyboardController?.hide()  // Optionally hide the keyboard when clearing text
-                    }
-                )
-            }
-        },
-        placeholder = { Text("Søk...") },
-        singleLine = true,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Blue,
-            unfocusedBorderColor = Color.Gray
-        ),
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(onSearch = {
-            favVM.toggleSearching(false)
-            keyboardController?.hide()  // Hide the keyboard when the user confirms the search
-        })
-    )
-}
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FavoriteBox(weatherVM: WeatherViewModel, data: DataHolder, pagerState: PagerState) {
+fun FavoriteBox(
+    setHomeLocation: (DataHolder) -> Unit,
+    data: DataHolder, pagerState: PagerState
+) {
     val coroutineScope = rememberCoroutineScope()
     Box(
         contentAlignment = Alignment.CenterStart,
@@ -496,7 +279,7 @@ fun FavoriteBox(weatherVM: WeatherViewModel, data: DataHolder, pagerState: Pager
             .glassEffect()
             .clickable {
                 coroutineScope.launch {
-                    weatherVM.setLocation(data)
+                    setHomeLocation(data)
                     pagerState.animateScrollToPage(0)
                 }
             }

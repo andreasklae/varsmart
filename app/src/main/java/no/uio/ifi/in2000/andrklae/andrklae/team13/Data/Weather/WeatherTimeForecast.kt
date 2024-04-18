@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 
 /*
 * This data class holds weather variables for a given location and time
@@ -15,6 +15,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.Cust
 * percipitation -- A Double. Measured in mm.
 * symbolName -- A string, represents weather symbol
 */
+
 data class WeatherTimeForecast(
     val weatherForecast: WeatherForecast,
     val time: DateTime,

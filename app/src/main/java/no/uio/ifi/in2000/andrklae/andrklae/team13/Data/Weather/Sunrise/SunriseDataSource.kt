@@ -9,7 +9,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 
 // Class which fetches the sunrise and sunset times for a given day and timezone
 class SunriseDataSource {

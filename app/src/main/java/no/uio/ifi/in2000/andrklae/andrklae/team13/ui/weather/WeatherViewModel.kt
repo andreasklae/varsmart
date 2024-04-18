@@ -3,8 +3,6 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather
 import android.annotation.SuppressLint
 import android.util.TypedValue
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
@@ -29,14 +27,14 @@ class WeatherViewModel(
     val GPTMain = _GPTMain.asStateFlow()
 
 
-    private val _GPTWeek = MutableStateFlow("Trykk på meg for å spørre om været det neste døgnet")
-    val GPTWeek = _GPTWeek.asStateFlow()
+    private val _GPT24h = MutableStateFlow("Trykk på meg for å spørre om været det neste døgnet")
+    val GPT24h = _GPT24h.asStateFlow()
 
     fun updateAll() {
         viewModelScope.launch {
             data.value!!.updateAll()
             _GPTMain.value = "Trykk på meg for å spørre om praktiske tips!"
-            _GPTWeek.value = "Trykk på meg for å spørre om været det neste døgnet"
+            _GPT24h.value = "Trykk på meg for å spørre om været det neste døgnet"
         }
     }
 
@@ -46,13 +44,27 @@ class WeatherViewModel(
             "Changing location from ${_data.value?.location?.name}" +
                     " to ${dataHolder.location.name}"
         )
-        val isSame = data.value!!.location == dataHolder.location
+        val isSame = data.value.location == dataHolder.location
 
         if (!isSame) {
             viewModelScope.launch {
                 _data.value = dataHolder
-                _GPTMain.value = data.value!!.mainGpt.value
-                _GPTWeek.value = data.value!!.weekGpt.value
+                if (_data.value.weather == null){
+                    updateAll()
+                }
+
+                // if gpt data is already loaded
+                if (data.value.mainGpt.value != "") {
+                    _GPTMain.value = data.value.mainGpt.value
+                }
+                else _GPTMain.value = "Trykk på meg for å spørre om praktiske tips!"
+
+                // if gpt data is already loaded
+                if (data.value.mainGpt.value != "") {
+                    _GPTMain.value = data.value.mainGpt.value
+                }
+                else _GPT24h.value = "Trykk på meg for å spørre om været det neste døgnet"
+                _GPT24h.value = data.value.gpt24h.value
 
             }
         }
@@ -89,10 +101,10 @@ class WeatherViewModel(
         viewModelScope.launch {
             // to keep track of loading status
             var loading = true
-            _GPTWeek.value = ""
+            _GPT24h.value = ""
             launch {
                 while (loading) {
-                    _GPTWeek.value = dotLoading(_GPTWeek.value)
+                    _GPT24h.value = dotLoading(_GPT24h.value)
                     delay(200)
                 }
             }
@@ -100,9 +112,9 @@ class WeatherViewModel(
                 data.value!!.updateGPT24h(age)
                 // done loading
                 loading = false
-                _GPTWeek.value = ""
-                data.value!!.weekGpt.value.forEach {
-                    _GPTWeek.value += it
+                _GPT24h.value = ""
+                data.value!!.gpt24h.value.forEach {
+                    _GPT24h.value += it
                     delay(15)
                 }
             }

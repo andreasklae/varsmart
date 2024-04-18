@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata
+package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata
 
 import android.content.Context
 import android.content.pm.PackageManager

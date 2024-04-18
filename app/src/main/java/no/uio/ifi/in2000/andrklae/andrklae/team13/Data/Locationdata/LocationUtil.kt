@@ -1,19 +1,16 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation
+package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.Task
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
 
 object LocationUtil {
+    val REQUEST_CODE = 1001
     fun hasLocationPermission(context: Context): Boolean {
         val hasFineLocationPermission = ContextCompat.checkSelfPermission(
             context,
@@ -28,15 +25,25 @@ object LocationUtil {
         return hasFineLocationPermission || hasCoarseLocationPermission
     }
 
-    fun requestPermission(activity: Activity) {
+    fun requestPermission(
+        activity: Activity
+    ) {
         ActivityCompat.requestPermissions(
             activity,
-            arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
-            1001
+            arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            REQUEST_CODE
         )
     }
-    fun fetchLocation(activity: Activity, context: Context, callback: (CustomLocation?) -> Unit) {
-        if (hasLocationPermission(context)) {
+
+    // function for fetching the user location
+    fun fetchLocation(
+        activity: Activity,
+        callback: (CustomLocation?) -> Unit
+    ) {
+        if (hasLocationPermission(activity)) {
             try {
                 val fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
