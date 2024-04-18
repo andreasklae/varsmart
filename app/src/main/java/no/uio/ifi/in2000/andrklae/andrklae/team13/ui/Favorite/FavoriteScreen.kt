@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchDialog
@@ -297,15 +298,31 @@ fun FavoriteBox(
         ) {
             val status = data.weatherStatus
             when (status.value) {
-                data.statusStates[0] -> {
-                    Text(
-                        text = data.location.name,
-                        fontSize = 30.sp
-                    )
-                    CircularProgressIndicator(color = Color.Black)
+                Status.LOADING -> {
+                    Spacer(modifier = Modifier.weight(2f))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = data.location.name,
+                            fontSize = 30.sp
+                        )
+
+                        Text(
+                            text = " f",
+                            fontSize = 15.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.width(90.dp)
+                    ) {
+                        CircularProgressIndicator(color = Color.Black)
+                    }
                 }
 
-                data.statusStates[1] -> {
+                Status.SUCCESS -> {
                     Spacer(modifier = Modifier.weight(2f))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -322,7 +339,8 @@ fun FavoriteBox(
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Box(
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.width(90.dp)
                     ) {
                         Column {
                             Spacer(modifier = Modifier.weight(1f))
@@ -338,6 +356,9 @@ fun FavoriteBox(
                         }
 
                     }
+
+                }
+                Status.FAILED ->{
 
                 }
             }

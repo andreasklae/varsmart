@@ -19,11 +19,9 @@ import java.time.LocalDateTime
 data class DataHolder(
     val location: CustomLocation
 ) {
-    val statusStates: List<String> = listOf("Loading", "Success", "Failed")
-
     // variables for weather
     var weather: WeatherForecast? = null
-    val weatherStatus = mutableStateOf(statusStates[0])
+    val weatherStatus = mutableStateOf(Status.LOADING)
     var currentWeather: WeatherTimeForecast? = null
 
     val mainGpt = mutableStateOf("")
@@ -35,12 +33,12 @@ data class DataHolder(
     // variables for sunrise and sunset
     var rise: String? = null
     var set: String? = null
-    val sunStatus = mutableStateOf(statusStates[0])
+    val sunStatus = mutableStateOf(Status.LOADING)
 
     // variables for alerts
     var allWarnings: Warning? = null
     var alertList = listOf<Alert>()
-    val alertStatus = mutableStateOf(statusStates[0])
+    val alertStatus = mutableStateOf(Status.LOADING)
 
 
     var current = LocalDateTime.now()
@@ -110,7 +108,7 @@ data class DataHolder(
 
     suspend fun updateWeather() {
         // sets status to loading
-        weatherStatus.value = statusStates[0]
+        weatherStatus.value = Status.LOADING
         // fetches weather data
         val newWeather = wRepo.getWeather(location)
 
@@ -123,9 +121,9 @@ data class DataHolder(
             updateNext24h(newWeather)
             updateWeek(newWeather)
             // sets status to success
-            weatherStatus.value = statusStates[1]
+            weatherStatus.value = Status.SUCCESS
         } else {
-            weatherStatus.value = statusStates[2]
+            weatherStatus.value = Status.FAILED
         }
     }
 
@@ -200,7 +198,7 @@ data class DataHolder(
 
     suspend fun updateSunriseAndSunset() {
         // sets status to loading
-        sunStatus.value = statusStates[0]
+        sunStatus.value = Status.LOADING
         // fetches from api
         val newSun = wRepo.getRiseAndSet(location, dt)
 
@@ -210,18 +208,18 @@ data class DataHolder(
             set = newSun.sunsetTime
 
             // sets status to success
-            sunStatus.value = statusStates[1]
+            sunStatus.value = Status.SUCCESS
         }
         // if api call fails
         else {
-            sunStatus.value = statusStates[2]
+            sunStatus.value = Status.FAILED
 
         }
     }
 
     suspend fun updateWarning() {
         // starts by setting the status to loading
-        alertStatus.value = statusStates[0]
+        alertStatus.value = Status.LOADING
         // fetches from api
         val newWarnings = aRepo.fetchAllWarnings()
         // if api call is successful
@@ -230,14 +228,15 @@ data class DataHolder(
             allWarnings = newWarnings
 
             // sets status to success
-            alertStatus.value = statusStates[1]
+            alertStatus.value = Status.SUCCESS
         }
         // if api call fails
         else {
-            alertStatus.value = statusStates[1]
+            alertStatus.value = Status.FAILED
         }
     }
 
+    // function to get the current time
     fun getCurrentTime(): DateTime {
         var current = LocalDateTime.now()
         var currentYear = current.year.toString()

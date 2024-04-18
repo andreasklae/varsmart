@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.Next24
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.RainWind
@@ -75,7 +76,7 @@ fun WeatherScreen(
             // keeps track of the status of the data
             when (data.weatherStatus.value) {
                 // loading
-                data.statusStates[0] -> {
+                Status.LOADING -> {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Spacer(modifier = Modifier.height(70.dp))
                         Text(text = data.location.name, fontSize = 35.sp)
@@ -85,7 +86,7 @@ fun WeatherScreen(
 
                 }
                 // success
-                data.statusStates[1] -> {
+                Status.SUCCESS -> {
                     UpperHalf(
                         activity = activity,
                         data = data,
@@ -99,7 +100,7 @@ fun WeatherScreen(
                         setLocation = { newLocationData -> setLocation(newLocationData) }
                     )
 
-                    if (data.alertStatus.value == data.statusStates[1]) {
+                    if (data.alertStatus.value == Status.SUCCESS) {
                         WarningRow(data, 500)
                     }
                     Next24(
@@ -114,7 +115,7 @@ fun WeatherScreen(
                     Spacer(modifier = Modifier.height(20.dp))
                 }
                 // failed
-                data.statusStates[2] -> {
+                Status.FAILED -> {
                     // if it doesnt have any data loaded previously
                     if (data.weather == null) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
