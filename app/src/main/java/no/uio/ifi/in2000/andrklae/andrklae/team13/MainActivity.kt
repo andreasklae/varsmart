@@ -6,112 +6,128 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CurrentLocation.LocationUtil
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationUtil
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MasterUi
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.Team13Theme
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningViewModel
 
 class MainActivity : ComponentActivity() {
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    val settingsVM = SettingsViewModel()
+    val favVM = FavoriteViewModel()
+    val weatherVM = WeatherViewModel(DataHolder.initLocation, this)
+    val warningVM = WarningViewModel()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+
+
+        setContent {
+            MasterUi(
+                activity = this,
+                settingsVM = settingsVM,
+                favVM = favVM,
+                weatherVM = weatherVM,
+                warningVM = warningVM
+            )
+        }
+    }
+
+    // function for handling requests (only location services is needed)
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1001) {
+        // if the request code is for location access
+        if (requestCode == LocationUtil.REQUEST_CODE) {
             // Check if the permissions were granted
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted, try to fetch the location
-                LocationUtil.fetchLocation(this, this) { customLocation ->
+                LocationUtil.fetchLocation(this)
+                { customLocation ->
+                    // if fetching was sucessfull
                     if (customLocation != null) {
-                        DataHolder(customLocation)
-                        //DataHolder.Favourites.sortBy { if (it.location == customLocation) 0 else 1 }
+                        val new = DataHolder(customLocation)
+
+                        // i data doesnt exist
+                        if (!DataHolder.Favourites.contains(new)) {
+                            new.toggleInFavourites()
+                            weatherVM.setLocation(new)
+                        } else {
+                            weatherVM.setLocation(
+                                // will never be null because of the if statement above
+                                DataHolder.Favourites.find { it == new }!!
+                            )
+                        }
                     } else {
 
                     }
                 }
             } else {
-                // Permission was denied. You can show a message to the user or take appropriate action.
+                // Permission was denied. You can show a message
+                // to the user or take appropriate action.
                 println("Permission denied by the user")
             }
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            MasterUi(this)
-        }
-    }
-
-    fun isOnline(context: Context = this): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (connectivityManager != null) {
-            val capabilities =
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
-    fun getCurrentLocation(){
+    // function for fetching the current location of the device
+    fun getCurrentLocation() {
         println("Henter nåværende lokasjon")
         if (LocationUtil.hasLocationPermission(this)) {
             // If permission is already granted, attempt to fetch the location immediately
-            LocationUtil.fetchLocation(this,this) { customLocation ->
+            LocationUtil.fetchLocation(
+                this
+            ) { customLocation ->
+                println("test")
                 if (customLocation != null) {
-
                     val new = DataHolder(customLocation)
-                    /*
-                    // fix later
-                    // checks if the user has moved
-                    val notMoved = DataHolder.Favourites.any {
-                        it.location.lat == customLocation.lat
-                                &&
-                                it.location.lon == customLocation.lon
-                    }
-                    if (notMoved){
-                        val index = DataHolder.Favourites.indexOf(
-                            DataHolder.Favourites.find { it.location == customLocation }
+
+                    // i data doesnt exist
+                    if (!DataHolder.Favourites.contains(new)) {
+                        new.toggleInFavourites()
+                        weatherVM.setLocation(new)
+                    } else {
+                        weatherVM.setLocation(
+                            // will never be null because of the if statement above
+                            DataHolder.Favourites.find { it == new }!!
                         )
-                        //homeVM.setLocation(index)
                     }
-                    else{
-                        DataHolder.Favourites.remove(DataHolder.Favourites.find { it.location.name == "My location" })
-                        val newLocation = DataHolder(customLocation)
-                        //homeVM.setLocation(DataHolder.Favourites.lastIndex)
-                    }*/
                 }
             }
         }
 
-        else{
+        // request permission if not granted
+        else {
             LocationUtil.requestPermission(this)
         }
+    }
+
+    // function for checking if the user as internet
+    fun isOnline(context: Context = this): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        if (capabilities != null) {
+            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                return true
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                return true
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                return true
+            }
+        }
+        Log.i("Internet", "No internet connection detected")
+        return false
     }
 }

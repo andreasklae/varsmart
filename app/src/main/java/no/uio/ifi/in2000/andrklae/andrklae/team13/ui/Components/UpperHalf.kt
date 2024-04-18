@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,96 +15,281 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
+import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchDialog
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun UpperHalf(weatherVM: WeatherViewModel, data: DataHolder){
+fun UpperHalf(
+    activity: MainActivity,
+    data: DataHolder,
+    background: Background,
+    updateAll: () -> Unit,
+    age: Int,
+    gptText: String,
+    hobbies: List<String>,
+    updateMainGpt: (Int, List<String>) -> Unit,
+    searchVm: SearchViewModel,
+    setLocation: (DataHolder) -> Unit
+) {
     val loc = data.location.name
+    val showSearchDialog = searchVm.showSearchDialog.collectAsState()
+
+    if (showSearchDialog.value) {
+        SearchDialog(
+            searchVm = searchVm,
+            functionToPerform = { newLocationData -> setLocation(newLocationData) }
+        )
+    }
     Box {
         // background image
         Image(
-            painter = painterResource(id = R.drawable.space),
+            painter = painterResource(background.imageId),
             contentDescription = "Background",
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(570.dp),
             contentScale = ContentScale.Crop
         )
+        // main components of the screen
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
-            Box (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .glassEffect()
-                    .padding(vertical = 20.dp)
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // row for actions
+            ActionRow(
+                activity = activity,
+                updateAll = { updateAll() },
+                toggleInFavourites = { data.toggleInFavourites() },
+                isInFavourites = DataHolder.Favourites.contains(data),
+                isOnCurrentLocation = data.location.name == "Min posisjon",
+                toggleSearchDialog = { searchVm.toggleSearchDialog() }
             )
-            {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .width(180.dp)
-                ) {
-                    Text(text = loc, fontSize = 35.sp, textAlign = TextAlign.Center)
-                    Text(
-                        text = "Oppdatert: ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
-                        fontSize = 15.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .clickable {
-                            weatherVM.updateAll()
-                        }
-                        .clip(CircleShape)
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 20.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Refresh,
-                        "refresh",
-                        Modifier.size(40.dp)
+            Spacer(modifier = Modifier.height(10.dp))
 
 
-                    )
-                }
+            var rise = ""
+            var set = ""
 
+            // if sunrise api is successful
+            if (data.sunStatus.value == data.statusStates[1]) {
+                rise = data.rise!!.substringAfter("T").substringBefore("+")
+                set = data.set!!.substringAfter("T").substringBefore("+")
             }
-            WeatherBox(weatherVM, data)
-            Spacer(modifier = Modifier.height(20.dp))
-            val GPTMain by weatherVM.GPTMain.collectAsState()
-            GptSpeechBubble(GPTMain, { weatherVM.updateMainGpt() })
-
+            // Row containing basic info like location and current weather
+            BasicInfo(
+                symbolName = data.currentWeather!!.symbolName!!,
+                temperature = data.currentWeather!!.temperature!!,
+                loc,
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            GPTBox(gptText, { updateMainGpt(age, hobbies) })
         }
     }
 }
 
 @Composable
-fun WeatherBox(weatherVM: WeatherViewModel, data: DataHolder){
+fun GPTBox(content: String, function: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.End,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .padding(10.dp)
+        ) {
+            Text(
+                text = content,
+                fontSize = 12.sp
+            )
+        }
+        ImageIcon(y = 0, x = -20, symbolId = R.drawable.arrowdown, width = 60, height = 25)
+        MrPraktiskBlink({ function() })
+    }
+}
+
+@Composable
+fun ActionRow(
+    activity: MainActivity,
+    updateAll: () -> Unit,
+    isInFavourites: Boolean,
+    toggleInFavourites: () -> Unit,
+    isOnCurrentLocation: Boolean,
+    toggleSearchDialog: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        // Button for adding or removing from favourites
+        // if the location is in the favourites
+        Box(
+            modifier = Modifier
+                .clickable {
+                    toggleInFavourites()
+                }
+                .glassEffect()
+                .padding(5.dp)
+        ) {
+            val iconId = {
+                if (isInFavourites) {
+                    Icons.Filled.Bookmark
+                } else Icons.Filled.BookmarkBorder
+            }
+            Icon(
+                iconId(),
+                "refresh",
+                Modifier.size(50.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(5.dp))
+
+        // button from refreshing the page
+        Box(
+            modifier = Modifier
+                .clickable {
+                    updateAll()
+                }
+                .glassEffect()
+                .padding(5.dp)
+        ) {
+            Icon(
+                Icons.Filled.Refresh,
+                "refresh",
+                Modifier.size(50.dp)
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+
+        // button for searching for a place
+        Box(
+            modifier = Modifier
+                .clickable {
+                    toggleSearchDialog()
+                }
+                .glassEffect()
+                .padding(5.dp)
+        ) {
+            Icon(
+                Icons.Outlined.Search,
+                "søk etter sted",
+                Modifier.size(50.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(5.dp))
+
+        // button for going to the device location
+        if (!isOnCurrentLocation) {
+            Box(
+                modifier = Modifier
+                    .clickable {
+                        val currentLocation = {
+                            DataHolder.Favourites.find {
+                                it.location.name == "Min posisjon"
+                            }
+
+                        }
+                        activity.getCurrentLocation()
+                    }
+                    .glassEffect()
+                    .padding(5.dp)
+            ) {
+                Icon(
+                    Icons.Outlined.LocationOn,
+                    "go to current location",
+                    Modifier.size(50.dp)
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
+fun BasicInfo(
+    symbolName: String,
+    temperature: Double,
+    loc: String,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .height(IntrinsicSize.Min)
+    ) {
+        // Location
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .weight(1f)
+                .glassEffect()
+                .padding(10.dp)
+
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(text = loc, fontSize = 35.sp, textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.weight(1f))
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+
+        // temp and weather
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .weight(0.5f)
+                .glassEffect()
+                .padding(bottom = 10.dp)
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            DrawSymbol(symbol = symbolName, size = 85.dp)
+            Spacer(modifier = Modifier.weight(1f))
+            Text(text = temperature.toString() + "°C")
+        }
+
+    }
+}
+
+
+@Composable
+fun WeatherBox(weatherVM: WeatherViewModel, data: DataHolder) {
     val sunStatus = data.sunStatus
     val set = data.set
     val rise = data.rise
@@ -128,40 +314,10 @@ fun WeatherBox(weatherVM: WeatherViewModel, data: DataHolder){
                 data.currentWeather!!.symbolName,
                 size = 120.dp,
             )
-            //Spacer(modifier = Modifier.weight(1f))
-            if (sunStatus.value == data.statusStates[1]){
-                val riseTime = rise!!.substringAfter("T").substringBefore("+")
-                val setTime = set!!.substringAfter("T").substringBefore("+")
-                Row(
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.sunrise),
-                        contentDescription = "Soloppgang",
-                        modifier = Modifier.height(iconHeight.dp)
-                    )
-                    Text(
-                        text = riseTime,
-                        fontSize = fontSize.sp
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.sunset),
-                        contentDescription = "Solnedgang",
-                        modifier = Modifier.height(iconHeight.dp)
-                    )
-                    Text(
-                        text = setTime,
-                        fontSize = fontSize.sp
-                    )
-                }
-            }
         }
         Column(
             modifier = Modifier.fillMaxHeight()
-        ){
+        ) {
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "${data.currentWeather!!.temperature}°C",

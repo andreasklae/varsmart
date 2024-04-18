@@ -1,30 +1,30 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings
 
 import com.google.android.gms.maps.model.LatLng
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 
 class WarningRepository {
-    companion object{
+    companion object {
         val warningDataSource: WarningDataSource = WarningDataSource()
     }
 
     // fetches all warnings
-    suspend fun fetchAllWarnings(): Warning?{
+    suspend fun fetchAllWarnings(): Warning? {
         try {
             return warningDataSource.fetchAllWarnings()
-        }catch (e: Exception){
+        } catch (e: Exception) {
             return null
         }
 
     }
 
     // Turns the warnings into a list of Alert objects sorted by the distance to them
-    suspend fun fetchAlertList(allWarnings: Warning, loc: CustomLocation): List<Alert>{
+    suspend fun fetchAlertList(allWarnings: Warning, loc: CustomLocation): List<Alert> {
         val alerts = allWarnings.weatherAlert.features
         val alertList = mutableListOf<Alert>()
 
         // iterates through all alerts
-        alerts.forEach{ alert ->
+        alerts.forEach { alert ->
             val distanceToAlert: Double
 
             // find all polygons
@@ -33,16 +33,14 @@ class WarningRepository {
             // sees if the the location is inside one of the polygons
             var isInAlertArea = false
             polygonList.forEach {
-                if (isPointInsidePolygon(it.coordinates, LatLng(loc.lat, loc.lon))){
+                if (isPointInsidePolygon(it.coordinates, LatLng(loc.lat, loc.lon))) {
                     isInAlertArea = true
                 }
             }
 
-            if (isInAlertArea){
+            if (isInAlertArea) {
                 distanceToAlert = 0.0
-            }
-
-            else{
+            } else {
                 // find the closest coordinate of the alert
                 val closestCoord = findClosestCoordinateOfAlert(polygonList, loc)
                 // finds the distance to the alert
@@ -61,8 +59,12 @@ class WarningRepository {
         val earthRadius = 6371.0 // Radius of the Earth in kilometers
         val dLat = Math.toRadians(coord2.latitude - coord1.latitude)
         val dLon = Math.toRadians(coord2.longitude - coord1.longitude)
-        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(coord1.latitude)) * Math.cos(Math.toRadians(coord2.latitude)) *
+        val a = Math.sin(
+            dLat / 2
+        ) * Math.sin(dLat / 2) +
+                Math.cos(
+                    Math.toRadians(coord1.latitude)
+                ) * Math.cos(Math.toRadians(coord2.latitude)) *
                 Math.sin(dLon / 2) * Math.sin(dLon / 2)
         val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
         return earthRadius * c
@@ -81,7 +83,7 @@ class WarningRepository {
                 // calculates the distance to the coordinate
                 val distance = calculateDistance(coord, myCoord)
                 // if the coordinate is closer than all other thus far
-                if (distance < closestDist){
+                if (distance < closestDist) {
                     closestDist = distance
                     closestCoord = coord
                 }
@@ -117,7 +119,8 @@ class WarningRepository {
     }
 
     fun isPointInsidePolygon(polygon: List<LatLng>, point: LatLng): Boolean {
-        // Counter for the number of times a ray starting from the point intersects with polygon edges.
+        // Counter for the number of times a ray
+        // starting from the point intersects with polygon edges.
         var intersections = 0
 
         // Construct a ray from the point to the 'east' direction (increasing longitude)
@@ -126,7 +129,8 @@ class WarningRepository {
         polygon.forEachIndexed { index, vertex ->
             val nextVertex = polygon[(index + 1) % polygon.size] // Ensures a closed loop
 
-            // Check if the ray intersects with the edge between the current vertex and the next vertex
+            // Check if the ray intersects with the edge
+            // between the current vertex and the next vertex
             if (areLinesIntersecting(point, rayEndPoint, vertex, nextVertex)) {
                 intersections++
             }
@@ -155,9 +159,11 @@ class WarningRepository {
     fun direction(pi: LatLng, pj: LatLng, pk: LatLng): Double {
         // The cross product of vectors (pi, pj) and (pi, pk) determines the relative orientation
         // of the point pk to the line segment formed by pi and pj
-        return (pk.latitude - pi.longitude) * (pj.latitude - pi.latitude) - (pj.longitude - pi.longitude) * (pk.latitude - pi.latitude)
+        return (pk.latitude - pi.longitude) * (pj.latitude - pi.latitude) - (pj.longitude -
+                pi.longitude) * (pk.latitude - pi.latitude)
     }
 }
+
 fun flatten(list: List<*>): List<*> =
     list.flatMap {
         if (it is List<*>) flatten(it) else listOf(it)
@@ -165,7 +171,7 @@ fun flatten(list: List<*>): List<*> =
 
 data class Alert(val alert: Feature, val distance: Double, val polygonList: List<Polygon>)
 
-data class Polygon(val coordinates: List<LatLng>){
+data class Polygon(val coordinates: List<LatLng>) {
     override fun toString(): String {
         var string = ""
         coordinates.forEach { string += "(${it.latitude} - ${it.longitude})" }

@@ -11,7 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ImageIcon(y: Int, x: Int, symbolId: Int, width: Int, height: Int){
+fun ImageIcon(y: Int, x: Int, symbolId: Int, width: Int, height: Int) {
     Box(
         modifier = Modifier
             .offset(y = (y).dp, x = x.dp)

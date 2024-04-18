@@ -3,10 +3,9 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data
 import android.annotation.SuppressLint
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import kotlinx.coroutines.time.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepo
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
@@ -14,11 +13,12 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 import java.time.LocalDateTime
-import kotlin.time.Duration
 
+// holds on to data for a given location.
+// puts weather, gpt messages, location, sunrise/set, warnings and time in one object
 data class DataHolder(
     val location: CustomLocation
-){
+) {
     val statusStates: List<String> = listOf("Loading", "Success", "Failed")
 
     // variables for weather
@@ -30,7 +30,7 @@ data class DataHolder(
 
     var next24h: List<WeatherTimeForecast> = listOf()
     var week: List<WeatherTimeForecast> = listOf()
-    val weekGpt = mutableStateOf("")
+    val gpt24h = mutableStateOf("")
 
     // variables for sunrise and sunset
     var rise: String? = null
@@ -59,11 +59,8 @@ data class DataHolder(
     var lastUpdate = dt
 
 
-
     @SuppressLint("MutableCollectionMutableState")
     companion object {
-        val Favourites = mutableStateListOf<DataHolder>()
-        // initializes
         val initLocation = DataHolder(
             CustomLocation(
                 "Ålesund",
@@ -73,22 +70,20 @@ data class DataHolder(
                 "Møre og Romsdal"
             )
         )
+        val Favourites = mutableStateListOf<DataHolder>(initLocation)
         val wRepo = WeatherRepository()
         val aRepo = WarningRepository()
         val gptRepo = GPTRepo()
     }
 
-    init {
-        Favourites.add(this)
-        println("Creating data for ${location.name} and adding to favourites")
-        println("Favorites: ")
-        Favourites.forEach{
-            println("\t ${it.location.name}")
+    // function to either add or remove object from favourite list
+    fun toggleInFavourites() {
+        //if the location is in the list
+        if (!Favourites.contains(this)) {
+            Favourites.add(this)
+        } else {
+            Favourites.remove(this)
         }
-
-    }
-    fun removeFromFavorites(){
-        Favourites.remove(this)
     }
 
     suspend fun updateAll() {
@@ -97,12 +92,13 @@ data class DataHolder(
         updateSunriseAndSunset()
     }
 
-    fun findHighestAndLowestTemp (): List<String>{
+    fun findHighestAndLowestTemp(): List<String> {
         val templist = mutableListOf<Double>(currentWeather!!.temperature!!.toDouble())
         next24h.forEach {
             // makes sure that it only fetches the temperatures for this day and not tomorrow
-            // note: the api doesnt fetch data in the past, so the highest and lowest will not include past temperatures
-            if (it.time.hour.toInt() < currentHour.toInt() || it.time.hour.toInt() == 0){
+            // note: the api doesn't fetch data in the past,
+            // so the highest and lowest will not include past temperatures
+            if (it.time.hour.toInt() < currentHour.toInt() || it.time.hour.toInt() == 0) {
                 templist.add(it.temperature!!.toDouble())
             }
         }
@@ -119,7 +115,7 @@ data class DataHolder(
         val newWeather = wRepo.getWeather(location)
 
         // if api call is successfull
-        if (newWeather != null){
+        if (newWeather != null) {
             // sets last update to now
             lastUpdate = getCurrentTime()
             weather = newWeather
@@ -128,23 +124,23 @@ data class DataHolder(
             updateWeek(newWeather)
             // sets status to success
             weatherStatus.value = statusStates[1]
-        }
-        else{
+        } else {
             weatherStatus.value = statusStates[2]
         }
     }
 
-    suspend fun updateGPTCurrent(){
+    suspend fun updateGPTCurrent(age: Int, hobbies: List<String>) {
         mainGpt.value = ""
         // fetches from api
-        mainGpt.value = gptRepo.fetchCurrent(currentWeather!!, next24h)
-    }
-    suspend fun updateGPTWeek() {
-        weekGpt.value = ""
-        weekGpt.value = gptRepo.fetchWeek(next24h)
+        mainGpt.value = gptRepo.fetchCurrent(currentWeather!!, next24h, age, hobbies)
     }
 
-    suspend fun updateNext24h(newWeather: WeatherForecast){
+    suspend fun updateGPT24h(age: Int) {
+        gpt24h.value = ""
+        gpt24h.value = gptRepo.fetch24h(next24h, age)
+    }
+
+    suspend fun updateNext24h(newWeather: WeatherForecast) {
         val time = dt
         val hour = dt.hour
 
@@ -153,7 +149,7 @@ data class DataHolder(
         for (i in 1..24) {
 
             // makes sure that it is the correct day
-            if (hour.toInt() + i < 24){
+            if (hour.toInt() + i < 24) {
                 hours.add(
                     DateTime(
                         time.year,
@@ -162,7 +158,7 @@ data class DataHolder(
                         (time.hour.toInt() + i).toString()
                     )
                 )
-            } else{
+            } else {
                 hours.add(
                     DateTime(
                         time.year,
@@ -176,7 +172,7 @@ data class DataHolder(
 
         val newList = mutableListOf<WeatherTimeForecast>()
         // add a weather object for each hour in a day
-        hours.forEach{
+        hours.forEach {
             newList.add(WeatherTimeForecast(newWeather, it, location))
         }
         next24h = newList
@@ -195,21 +191,21 @@ data class DataHolder(
 
         val newList = mutableListOf<WeatherTimeForecast>()
         // add a weather object for each hour in a day
-        weekDays.forEach{
+        weekDays.forEach {
             newList.add(WeatherTimeForecast(newWeather, it, location))
         }
         week = newList
 
     }
 
-    suspend fun updateSunriseAndSunset(){
+    suspend fun updateSunriseAndSunset() {
         // sets status to loading
         sunStatus.value = statusStates[0]
         // fetches from api
         val newSun = wRepo.getRiseAndSet(location, dt)
 
         // if api call is successful
-        if(newSun != null){
+        if (newSun != null) {
             rise = newSun.sunriseTime
             set = newSun.sunsetTime
 
@@ -217,19 +213,19 @@ data class DataHolder(
             sunStatus.value = statusStates[1]
         }
         // if api call fails
-        else{
+        else {
             sunStatus.value = statusStates[2]
 
         }
     }
 
-    suspend fun updateWarning(){
+    suspend fun updateWarning() {
         // starts by setting the status to loading
         alertStatus.value = statusStates[0]
         // fetches from api
         val newWarnings = aRepo.fetchAllWarnings()
         // if api call is successful
-        if (newWarnings != null){
+        if (newWarnings != null) {
             alertList = aRepo.fetchAlertList(newWarnings, location)
             allWarnings = newWarnings
 
@@ -237,7 +233,7 @@ data class DataHolder(
             alertStatus.value = statusStates[1]
         }
         // if api call fails
-        else{
+        else {
             alertStatus.value = statusStates[1]
         }
     }

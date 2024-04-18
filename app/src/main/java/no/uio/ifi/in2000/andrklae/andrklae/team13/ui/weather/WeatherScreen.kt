@@ -29,11 +29,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
+import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.Next24
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.RainWind
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.UpperHalf
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.WarningRow
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.WeekTable
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 
@@ -43,8 +47,20 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 )
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun WeatherScreen(weatherViewModel: WeatherViewModel) {
-    val data = weatherViewModel.data.observeAsState().value
+fun WeatherScreen(
+    activity: MainActivity,
+    data: DataHolder,
+    background: Background,
+    updateAll: () -> Unit,
+    age: Int,
+    gptMain: String,
+    hobbies: List<String>,
+    updateMainGpt: (Int, List<String>) -> Unit,
+    gpt24h: String,
+    update24hGpt: (Int) -> Unit,
+    searchVm: SearchViewModel,
+    setLocation: (DataHolder) -> Unit
+) {
     val scrollState = rememberScrollState()
     Box {
         // contents
@@ -57,10 +73,9 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
         ) {
 
             // keeps track of the status of the data
-            when (data!!.weatherStatus.value) {
+            when (data.weatherStatus.value) {
                 // loading
                 data.statusStates[0] -> {
-
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Spacer(modifier = Modifier.height(70.dp))
                         Text(text = data.location.name, fontSize = 35.sp)
@@ -71,14 +86,28 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
                 }
                 // success
                 data.statusStates[1] -> {
-                    UpperHalf(weatherViewModel, data)
+                    UpperHalf(
+                        activity = activity,
+                        data = data,
+                        background = background,
+                        updateAll = { updateAll() },
+                        age = age,
+                        gptText = gptMain,
+                        hobbies = hobbies,
+                        updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) },
+                        searchVm = searchVm,
+                        setLocation = { newLocationData -> setLocation(newLocationData) }
+                    )
 
                     if (data.alertStatus.value == data.statusStates[1]) {
-
                         WarningRow(data, 500)
-
                     }
-                    Next24(weatherViewModel, data)
+                    Next24(
+                        data = data,
+                        age = age,
+                        gpt24h = gpt24h,
+                        updateGpt = { update24hGpt(age) }
+                    )
 
                     RainWind(data)
                     WeekTable(data)
@@ -90,7 +119,7 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
                     if (data.weather == null) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Spacer(modifier = Modifier.height(80.dp))
-                            Box (
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 20.dp)
@@ -104,7 +133,11 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
                                         .align(Alignment.Center)
                                         .width(180.dp)
                                 ) {
-                                    Text(text = data.location.name, fontSize = 35.sp, textAlign = TextAlign.Center)
+                                    Text(
+                                        text = data.location.name,
+                                        fontSize = 35.sp,
+                                        textAlign = TextAlign.Center
+                                    )
                                 }
                             }
                             Spacer(modifier = Modifier.height(70.dp))
@@ -113,9 +146,9 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
-                                .glassEffect()
-                                .background(Color.Red.copy(alpha = 0.3f))
-                                .padding(20.dp)
+                                    .glassEffect()
+                                    .background(Color.Red.copy(alpha = 0.3f))
+                                    .padding(20.dp)
                             ) {
                                 Text(text = "Feilet", fontSize = 25.sp)
                                 Spacer(modifier = Modifier.height(10.dp))
@@ -127,7 +160,7 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
                                         .padding(3.dp)
                                         .clip(RoundedCornerShape(13.dp))
                                         .background(Color.White)
-                                        .clickable { weatherViewModel.updateAll() }
+                                        .clickable { updateAll() }
                                         .padding(10.dp)
                                 ) {
 
@@ -143,11 +176,27 @@ fun WeatherScreen(weatherViewModel: WeatherViewModel) {
                     }
                     // if it has previous data
                     else {
-                        UpperHalf(weatherViewModel, data)
+                        UpperHalf(
+                            activity = activity,
+                            data = data,
+                            background = background,
+                            updateAll = { updateAll() },
+                            age = age,
+                            gptText = gptMain,
+                            hobbies = hobbies,
+                            updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) },
+                            searchVm = searchVm,
+                            setLocation = { newLocationData -> setLocation(newLocationData) }
+                        )
 
                         WarningRow(data, 500)
 
-                        Next24(weatherViewModel, data)
+                        Next24(
+                            data = data,
+                            age = age,
+                            gpt24h = gpt24h,
+                            updateGpt = { update24hGpt(age) }
+                        )
 
                         RainWind(data)
 

@@ -23,23 +23,26 @@ import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
-fun Next24(weatherVM: WeatherViewModel, data: DataHolder){
+fun Next24(
+    data: DataHolder,
+    age: Int,
+    gpt24h: String,
+    updateGpt: (Int) -> Unit
+) {
     val next24 = data.next24h
-    val GPTWeek by weatherVM.GPTWeek.collectAsState()
     val scrollState = rememberScrollState()
     Column {
         Header("Været det neste døgnet")
         Spacer(modifier = Modifier.height(10.dp))
-        Row (
+        Row(
             horizontalArrangement = Arrangement.spacedBy(0.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .horizontalScroll(scrollState),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Spacer(modifier = Modifier.width(20.dp))
             next24.forEach {
                 HourlyForecast(it)
@@ -49,22 +52,20 @@ fun Next24(weatherVM: WeatherViewModel, data: DataHolder){
 
         }
         Spacer(modifier = Modifier.height(10.dp))
-        GptSpeechBubble(GPTWeek, { weatherVM.updateGPTWeek() })
+        GptSpeechBubble(gpt24h, { updateGpt(age) })
     }
-
 }
 
 @Composable
 fun HourlyForecast(weather: WeatherTimeForecast) {
     Box(
         contentAlignment = Alignment.Center
-    ){
+    ) {
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .glassEffect()
-            ,
+                .glassEffect(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -72,7 +73,7 @@ fun HourlyForecast(weather: WeatherTimeForecast) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(10.dp)
-            ){
+            ) {
                 Text(
                     text = weather.time.hour + ":00",
                     fontSize = 20.sp,
@@ -85,8 +86,6 @@ fun HourlyForecast(weather: WeatherTimeForecast) {
                     )
             }
         }
-
-
     }
 }
 

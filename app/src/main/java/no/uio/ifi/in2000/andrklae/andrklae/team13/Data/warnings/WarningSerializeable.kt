@@ -8,8 +8,6 @@ data class Geometry(
     val type: String
 )
 
-
-
 data class Properties(
     val altitude_above_sea_level: Int,
     val area: String, //
@@ -38,14 +36,23 @@ data class Properties(
     val triggerLevel: String,
     val type: String,
     val web: String
-)
+) {
+    // Function that can collect the area name as ocean-type to give the user more context
+    // as to what areas like "A5" represent.
+    fun thing(string: String): String {
+        if (string.length == 2 && (string[1].isDigit() || string[0].isDigit())) {
+            return "Havområde: " + string
+        } else {
+            return string
+        }
+    }
+}
 
 data class Resource(
     val description: String,
     val mimeType: String,
     val uri: String
 )
-
 
 
 data class When(
@@ -59,8 +66,6 @@ data class Feature(
     val type: String,
     val `when`: When
 )
-
-
 
 
 data class AlertResponse(

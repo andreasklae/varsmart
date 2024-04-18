@@ -5,15 +5,24 @@ import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 
 class GPTRepo {
-    val dummyResponse = "dummy response: Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, " +
+    val dummyResponse = "dummy response: Lorem ipsum dolor sit amet " +
+            "consectetur adipisicing elit. Maxime mollitia, " +
             "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum "
     val dataSource = GPTDataSource()
+
     @OptIn(BetaOpenAI::class)
-    suspend fun fetchCurrent(weather: WeatherTimeForecast, next24: List<WeatherTimeForecast>): String {
+    suspend fun fetchCurrent(
+        weather: WeatherTimeForecast,
+        next24: List<WeatherTimeForecast>,
+        age: Int,
+        hobbyList: List<String>
+    ): String {
         var prompt = (
-                "oppsumer været og gi relevante råd,maks 30 ord,ett avsnitt. " +
+                "gi relevante råd basert på været,maks 40 ord,ett avsnitt. " +
                         "Du er kortfattet,jovial,uformell,enkel å forstå. " +
-                        "Skriv som om jeg er 9 år" +
+                        "ta hensyn til hobbyene mine dersom det er relevant" +
+                        "Skriv som om jeg er $age år" +
+                        "hobbyer: ${hobbyList.toString()}" +
                         "Værdata: " +
 
                         "sted: ${weather.customLocation.name} " +
@@ -36,10 +45,11 @@ class GPTRepo {
 
     }
 
-    suspend fun fetchWeek(next24h: List<WeatherTimeForecast>): String {
-        var prompt = "på maks 20 ord, fortell hvordan været utvikler seg i løpet av døgnet." +
-                "Du er jovial,uformell,enkel å forstå."+
-                "Skriv som om jeg er 9 år. " +
+    suspend fun fetch24h(next24h: List<WeatherTimeForecast>, age: Int): String {
+        var prompt = "på maks 30 ord, fortell hvordan været utvikler seg i løpet av døgnet." +
+                "Du er jovial,uformell,enkel å forstå." +
+                "kun utf-8 karakterer" +
+                "Skriv som om jeg er $age år. " +
                 "Værdata: "
         next24h.forEach {
             prompt += ("tid: ${it.time.isoFormat}{" +

@@ -26,6 +26,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -93,7 +94,7 @@ fun WarningRow(data: DataHolder, range: Int) {
             }
 
             // if there are more than one alert, show page indicator
-            if (filteredAlerts.size > 1){
+            if (filteredAlerts.size > 1) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -131,7 +132,7 @@ fun DisplayWarning(
 ) {
     val warningDescription = "${alert.alert.properties.instruction}" +
             " \n${alert.alert.properties.description} ${alert.alert.properties.consequences}"
-    val warningTitle = alert.alert.properties.area
+    val warningTitle = alert.alert.properties.thing(alert.alert.properties.area)
     val warningLevel = alert.alert.properties.riskMatrixColor
     val distance = alert.distance
     var showDialog by remember { mutableStateOf(false) }
@@ -175,9 +176,10 @@ fun DisplayWarning(
                     modifier = Modifier.size(50.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.LocationOn,
+                        imageVector = Icons.Outlined.Map,
                         contentDescription = "Settings",
-                        tint = Color.Black
+                        tint = Color.Black,
+                        modifier = Modifier.size(30.dp)
                     )
                 }
                 Spacer(Modifier.weight(1f))

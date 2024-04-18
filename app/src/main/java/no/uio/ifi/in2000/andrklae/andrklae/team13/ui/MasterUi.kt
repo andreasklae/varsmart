@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningScreen
@@ -27,36 +29,87 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 @Composable
 fun MasterUi(
     activity: MainActivity,
-    weatherVM: WeatherViewModel = WeatherViewModel(0, activity),
-    favVM: FavoriteViewModel = FavoriteViewModel(),
-    settingsVM: SettingsViewModel = SettingsViewModel(),
-    warningVM: WarningViewModel = WarningViewModel()
+    weatherVM: WeatherViewModel,
+    favVM: FavoriteViewModel,
+    settingsVM: SettingsViewModel,
+    warningVM: WarningViewModel
 ) {
     val pagerState = rememberPagerState(
         pageCount = { 4 },
     )
-    Column(verticalArrangement = Arrangement.Bottom,
-        modifier = Modifier.fillMaxSize()) {
+
+    // hoisted for low coupling
+    val background = settingsVM.background.collectAsState()
+    val age = settingsVM.age.collectAsState()
+    val sliderPosition = settingsVM.sliderPosition.collectAsState()
+    var hobbies = settingsVM.hobbies.collectAsState()
+
+    val gptMain by weatherVM.GPTMain.collectAsState()
+    val gpt24h by weatherVM.GPT24h.collectAsState()
+    val currentData by weatherVM.data.collectAsState()
+
+    println("test")
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.fillMaxSize()
+    ) {
         HorizontalPager(
             state = pagerState,
             beyondBoundsPageCount = 2,
             modifier = Modifier
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFFB3E5FC), // Light blue
-                            Color(0xFF01579B)  // Dark blue
-                        )
+                        colors = background.value.gradientList
                     )
                 )
                 .weight(1f)
         ) { page ->
-            when (page){
-                0 -> WeatherScreen(weatherViewModel = weatherVM)
-                1 -> FavoriteScreen(favVM, weatherVM, activity, pagerState)
-                2 -> WarningScreen(warningVM)
-                3 -> SettingsScreen(settingsVM)
+            when (page) {
+                0 -> {
+                    WeatherScreen(
+                        activity = activity,
+                        data = currentData,
+                        background = background.value,
+                        updateAll = { weatherVM.updateAll() },
+                        age = age.value,
+                        gptMain = gptMain,
+                        hobbies = hobbies.value,
+                        updateMainGpt = { age, list -> weatherVM.updateMainGpt(age, list) },
+                        gpt24h = gpt24h,
+                        update24hGpt = { age -> weatherVM.updateGPT24h(age) },
+                        searchVm = SearchViewModel(),
+                        setLocation = { newLocationData -> weatherVM.setLocation(newLocationData) }
+                    )
+                }
 
+                1 -> FavoriteScreen(
+                    favVM,
+                    SearchViewModel(),
+                    setHomeLocation = { data -> weatherVM.setLocation(data) },
+                    activity,
+                    pagerState
+                )
+
+                2 -> WarningScreen(warningVM)
+                3 -> {
+                    SettingsScreen(
+                        age = age.value,
+                        onAgeChange = { fraction -> settingsVM.changeAgeByFraction(fraction) },
+                        sliderPosition = sliderPosition.value,
+                        onSliderChange = { newPosition ->
+                            settingsVM.changeSliderPosition(
+                                newPosition
+                            )
+                        },
+                        hobbies = hobbies.value,
+                        onAddHobby = { hobby -> settingsVM.addHobby(hobby) },
+                        onRemoveHobby = { hobby -> settingsVM.removeHobby(hobby) },
+                        background = background.value,
+                        onBackgroundChange = { background ->
+                            settingsVM.changeBackround(background)
+                        }
+                    )
+                }
             }
 
         }

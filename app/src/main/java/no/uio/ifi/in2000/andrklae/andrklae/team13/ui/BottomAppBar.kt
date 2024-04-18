@@ -35,10 +35,11 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 val iconSize = 35.dp
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomAppBar(weatherVM: WeatherViewModel, pagerState: PagerState) {
-    Column(verticalArrangement = Arrangement.Bottom){
+    Column(verticalArrangement = Arrangement.Bottom) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -70,8 +71,7 @@ fun HomeButton(pagerState: PagerState) {
     val icon = {
         if (pagerState.currentPage == 0) {
             Icons.Filled.Home
-        }
-        else Icons.Outlined.Home
+        } else Icons.Outlined.Home
     }
     IconButton(
         onClick = {
@@ -91,6 +91,7 @@ fun HomeButton(pagerState: PagerState) {
 
     }
 }
+
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -99,8 +100,7 @@ fun FavouriteButton(pagerState: PagerState) {
     val icon = {
         if (pagerState.currentPage == 1) {
             Icons.Filled.Bookmarks
-        }
-        else Icons.Outlined.Bookmarks
+        } else Icons.Outlined.Bookmarks
     }
     IconButton(
         onClick = {
@@ -119,8 +119,8 @@ fun FavouriteButton(pagerState: PagerState) {
 
     }
 }
-@SuppressLint("CoroutineCreationDuringComposition")
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WarningButton(pagerState: PagerState) {
@@ -128,8 +128,7 @@ fun WarningButton(pagerState: PagerState) {
     val icon = {
         if (pagerState.currentPage == 2) {
             Icons.Default.Warning
-        }
-        else Icons.Outlined.WarningAmber
+        } else Icons.Outlined.WarningAmber
     }
     IconButton(
         onClick = {
@@ -148,8 +147,8 @@ fun WarningButton(pagerState: PagerState) {
 
     }
 }
-@SuppressLint("CoroutineCreationDuringComposition")
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileButton(pagerState: PagerState) {
@@ -157,8 +156,7 @@ fun ProfileButton(pagerState: PagerState) {
     val icon = {
         if (pagerState.currentPage == 3) {
             Icons.Filled.Settings
-        }
-        else Icons.Outlined.Settings
+        } else Icons.Outlined.Settings
     }
     IconButton(
         onClick = {
