@@ -1,4 +1,5 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
+
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -29,8 +30,7 @@ data class DateTime(
 
     private fun dayToNorwegian(dateInt: LocalDate?): String {
         val day = DateInt.dayOfWeek
-            .toString().
-            lowercase()
+            .toString().lowercase()
             .replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase() else it.toString()
 
@@ -53,7 +53,10 @@ data class DateTime(
     }
 
     fun getNextDay(dateTime: DateTime): DateTime {
-        val current = LocalDate.parse("${dateTime.year}-${dateTime.month}-${dateTime.day}", DateTimeFormatter.ISO_DATE)
+        val current = LocalDate.parse(
+            "${dateTime.year}-${dateTime.month}-${dateTime.day}",
+            DateTimeFormatter.ISO_DATE
+        )
         val nextDay = current.plusDays(1)
 
         return DateTime(

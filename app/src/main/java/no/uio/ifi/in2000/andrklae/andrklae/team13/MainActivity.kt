@@ -38,7 +38,10 @@ class MainActivity : ComponentActivity() {
     }
 
     // function for handling requests (only location services is needed)
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         // if the request code is for location access
@@ -53,10 +56,10 @@ class MainActivity : ComponentActivity() {
                         val new = DataHolder(customLocation)
 
                         // i data doesnt exist
-                        if (!DataHolder.Favourites.contains(new)){
+                        if (!DataHolder.Favourites.contains(new)) {
                             new.toggleInFavourites()
                             weatherVM.setLocation(new)
-                        } else{
+                        } else {
                             weatherVM.setLocation(
                                 // will never be null because of the if statement above
                                 DataHolder.Favourites.find { it == new }!!
@@ -67,7 +70,8 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             } else {
-                // Permission was denied. You can show a message to the user or take appropriate action.
+                // Permission was denied. You can show a message
+                // to the user or take appropriate action.
                 println("Permission denied by the user")
             }
         }
@@ -86,10 +90,10 @@ class MainActivity : ComponentActivity() {
                     val new = DataHolder(customLocation)
 
                     // i data doesnt exist
-                    if (!DataHolder.Favourites.contains(new)){
+                    if (!DataHolder.Favourites.contains(new)) {
                         new.toggleInFavourites()
                         weatherVM.setLocation(new)
-                    } else{
+                    } else {
                         weatherVM.setLocation(
                             // will never be null because of the if statement above
                             DataHolder.Favourites.find { it == new }!!
@@ -100,7 +104,7 @@ class MainActivity : ComponentActivity() {
         }
 
         // request permission if not granted
-        else{
+        else {
             LocationUtil.requestPermission(this)
         }
     }
@@ -123,6 +127,7 @@ class MainActivity : ComponentActivity() {
                 return true
             }
         }
+        Log.i("Internet", "No internet connection detected")
         return false
     }
 }

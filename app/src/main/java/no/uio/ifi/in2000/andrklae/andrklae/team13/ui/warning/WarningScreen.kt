@@ -180,7 +180,7 @@ fun LoadWarningScreen(
         item {
             Spacer(modifier = Modifier.height(90.dp))
         }
-        item { 
+        item {
             Text(text = "Se i kart")
         }
         // Row for refreshing and editing list

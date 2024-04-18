@@ -26,29 +26,29 @@ class FavoriteViewModel() : ViewModel() {
     val _showBottomSheet = MutableStateFlow(false)
     val showBottomSheet = _showBottomSheet.asStateFlow()
 
-    fun toggleBottomSheet(){
+    fun toggleBottomSheet() {
         // hides / shows bottom sheet
         _showBottomSheet.value = !showBottomSheet.value
     }
 
-    fun loadData(){
+    fun loadData() {
         viewModelScope.launch {
-            favourites.forEach{
+            favourites.forEach {
                 // loads weather
                 launch {
-                    if (it.weather == null){
+                    if (it.weather == null) {
                         it.updateWeather()
                     }
                 }
                 // loads warnings
                 launch {
-                    if (it.alertList.isEmpty()){
+                    if (it.alertList.isEmpty()) {
                         it.updateWarning()
                     }
                 }
                 // loads sunrise and set
                 launch {
-                    if (it.set == null){
+                    if (it.set == null) {
                         it.updateSunriseAndSunset()
                     }
                 }
@@ -56,8 +56,8 @@ class FavoriteViewModel() : ViewModel() {
         }
     }
 
-    fun updateWeather(){
-        favourites.forEach{
+    fun updateWeather() {
+        favourites.forEach {
             viewModelScope.launch {
                 it.updateAll()
             }

@@ -15,30 +15,33 @@ class LocationDataSource() {
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
-            json(Json{ignoreUnknownKeys = true})
+            json(Json { ignoreUnknownKeys = true })
         }
     }
 
-    suspend fun fetchAddresses(search:String): List<CustomLocation> {
+    suspend fun fetchAddresses(search: String): List<CustomLocation> {
         val APIKey = "AIzaSyBofr2wZtjab3DBuYh46BDxeUWUit5l-sw"
-        val path= "https://maps.googleapis.com/maps/api/geocode/json?components=route:$search|country:NO&language=no&key=$APIKey"
+        val path =
+            "https://maps.googleapis.com/maps/api/geocode/json?components=route:" +
+                    "$search|country:NO&language=no&key=$APIKey"
 
         try {
             val response: Root = client.get(path).body()
             return response.results.map { result ->
                 CustomLocation(
-                    name = result.formatted_address.split(", ").first() ,
+                    name = result.formatted_address.split(", ").first(),
                     lon = result.geometry.location.lng,
                     lat = result.geometry.location.lat,
                     postSted = result.formatted_address
                         .split(", ")
                         [result.formatted_address.split(", ").size - 2]
                         .replace("[0-9\\s]+".toRegex(), ""),
-                    fylke = result.address_components.find { it.types.first() == "administrative_area_level_1" }!!.short_name
+                    fylke = result.address_components.find {
+                        it.types.first() == "administrative_area_level_1"
+                    }!!.short_name
                 )
             }
-        }
-        catch (e: Exception){
+        } catch (e: Exception) {
             return emptyList()
         }
 

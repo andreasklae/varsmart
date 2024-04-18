@@ -20,7 +20,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 
 
 @Composable
-fun GptSpeechBubble(content: String, function:() -> Unit) {
+fun GptSpeechBubble(content: String, function: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
@@ -50,7 +50,7 @@ fun GptSpeechBubble(content: String, function:() -> Unit) {
 
             }
         }
-        ImageIcon(y = 0, x = 0 , symbolId =R.drawable.arrowright , width =30 , height =60 )
-        MrPraktiskBlink({ function()})
+        ImageIcon(y = 0, x = 0, symbolId = R.drawable.arrowright, width = 30, height = 60)
+        MrPraktiskBlink({ function() })
     }
 }

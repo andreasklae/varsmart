@@ -2,9 +2,7 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata
 
 import kotlinx.serialization.Serializable
 
-
-
-data class CustomLocation (
+data class CustomLocation(
     val name: String,
     val lat: Double,
     val lon: Double,
@@ -15,7 +13,7 @@ data class CustomLocation (
         return "Location = $name \n" +
                 "Lat = $lat \n" +
                 "Lon = $lon \n" +
-                "PostSted = $postSted\n"+
+                "PostSted = $postSted\n" +
                 "fylke = $fylke"
 
     }

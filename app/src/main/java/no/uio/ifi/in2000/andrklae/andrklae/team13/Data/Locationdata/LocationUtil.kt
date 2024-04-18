@@ -45,18 +45,28 @@ object LocationUtil {
     ) {
         if (hasLocationPermission(activity)) {
             try {
-                val fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
-                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    location?.let {
-                        callback(CustomLocation("Min posisjon", it.latitude, it.longitude, "",""))
-                    } ?: run {
-                        // Location was null, handle accordingly
+                val fusedLocationProviderClient: FusedLocationProviderClient =
+                    LocationServices.getFusedLocationProviderClient(activity)
+                fusedLocationProviderClient.lastLocation
+                    .addOnSuccessListener { location: Location? ->
+                        location?.let {
+                            callback(
+                                CustomLocation(
+                                    "Min posisjon",
+                                    it.latitude,
+                                    it.longitude,
+                                    "",
+                                    ""
+                                )
+                            )
+                        } ?: run {
+                            // Location was null, handle accordingly
+                            callback(null)
+                        }
+                    }.addOnFailureListener {
+                        // Failed to get location, handle accordingly
                         callback(null)
                     }
-                }.addOnFailureListener {
-                    // Failed to get location, handle accordingly
-                    callback(null)
-                }
             } catch (e: SecurityException) {
                 // Handle the case where the permission was revoked between checking and usage
                 callback(null)

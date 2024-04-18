@@ -5,8 +5,9 @@ import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 
 class GPTRepo {
-    val dummyResponse = "dummy response: Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, " +
-                "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum "
+    val dummyResponse = "dummy response: Lorem ipsum dolor sit amet " +
+            "consectetur adipisicing elit. Maxime mollitia, " +
+            "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum "
     val dataSource = GPTDataSource()
 
     @OptIn(BetaOpenAI::class)
@@ -46,7 +47,7 @@ class GPTRepo {
 
     suspend fun fetch24h(next24h: List<WeatherTimeForecast>, age: Int): String {
         var prompt = "på maks 30 ord, fortell hvordan været utvikler seg i løpet av døgnet." +
-                "Du er jovial,uformell,enkel å forstå."+
+                "Du er jovial,uformell,enkel å forstå." +
                 "kun utf-8 karakterer" +
                 "Skriv som om jeg er $age år. " +
                 "Værdata: "

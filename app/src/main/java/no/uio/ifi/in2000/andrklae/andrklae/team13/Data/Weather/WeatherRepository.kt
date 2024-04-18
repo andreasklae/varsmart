@@ -13,26 +13,25 @@ class WeatherRepository {
     suspend fun getLocation(search: String): CustomLocation {
         return locRepo.getLocations(search).first()
     }
+
     suspend fun getWeather(customLocation: CustomLocation): WeatherForecast? {
         try {
-            val weather =  wDataSource.fetchWeather(customLocation)
+            val weather = wDataSource.fetchWeather(customLocation)
             return weather
-        } catch (exception: Exception){
+        } catch (exception: Exception) {
             return null
         }
-        
+
     }
 
     suspend fun getRiseAndSet(loc: CustomLocation, time: DateTime): SunriseAndSunset? {
         try {
             return sunrisesunsetData.fetchSunriseandSunset(loc, time)
-        }catch (exception: Exception){
+        } catch (exception: Exception) {
             return null
         }
-        
+
     }
-
-
 
 
 }

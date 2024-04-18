@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 
-class SettingsViewModel(): ViewModel() {
+class SettingsViewModel() : ViewModel() {
     private val _age = MutableStateFlow(9)
     val age = _age.asStateFlow()
     private val _sliderPosition = MutableStateFlow(0f)
@@ -19,13 +19,13 @@ class SettingsViewModel(): ViewModel() {
     private var _background = MutableStateFlow(Background.images[0])
     val background = _background.asStateFlow()
 
-    fun changeAgeByFraction(fraction: Float = 0f){
+    fun changeAgeByFraction(fraction: Float = 0f) {
         viewModelScope.launch {
             _age.value = 9 + (16 * fraction).toInt()
         }
     }
 
-    fun changeSliderPosition(newPosition: Float){
+    fun changeSliderPosition(newPosition: Float) {
         viewModelScope.launch {
             _sliderPosition.value = newPosition
         }
@@ -38,6 +38,7 @@ class SettingsViewModel(): ViewModel() {
             _hobbies.value = currentHobbies
         }
     }
+
     fun removeHobby(hobby: String) {
         viewModelScope.launch {
             val currentHobbies = hobbies.value
@@ -45,7 +46,7 @@ class SettingsViewModel(): ViewModel() {
         }
     }
 
-    fun changeBackround(background: Background){
+    fun changeBackround(background: Background) {
         viewModelScope.launch {
             _background.value = background
         }

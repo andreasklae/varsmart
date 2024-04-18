@@ -57,11 +57,11 @@ fun UpperHalf(
     updateMainGpt: (Int, List<String>) -> Unit,
     searchVm: SearchViewModel,
     setLocation: (DataHolder) -> Unit
-){
+) {
     val loc = data.location.name
     val showSearchDialog = searchVm.showSearchDialog.collectAsState()
 
-    if (showSearchDialog.value){
+    if (showSearchDialog.value) {
         SearchDialog(
             searchVm = searchVm,
             functionToPerform = { newLocationData -> setLocation(newLocationData) }
@@ -100,7 +100,7 @@ fun UpperHalf(
             var set = ""
 
             // if sunrise api is successful
-            if (data.sunStatus.value == data.statusStates[1]){
+            if (data.sunStatus.value == data.statusStates[1]) {
                 rise = data.rise!!.substringAfter("T").substringBefore("+")
                 set = data.set!!.substringAfter("T").substringBefore("+")
             }
@@ -111,7 +111,7 @@ fun UpperHalf(
                 loc,
             )
             Spacer(modifier = Modifier.height(10.dp))
-            GPTBox(gptText, { updateMainGpt(age, hobbies) } )
+            GPTBox(gptText, { updateMainGpt(age, hobbies) })
         }
     }
 }
@@ -136,8 +136,8 @@ fun GPTBox(content: String, function: () -> Unit) {
                 fontSize = 12.sp
             )
         }
-        ImageIcon(y = 0, x = -20 , symbolId =R.drawable.arrowdown , width =60 , height =25 )
-        MrPraktiskBlink({ function()})
+        ImageIcon(y = 0, x = -20, symbolId = R.drawable.arrowdown, width = 60, height = 25)
+        MrPraktiskBlink({ function() })
     }
 }
 
@@ -167,7 +167,7 @@ fun ActionRow(
                 .padding(5.dp)
         ) {
             val iconId = {
-                if (isInFavourites){
+                if (isInFavourites) {
                     Icons.Filled.Bookmark
                 } else Icons.Filled.BookmarkBorder
             }
@@ -215,7 +215,7 @@ fun ActionRow(
         Spacer(modifier = Modifier.width(5.dp))
 
         // button for going to the device location
-        if (!isOnCurrentLocation){
+        if (!isOnCurrentLocation) {
             Box(
                 modifier = Modifier
                     .clickable {
@@ -289,7 +289,7 @@ fun BasicInfo(
 
 
 @Composable
-fun WeatherBox(weatherVM: WeatherViewModel, data: DataHolder){
+fun WeatherBox(weatherVM: WeatherViewModel, data: DataHolder) {
     val sunStatus = data.sunStatus
     val set = data.set
     val rise = data.rise
@@ -317,7 +317,7 @@ fun WeatherBox(weatherVM: WeatherViewModel, data: DataHolder){
         }
         Column(
             modifier = Modifier.fillMaxHeight()
-        ){
+        ) {
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "${data.currentWeather!!.temperature}°C",

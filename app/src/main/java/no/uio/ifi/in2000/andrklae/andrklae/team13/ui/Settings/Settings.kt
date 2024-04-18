@@ -69,7 +69,7 @@ fun SettingsScreen(
 
     background: Background,
     onBackgroundChange: (Background) -> Unit
-){
+) {
     println(background.imageId)
 
     val scrollState = rememberScrollState(age)
@@ -97,7 +97,7 @@ fun SettingsScreen(
             age,
             sliderPosition,
             onSliderChange = { onSliderChange(it) },
-            valueChange = {onAgeChange(it)}
+            valueChange = { onAgeChange(it) }
         )
         Spacer(modifier = Modifier.height(15.dp))
 
@@ -108,7 +108,7 @@ fun SettingsScreen(
             hobbies,
             onTextChange = { hobbyText = it },
             addToHobbies = { onAddHobby(it) },
-            removeFromHobbies = {onRemoveHobby(it)}
+            removeFromHobbies = { onRemoveHobby(it) }
 
         )
         Spacer(modifier = Modifier.height(15.dp))
@@ -116,7 +116,7 @@ fun SettingsScreen(
         var pickedBackgroundImage = background
 
         BackgroundImageChooser(
-            onBackgroundChange = { onBackgroundChange(it)},
+            onBackgroundChange = { onBackgroundChange(it) },
             pickedBackgroundImage
         )
 
@@ -137,18 +137,18 @@ fun BackgroundImageChooser(
             .clip(RoundedCornerShape(16.dp))
             .background(Color(0xFFF5F5F5))
             .padding(10.dp)
-    ){
+    ) {
         Text(
             text = "Hvilken bakgrunn vil du ha på hjemskjermen??",
             fontSize = 15.sp
         )
         var scrollState = rememberScrollState()
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .horizontalScroll(scrollState)
         ) {
-            Background.images.sortedBy { it != pickedBackground }.forEach{
+            Background.images.sortedBy { it != pickedBackground }.forEach {
                 Box(
                     modifier = Modifier
                         .padding(5.dp)
@@ -240,7 +240,7 @@ fun HobbyBox(
                 onDone = {
                     focusManager.clearFocus()
                     keyboardController?.hide()
-                    if (hobbyText.isNotEmpty()){
+                    if (hobbyText.isNotEmpty()) {
                         addToHobbies(hobbyText)
                     }
                     onTextChange("")
@@ -248,7 +248,7 @@ fun HobbyBox(
             )
         )
         Spacer(modifier = Modifier.height(10.dp))
-        if (hobbies.isNotEmpty()){
+        if (hobbies.isNotEmpty()) {
             Text(text = "Hobbyer:")
             HorizontalDivider(
                 modifier = Modifier
@@ -280,7 +280,7 @@ fun HobbyBox(
 }
 
 @Composable
-fun InfoBox(){
+fun InfoBox() {
     Spacer(modifier = Modifier.height(30.dp))
     Box(
         modifier = Modifier
@@ -292,7 +292,8 @@ fun InfoBox(){
             text = "Hei! Jeg er Mr. Praktisk, din personlige KI assistent. " +
                     "Ser du meg på hjemskjermen betyr det at " +
                     "du kan trykke på meg for å få råd og informasjon. " +
-                    "Jeg er basert på OpenAI sin GPT 3.5 som betyr at du bør ta det jeg sier med en klype salt. " +
+                    "Jeg er basert på OpenAI sin GPT 3.5 som betyr " +
+                    "at du bør ta det jeg sier med en klype salt. " +
                     "Ha en fin dag!",
             fontSize = 12.sp
         )
@@ -306,7 +307,7 @@ fun AgeSlider(
     sliderPosition: Float,
     onSliderChange: (Float) -> Unit,
     valueChange: (Float) -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

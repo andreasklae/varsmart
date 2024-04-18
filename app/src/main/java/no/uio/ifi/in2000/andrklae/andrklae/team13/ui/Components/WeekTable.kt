@@ -23,7 +23,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForeca
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 @Composable
-fun WeekTable(data: DataHolder){
+fun WeekTable(data: DataHolder) {
     val week = data.week
     Column {
         Header(header = "Været til uka")
@@ -36,7 +36,7 @@ fun WeekTable(data: DataHolder){
                 .glassEffect(),
             contentAlignment = Alignment.Center
 
-        ){
+        ) {
             Column(
             ) {
                 Row(
@@ -73,7 +73,7 @@ fun WeekTable(data: DataHolder){
                     color = Color.Black
                 )
 
-                week.forEach{
+                week.forEach {
                     DayRow(it)
                 }
             }
@@ -83,7 +83,7 @@ fun WeekTable(data: DataHolder){
 }
 
 @Composable
-fun DayRow(weather: WeatherTimeForecast){
+fun DayRow(weather: WeatherTimeForecast) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier

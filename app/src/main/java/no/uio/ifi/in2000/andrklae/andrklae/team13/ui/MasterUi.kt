@@ -49,8 +49,10 @@ fun MasterUi(
     val currentData by weatherVM.data.collectAsState()
 
     println("test")
-    Column(verticalArrangement = Arrangement.Bottom,
-        modifier = Modifier.fillMaxSize()) {
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.fillMaxSize()
+    ) {
         HorizontalPager(
             state = pagerState,
             beyondBoundsPageCount = 2,
@@ -61,9 +63,8 @@ fun MasterUi(
                     )
                 )
                 .weight(1f)
-        ) {
-            page ->
-            when (page){
+        ) { page ->
+            when (page) {
                 0 -> {
                     WeatherScreen(
                         activity = activity,

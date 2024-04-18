@@ -34,7 +34,6 @@ class WeatherDataSource {
         val lon = loc.lon
 
 
-
         // sets the url based on location
         val source = "weatherapi/locationforecast/2.0/compact?lat=$lat&lon=$lon"
 

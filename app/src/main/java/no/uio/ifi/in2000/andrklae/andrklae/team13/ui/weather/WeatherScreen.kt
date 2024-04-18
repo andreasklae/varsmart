@@ -119,7 +119,7 @@ fun WeatherScreen(
                     if (data.weather == null) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Spacer(modifier = Modifier.height(80.dp))
-                            Box (
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 20.dp)
@@ -133,7 +133,11 @@ fun WeatherScreen(
                                         .align(Alignment.Center)
                                         .width(180.dp)
                                 ) {
-                                    Text(text = data.location.name, fontSize = 35.sp, textAlign = TextAlign.Center)
+                                    Text(
+                                        text = data.location.name,
+                                        fontSize = 35.sp,
+                                        textAlign = TextAlign.Center
+                                    )
                                 }
                             }
                             Spacer(modifier = Modifier.height(70.dp))
@@ -156,7 +160,7 @@ fun WeatherScreen(
                                         .padding(3.dp)
                                         .clip(RoundedCornerShape(13.dp))
                                         .background(Color.White)
-                                        .clickable { updateAll }
+                                        .clickable { updateAll() }
                                         .padding(10.dp)
                                 ) {
 

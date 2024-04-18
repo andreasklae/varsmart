@@ -14,11 +14,11 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 @Composable
 fun Header(header: String) {
-    Row (
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp)
-    ){
+    ) {
         Box(
             modifier = Modifier
                 .glassEffect()

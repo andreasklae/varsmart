@@ -19,7 +19,8 @@ fun Modifier.glassEffect(color: Color = Color.White): Modifier {
         .border(2.dp, color.copy(alpha = 0.05f), RoundedCornerShape(15.dp))
         .border(3.dp, color.copy(alpha = 0.02f), RoundedCornerShape(15.dp))
         .border(4.dp, color.copy(alpha = 0.03f), RoundedCornerShape(15.dp))
-        .background(brush = Brush.verticalGradient(
+        .background(
+            brush = Brush.verticalGradient(
                 colors = listOf(
                     color.copy(alpha = 0.7f),
                     color.copy(alpha = 0.4f),
@@ -27,7 +28,8 @@ fun Modifier.glassEffect(color: Color = Color.White): Modifier {
                 ),
             )
         )
-        .background(brush = Brush.horizontalGradient(
+        .background(
+            brush = Brush.horizontalGradient(
                 colors = listOf(
                     color.copy(alpha = 0.7f),
                     color.copy(alpha = 0.4f),
@@ -46,7 +48,8 @@ fun Modifier.coloredGlassEffect(color: Color = Color.White): Modifier {
         .border(2.dp, Color.Black.copy(alpha = 0.05f), RoundedCornerShape(15.dp))
         .border(3.dp, Color.Black.copy(alpha = 0.02f), RoundedCornerShape(15.dp))
         .border(4.dp, Color.Black.copy(alpha = 0.03f), RoundedCornerShape(15.dp))
-        .background(brush = Brush.verticalGradient(
+        .background(
+            brush = Brush.verticalGradient(
                 colors = listOf(
                     color.copy(alpha = 0.7f),
                     color.copy(alpha = 0.4f),
@@ -54,7 +57,8 @@ fun Modifier.coloredGlassEffect(color: Color = Color.White): Modifier {
                 ),
             )
         )
-        .background(brush = Brush.horizontalGradient(
+        .background(
+            brush = Brush.horizontalGradient(
                 colors = listOf(
                     color.copy(alpha = 0.7f),
                     color.copy(alpha = 0.4f),

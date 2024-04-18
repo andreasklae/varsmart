@@ -94,7 +94,7 @@ fun WarningRow(data: DataHolder, range: Int) {
             }
 
             // if there are more than one alert, show page indicator
-            if (filteredAlerts.size > 1){
+            if (filteredAlerts.size > 1) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier

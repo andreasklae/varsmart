@@ -76,7 +76,8 @@ fun FavoriteScreen(
     // loads the list every time the ui changes (ie a new favourite is added)
     favVM.loadData()
     // sorts favorite list to put current location at the top of the list
-    val favorites = DataHolder.Favourites.sortedBy { if (it.location.name.equals("Min posisjon")) 0 else 1 }
+    val favorites =
+        DataHolder.Favourites.sortedBy { if (it.location.name.equals("Min posisjon")) 0 else 1 }
     // column of all favourites
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -103,7 +104,7 @@ fun FavoriteScreen(
         // boxes for each favourite
         favorites.forEach {
             item {
-                FavoriteBox( { data -> setHomeLocation(data) }, it, pagerState)
+                FavoriteBox({ data -> setHomeLocation(data) }, it, pagerState)
             }
         }
 
@@ -130,20 +131,20 @@ fun FavoriteScreen(
                         favVM.toggleBottomSheet()
                     },
 
-            ) {
-                Icon(Icons.Filled.Add,"legg til posisjon")
+                ) {
+                Icon(Icons.Filled.Add, "legg til posisjon")
             }
             Spacer(modifier = Modifier.height(12.dp))
 
             val showBottomSheet by favVM.showBottomSheet.collectAsState()
 
-            if (showBottomSheet){
+            if (showBottomSheet) {
                 BottomSheet(favVM, activity, searchVm)
             }
 
             val showSearchDialog = searchVm.showSearchDialog.collectAsState()
 
-            if (showSearchDialog.value){
+            if (showSearchDialog.value) {
                 SearchDialog(
                     searchVm = searchVm,
                     functionToPerform = { data -> data.toggleInFavourites() }
@@ -169,8 +170,8 @@ fun FunctionRow(favVM: FavoriteViewModel) {
                 .clickable {
                     favVM.updateWeather()
                 }
-            )
-        Icon(Icons.Filled.Edit,"edit")
+        )
+        Icon(Icons.Filled.Edit, "edit")
     }
 }
 
@@ -207,7 +208,7 @@ fun BottomSheet(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Give option to add current location if the user hasn't done it already
-            if (!DataHolder.Favourites.any{it.location.name == "Min posisjon"}){
+            if (!DataHolder.Favourites.any { it.location.name == "Min posisjon" }) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -223,7 +224,7 @@ fun BottomSheet(
 
 
                 ) {
-                    Icon(Icons.Filled.Place,"legg til posisjon")
+                    Icon(Icons.Filled.Place, "legg til posisjon")
                     Spacer(modifier = Modifier.width(20.dp))
                     Text(
                         text = "Nåværende posisjon",
@@ -248,7 +249,7 @@ fun BottomSheet(
 
 
             ) {
-                Icon(Icons.Filled.Search,"legg til posisjon")
+                Icon(Icons.Filled.Search, "legg til posisjon")
                 Spacer(modifier = Modifier.width(20.dp))
                 Text(
                     text = "Søk",
@@ -259,9 +260,6 @@ fun BottomSheet(
         }
     }
 }
-
-
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -292,13 +290,13 @@ fun FavoriteBox(
 
             )
 
-    ){
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-        ){
+        ) {
             val status = data.weatherStatus
-            when (status.value){
+            when (status.value) {
                 data.statusStates[0] -> {
                     Text(
                         text = data.location.name,
@@ -311,7 +309,7 @@ fun FavoriteBox(
                     Spacer(modifier = Modifier.weight(2f))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
-                    ){
+                    ) {
                         Text(
                             text = data.location.name,
                             fontSize = 30.sp
@@ -323,12 +321,12 @@ fun FavoriteBox(
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Box (
+                    Box(
                         contentAlignment = Alignment.Center
-                    ){
+                    ) {
                         Column {
                             Spacer(modifier = Modifier.weight(1f))
-                            DrawSymbol(symbol = data.currentWeather!!.symbolName, size = 90.dp )
+                            DrawSymbol(symbol = data.currentWeather!!.symbolName, size = 90.dp)
                             Spacer(modifier = Modifier.weight(1f))
                         }
                         Column {

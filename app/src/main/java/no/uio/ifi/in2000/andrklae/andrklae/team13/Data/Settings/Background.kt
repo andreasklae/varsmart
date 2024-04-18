@@ -7,7 +7,7 @@ data class Background(
     val imageId: Int,
     val gradientList: List<Color>
 ) {
-    companion object{
+    companion object {
         val images = listOf(
             Background(
                 R.drawable.space,

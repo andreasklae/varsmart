@@ -32,7 +32,7 @@ class WeatherViewModel(
 
     fun updateAll() {
         viewModelScope.launch {
-            data.value!!.updateAll()
+            data.value.updateAll()
             _GPTMain.value = "Trykk på meg for å spørre om praktiske tips!"
             _GPT24h.value = "Trykk på meg for å spørre om været det neste døgnet"
         }
@@ -41,7 +41,7 @@ class WeatherViewModel(
     @OptIn(ExperimentalFoundationApi::class)
     fun setLocation(dataHolder: DataHolder) {
         print(
-            "Changing location from ${_data.value?.location?.name}" +
+            "Changing location from ${_data.value.location.name}" +
                     " to ${dataHolder.location.name}"
         )
         val isSame = data.value.location == dataHolder.location
@@ -49,21 +49,19 @@ class WeatherViewModel(
         if (!isSame) {
             viewModelScope.launch {
                 _data.value = dataHolder
-                if (_data.value.weather == null){
+                if (_data.value.weather == null) {
                     updateAll()
                 }
 
                 // if gpt data is already loaded
                 if (data.value.mainGpt.value != "") {
                     _GPTMain.value = data.value.mainGpt.value
-                }
-                else _GPTMain.value = "Trykk på meg for å spørre om praktiske tips!"
+                } else _GPTMain.value = "Trykk på meg for å spørre om praktiske tips!"
 
                 // if gpt data is already loaded
                 if (data.value.mainGpt.value != "") {
                     _GPTMain.value = data.value.mainGpt.value
-                }
-                else _GPT24h.value = "Trykk på meg for å spørre om været det neste døgnet"
+                } else _GPT24h.value = "Trykk på meg for å spørre om været det neste døgnet"
                 _GPT24h.value = data.value.gpt24h.value
 
             }
@@ -83,12 +81,12 @@ class WeatherViewModel(
                 }
             }
             launch {
-                data.value!!.updateGPTCurrent(age, hobbies)
+                data.value.updateGPTCurrent(age, hobbies)
                 // done loading
                 loading = false
                 _GPTMain.value = ""
                 // simulates writing
-                data.value!!.mainGpt.value.forEach {
+                data.value.mainGpt.value.forEach {
                     _GPTMain.value += it
                     delay(10)
 
@@ -109,11 +107,11 @@ class WeatherViewModel(
                 }
             }
             launch {
-                data.value!!.updateGPT24h(age)
+                data.value.updateGPT24h(age)
                 // done loading
                 loading = false
                 _GPT24h.value = ""
-                data.value!!.gpt24h.value.forEach {
+                data.value.gpt24h.value.forEach {
                     _GPT24h.value += it
                     delay(15)
                 }

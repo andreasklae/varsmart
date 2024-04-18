@@ -11,7 +11,7 @@ import com.aallam.openai.client.OpenAI
 //
 class GPTDataSource {
     @OptIn(BetaOpenAI::class)
-    suspend fun getGPTResponse(prompt: String): String{
+    suspend fun getGPTResponse(prompt: String): String {
         try {
             val apiKey = OpenAI("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")
             val chatCompletionRequest = ChatCompletionRequest(

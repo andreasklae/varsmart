@@ -18,7 +18,10 @@ data class Properties(
     val timeseries: List<TimeSeries>
 ) {
     override fun toString(): String {
-        return timeseries.joinToString(separator = "\n", prefix = "Forecast:\n", limit = 5, truncated = "...") { it.toString() }
+        return timeseries.joinToString(
+            separator = "\n", prefix = "Forecast:\n", limit = 5, truncated = "..."
+        )
+        { it.toString() }
     }
 }
 
@@ -26,7 +29,6 @@ data class Properties(
 data class TimeSeries(
     val time: String,
     val data: Data,
-
 ) {
 
     override fun toString(): String {
@@ -64,7 +66,9 @@ data class InstantWeatherDetails(
     val wind_speed: Double
 ) {
     override fun toString(): String {
-        return "Pressure: $air_pressure_at_sea_level hPa, Temperature: $air_temperature °C, Cloud Cover: $cloud_area_fraction%, Humidity: $relative_humidity%, Wind Speed: $wind_speed m/s"
+        return "Pressure: $air_pressure_at_sea_level hPa, Temperature: $air_temperature °C, " +
+                "Cloud Cover: $cloud_area_fraction%, " +
+                "Humidity: $relative_humidity%, Wind Speed: $wind_speed m/s"
     }
 }
 
@@ -73,15 +77,18 @@ data class next_1_hours(
     val summary: Summary,
     val details: Details
 )
+
 @Serializable
 data class Next12Hours(
     val summary: Summary,
 )
+
 @Serializable
 data class Next6Hours(
     val summary: Summary,
     val details: Details
 )
+
 @Serializable
 data class Summary(
     val symbol_code: String

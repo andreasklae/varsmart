@@ -28,6 +28,7 @@ class SunriseDataSource {
             })
         }
     }
+
     // Function that returns a SunriseAndSunset object from MET-API
     suspend fun fetchSunriseandSunset(loc: CustomLocation, dateTime: DateTime): SunriseAndSunset {
         // finds latitude and longitude
@@ -35,9 +36,10 @@ class SunriseDataSource {
         val lon = loc.lon
 
 
-
         // sets the url based on location and timezone
-        val source = "weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=${dateTime.year}-${dateTime.month}-${dateTime.day}&offset=+01:00"
+        val source =
+            "weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=${dateTime.year}-" +
+                    "${dateTime.month}-${dateTime.day}&offset=+01:00"
         // returns the object
         val sunriseData: SunriseData = client.get(source).body()
         return SunriseAndSunset(sunriseData, loc, dateTime)
