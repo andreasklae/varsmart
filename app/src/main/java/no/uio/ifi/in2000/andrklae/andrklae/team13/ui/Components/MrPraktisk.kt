@@ -4,26 +4,22 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 
+
 @Composable
-fun MrPraktiskBlink(generateText: () -> Unit) {
+fun Animation(generateText: () -> Unit, animationType: Int) {
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.blink)
+        LottieCompositionSpec.RawRes(animationType)
     )
     Box(
         modifier = Modifier
@@ -38,4 +34,14 @@ fun MrPraktiskBlink(generateText: () -> Unit) {
         )
 
     }
+}
+
+@Composable
+fun Blink(generateText: () -> Unit) {
+    Animation(generateText = { generateText() }, animationType = R.raw.blink)
+}
+
+@Composable
+fun Speak(generateText: () -> Unit) {
+    Animation(generateText = { generateText() }, animationType = R.raw.speak)
 }
