@@ -3,6 +3,8 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data
 import android.annotation.SuppressLint
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepo
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation

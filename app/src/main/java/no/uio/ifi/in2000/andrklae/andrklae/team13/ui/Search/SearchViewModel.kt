@@ -31,6 +31,9 @@ class SearchViewModel: ViewModel() {
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
     fun toggleSearchDialog(){
+        // resets the dialog and hides it
+        changeSearchText("")
+        emptySearchresults()
         _showSearchDialog.value = !_showSearchDialog.value
     }
 
@@ -63,9 +66,6 @@ class SearchViewModel: ViewModel() {
 
     fun toggleSearching(changeTo: Boolean = !_isSearching.value) {
         _isSearching.value = changeTo
-        // resets the dialog
-        _searchText.value = ""
-        emptySearchresults()
     }
 
 }
