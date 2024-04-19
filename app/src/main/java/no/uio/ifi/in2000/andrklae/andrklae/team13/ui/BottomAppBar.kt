@@ -13,14 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.filled.YoutubeSearchedFor
 import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Icon
@@ -52,11 +54,11 @@ fun BottomAppBar(weatherVM: WeatherViewModel, pagerState: PagerState) {
             Spacer(modifier = Modifier.weight(0.5f))
             HomeButton(pagerState)
             Spacer(modifier = Modifier.weight(1f))
-            FavouriteButton(pagerState)
+            SearchButton(pagerState)
             Spacer(modifier = Modifier.weight(1f))
             WarningButton(pagerState)
             Spacer(modifier = Modifier.weight(1f))
-            ProfileButton(pagerState)
+            SettingsButton(pagerState)
             Spacer(modifier = Modifier.weight(0.5f))
 
         }
@@ -95,13 +97,16 @@ fun HomeButton(pagerState: PagerState) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FavouriteButton(pagerState: PagerState) {
+fun SearchButton(pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
-    val icon = {
+    var color = {
         if (pagerState.currentPage == 1) {
-            Icons.Filled.Bookmarks
-        } else Icons.Outlined.Bookmarks
+            Color.Black
+        } else {
+            Color.DarkGray
+        }
     }
+    val icon = Icons.Outlined.Search
     IconButton(
         onClick = {
             coroutineScope.launch {
@@ -112,9 +117,10 @@ fun FavouriteButton(pagerState: PagerState) {
             .size(50.dp)
     ) {
         Icon(
-            imageVector = icon(),
+            imageVector = icon,
             contentDescription = "Vær skjerm",
-            modifier = Modifier.size(iconSize)
+            modifier = Modifier.size(iconSize),
+            tint = color()
         )
 
     }
@@ -151,7 +157,7 @@ fun WarningButton(pagerState: PagerState) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProfileButton(pagerState: PagerState) {
+fun SettingsButton(pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
     val icon = {
         if (pagerState.currentPage == 3) {

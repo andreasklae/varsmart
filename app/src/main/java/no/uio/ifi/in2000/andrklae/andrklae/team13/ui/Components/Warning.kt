@@ -89,7 +89,8 @@ fun WarningRow(data: DataHolder, range: Int) {
                 val alert = filteredAlerts[pagerState.currentPage]
 
                 DisplayWarning(
-                    alert
+                    alert,
+                    data.location.name
                 )
             }
 
@@ -128,7 +129,8 @@ fun WarningRow(data: DataHolder, range: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayWarning(
-    alert: Alert
+    alert: Alert,
+    location: String
 ) {
     val warningDescription = "${alert.alert.properties.instruction}" +
             " \n${alert.alert.properties.description} ${alert.alert.properties.consequences}"
@@ -167,7 +169,7 @@ fun DisplayWarning(
                 WarningIcon(warningLevel)
 
                 Text(
-                    text = "Værvarsel",
+                    text = "Farevarsel",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -206,14 +208,14 @@ fun DisplayWarning(
                 )
             } else {
                 var title = warningTitle
-                if (title.length > 25) {
-                    title = title.take(25) + "..."
+                if (title.length > 15) {
+                    title = title.take(15) + "..."
                 }
                 Text(
                     text = title,
                     fontSize = 16.sp
                 )
-                Text(text = distance.roundToInt().toString() + "km unna")
+                Text(text = distance.roundToInt().toString() + "km unna " + location)
             }
         }
     }

@@ -11,8 +11,11 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteScreen
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
@@ -67,10 +70,10 @@ fun MasterUi(
                 )
                 .weight(1f)
         ) { page ->
+            val coroutine = rememberCoroutineScope()
             when (page) {
                 0 -> {
                     WeatherScreen(
-                        activity = activity,
                         data = currentData,
                         background = background.value,
                         updateAll = { weatherVM.updateAll() },
@@ -79,9 +82,7 @@ fun MasterUi(
                         hobbies = hobbies.value,
                         updateMainGpt = { age, list -> weatherVM.updateMainGpt(age, list) },
                         gpt24h = gpt24h,
-                        update24hGpt = { age -> weatherVM.updateGPT24h(age) },
-                        searchVm = SearchViewModel(),
-                        setLocation = { newLocationData -> weatherVM.setLocation(newLocationData) }
+                        update24hGpt = { age -> weatherVM.updateGPT24h(age) }
                     )
                 }
 
@@ -89,6 +90,11 @@ fun MasterUi(
                     favVM,
                     SearchViewModel(),
                     setHomeLocation = { data -> weatherVM.setLocation(data) },
+                    navigateToHome = {
+                        coroutine.launch {
+                            pagerState.animateScrollToPage(0)
+                        }
+                    },
                     activity,
                     pagerState
                 )

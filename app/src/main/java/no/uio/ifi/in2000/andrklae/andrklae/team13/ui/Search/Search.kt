@@ -55,16 +55,18 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchDialog(
+fun Search(
     searchVm: SearchViewModel,
-    functionToPerform: (DataHolder) -> Unit
+    toggleDialog: () -> Unit,
+    functionToPerform: (DataHolder) -> Unit,
+    navigateToHome: (Int) -> Unit
 ) {
     val searchStatus by searchVm.searchStatus.collectAsState()
     val searchText by searchVm.searchText.collectAsState()
     val searchResults by searchVm.searchResults.collectAsState()
 
     Dialog(onDismissRequest = {
-        searchVm.toggleSearchDialog()
+        toggleDialog()
         searchVm.emptySearchresults()
     }) {
         Column(
@@ -135,6 +137,7 @@ fun SearchDialog(
                                 SearchResults(
                                     searchResults = searchResults,
                                     functionToPerform = { data -> functionToPerform(data)},
+                                    navigateToHome = {page: Int -> navigateToHome(page)},
                                     toggleDialog = { searchVm.toggleSearchDialog() }
                                 )
                             }
@@ -170,7 +173,8 @@ fun SearchDialog(
 @Composable
 fun SearchResults(
     searchResults: List<CustomLocation>,
-    functionToPerform: (DataHolder) -> Unit, // different search dialogs have different functions
+    functionToPerform: (DataHolder) -> Unit,
+    navigateToHome: (Int) -> Unit,
     toggleDialog: () -> Unit
     ) {
     val scrollState = rememberScrollState()
@@ -191,6 +195,7 @@ fun SearchResults(
                     .clickable {
                         val data = DataHolder(location)
                         functionToPerform(data)
+                        navigateToHome(0)
                         toggleDialog()
                     }
 
