@@ -49,6 +49,9 @@ fun MasterUi(
     val pagerState = rememberPagerState(
         pageCount = { 4 },
     )
+
+
+
     Column(
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxSize()

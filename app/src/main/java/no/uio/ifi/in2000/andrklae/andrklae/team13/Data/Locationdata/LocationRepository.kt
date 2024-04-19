@@ -20,5 +20,10 @@ class LocationRepository {
         return dataSource.fetchAddresses(newString)
     }
 
+    suspend fun coordsToCity(lat: Double, lon: Double): CustomLocation? {
+        val dataSource = LocationDataSource()
+        println("kjører repo funksjon")
+        return dataSource.reverseGeocoding(lat, lon)
+    }
 
 }
