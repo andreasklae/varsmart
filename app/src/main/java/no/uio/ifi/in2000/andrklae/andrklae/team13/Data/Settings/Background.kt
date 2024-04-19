@@ -22,6 +22,20 @@ data class Background(
                     Color.White,
                     Color(0xFF90EE90)
                 )
+            ),
+            Background(
+                R.drawable.glitterbackground,
+                listOf(
+                    Color.White,
+                    Color(0xFFFDDEFF)
+                )
+            ),
+            Background(
+                R.drawable.neutral,
+                listOf(
+                    Color.White,
+                    Color(0xFFCCDADE)
+                )
             )
 
         )
