@@ -32,7 +32,7 @@ suspend fun searchKnownCities() {
 }
 
 suspend fun reverseGeocode() {
-    val lat = 63.9592162
-    val lon = 15.9
+    val lat = 59.923045260291886
+    val lon = 10.737703157089879
     println(locationRepo.coordsToCity(lat, lon)?.name)
 }

@@ -54,7 +54,6 @@ class LocationDataSource() {
                     "&location_type=ROOFTOP&result_type=street_address&key=${APIKey}\n"
         try {
             val response: GeocodingResponse = client.get(path).body()
-            println("fant response")
 
             return CustomLocation("Min posisjon: " + extractName(response), lat, lon, "", "")
 
@@ -68,7 +67,7 @@ class LocationDataSource() {
 
         if (!(geocodingResponse.status.equals("ZERO_RESULTS"))) {
             geocodingResponse.results[0].address_components.forEach {
-                if (it.types.contains("country")) {
+                if (it.types.contains("administrative_area_level_1")) {
                     return it.long_name
                 }
             }
