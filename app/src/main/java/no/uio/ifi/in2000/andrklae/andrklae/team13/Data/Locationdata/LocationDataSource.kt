@@ -46,5 +46,41 @@ class LocationDataSource() {
         }
 
     }
+
+    suspend fun reverseGeocoding(lat: Double, lon: Double): CustomLocation? {
+        val APIKey = "AIzaSyBofr2wZtjab3DBuYh46BDxeUWUit5l-sw"
+        val path =
+            "https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}\n" +
+                    "&location_type=ROOFTOP&result_type=street_address&key=${APIKey}\n"
+        try {
+            val response: GeocodingResponse = client.get(path).body()
+
+            return CustomLocation("Min posisjon: " + extractName(response), lat, lon, "", "")
+
+        } catch (e: Exception) {
+            println("fant ikke response")
+            return null
+        }
+    }
+
+    fun extractName(geocodingResponse: GeocodingResponse): String {
+
+        if (!(geocodingResponse.status.equals("ZERO_RESULTS"))) {
+            geocodingResponse.results[0].address_components.forEach {
+                if (it.types.contains("administrative_area_level_1")) {
+                    return it.long_name
+                }
+            }
+        } else {
+            println("forsøker å returnere country backup")
+            val words = geocodingResponse.plus_code.compound_code.split(" ")
+            if (words.size <= 1) {
+                return "Min posisjon på havet"
+            } else {
+                return words.subList(1, words.size - 1).joinToString(" ").replace(",", "")
+            }
+        }
+        return "Min posisjon"
+    }
 }
 

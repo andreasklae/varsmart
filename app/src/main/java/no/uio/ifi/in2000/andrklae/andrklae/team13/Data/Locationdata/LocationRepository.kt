@@ -20,5 +20,15 @@ class LocationRepository {
         return dataSource.fetchAddresses(newString)
     }
 
+    suspend fun coordsToCity(lat: Double, lon: Double): CustomLocation? {
+        val dataSource = LocationDataSource()
+        val data = dataSource.reverseGeocoding(lat, lon)
+
+        if (!(data == null)) {
+            return data
+        } else {
+            return CustomLocation("Min posisjon", lat, lon, "", "")
+        }
+    }
 
 }

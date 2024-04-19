@@ -4,7 +4,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationData
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepository
 
 private val locationRepo = LocationRepository()
-suspend fun main(){
+suspend fun main() {
     println("Testing location Repository")
     println()
 
@@ -12,20 +12,27 @@ suspend fun main(){
     testAPI()
     println()
 
+    reverseGeocode()
 
 }
 
-suspend fun testAPI(){
+suspend fun testAPI() {
     val list = locationRepo.getLocations("sagtomtveien")
-    if(list.isNotEmpty()){
+    if (list.isNotEmpty()) {
         println("Success. Found: ${list.size} locations.")
         list.forEach { println(); println(it) }
-    }
-    else{
+    } else {
         println("Failed")
     }
 }
-suspend fun searchKnownCities(){
+
+suspend fun searchKnownCities() {
     val list = locationRepo.getLocations("Oslo")
     println("Found: ${list.first()}")
+}
+
+suspend fun reverseGeocode() {
+    val lat = 59.923045260291886
+    val lon = 10.737703157089879
+    println(locationRepo.coordsToCity(lat, lon)?.name)
 }

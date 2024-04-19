@@ -59,3 +59,16 @@ data class Location(
     val lat: Double,
     val lng: Double
 )
+
+@Serializable
+data class PlusCode(
+    val compound_code: String,
+    val global_code: String
+)
+
+@Serializable
+data class GeocodingResponse(
+    val plus_code: PlusCode,
+    val results: List<Result>,
+    val status: String
+)
