@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers

@@ -34,9 +34,7 @@ fun MasterUi(
     settingsVM: SettingsViewModel,
     warningVM: WarningViewModel
 ) {
-    val pagerState = rememberPagerState(
-        pageCount = { 4 },
-    )
+
 
     // hoisted for low coupling
     val background = settingsVM.background.collectAsState()
@@ -48,14 +46,16 @@ fun MasterUi(
     val gpt24h by weatherVM.GPT24h.collectAsState()
     val currentData by weatherVM.data.collectAsState()
 
-    println("test")
+    val pagerState = rememberPagerState(
+        pageCount = { 4 },
+    )
     Column(
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxSize()
     ) {
         HorizontalPager(
             state = pagerState,
-            beyondBoundsPageCount = 2,
+            beyondBoundsPageCount = 4,
             modifier = Modifier
                 .background(
                     brush = Brush.verticalGradient(
