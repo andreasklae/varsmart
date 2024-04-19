@@ -49,7 +49,6 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun WeatherScreen(
-    activity: MainActivity,
     data: DataHolder,
     background: Background,
     updateAll: () -> Unit,
@@ -58,9 +57,7 @@ fun WeatherScreen(
     hobbies: List<String>,
     updateMainGpt: (Int, List<String>) -> Unit,
     gpt24h: String,
-    update24hGpt: (Int) -> Unit,
-    searchVm: SearchViewModel,
-    setLocation: (DataHolder) -> Unit
+    update24hGpt: (Int) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Box {
@@ -88,7 +85,6 @@ fun WeatherScreen(
                 // success
                 Status.SUCCESS -> {
                     UpperHalf(
-                        activity = activity,
                         data = data,
                         background = background,
                         updateAll = { updateAll() },
@@ -96,8 +92,6 @@ fun WeatherScreen(
                         gptText = gptMain,
                         hobbies = hobbies,
                         updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) },
-                        searchVm = searchVm,
-                        setLocation = { newLocationData -> setLocation(newLocationData) }
                     )
 
                     if (data.alertStatus.value == Status.SUCCESS) {
@@ -178,7 +172,6 @@ fun WeatherScreen(
                     // if it has previous data
                     else {
                         UpperHalf(
-                            activity = activity,
                             data = data,
                             background = background,
                             updateAll = { updateAll() },
@@ -186,8 +179,6 @@ fun WeatherScreen(
                             gptText = gptMain,
                             hobbies = hobbies,
                             updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) },
-                            searchVm = searchVm,
-                            setLocation = { newLocationData -> setLocation(newLocationData) }
                         )
 
                         WarningRow(data, 500)

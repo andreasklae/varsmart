@@ -5,16 +5,13 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.FlingBehavior
-import androidx.compose.foundation.gestures.ScrollScope
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,11 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -37,8 +29,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
@@ -52,13 +42,9 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,14 +55,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchDialog
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.fontSize
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.Search
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
@@ -88,6 +74,7 @@ fun FavoriteScreen(
     favVM: FavoriteViewModel,
     searchVm: SearchViewModel,
     setHomeLocation: (DataHolder) -> Unit,
+    navigateToHome: (Int) -> Unit,
     activity: MainActivity,
     pagerState: PagerState
 ) {
@@ -100,11 +87,9 @@ fun FavoriteScreen(
             if (it.location.name.equals("Min posisjon")) 0 else 1
         }
 
+    val showDialog by searchVm.showSearchDialog.collectAsState()
     // column of all favourites
-    val states = remember { mutableListOf<LazyListState>() }
-
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .fillMaxSize()
@@ -121,92 +106,39 @@ fun FavoriteScreen(
     ) {
         // spacer
 
-            Spacer(modifier = Modifier.height(90.dp))
-        // Row for refreshing and editing list
-            FunctionRow(favVM, states)
-        // boxes for each favourite
-        favorites.forEach {
-            val scrollState = rememberScrollState()
-            val coroutineScope = rememberCoroutineScope()
-            val scrollPercent = (scrollState.value.toFloat() / scrollState.maxValue.toFloat()) * 100
-
-            val deleteBoxColor = remember { mutableStateOf(Color.White) }
-            if (scrollPercent.toDouble() > 90){
-                deleteBoxColor.value = Color.Red
-                if (!scrollState.isScrollInProgress) {
-                    coroutineScope.launch {
-                        it.toggleInFavourites()
-                        scrollState.scrollTo(0)
-                    }
-                }
-            } else{
-                deleteBoxColor.value = Color.White
-            }
-
-            // Custom FlingBehavior that disables flinging
-            val noFlingBehavior = object : FlingBehavior {
-                override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
-                    // Returning 0f here effectively disables flinging
-                    return 0f
-                }
-            }
-
-            Box(modifier = Modifier.horizontalScroll(scrollState, flingBehavior = noFlingBehavior)) {
-                Row {
-                    // Populate Row with example content
-                    FavoriteBox({ data -> setHomeLocation(data) }, it, pagerState)
-                    DeleteBox(it, deleteBoxColor.value)
-                }
-            }
-
-
-            LaunchedEffect(scrollState) {
-                snapshotFlow { scrollState.isScrollInProgress }
-                    .collect { isScrolling ->
-                        if (!isScrolling) {
-                            val percent = (scrollState.value.toFloat() / scrollState.maxValue.toFloat()) * 100
-                            if (percent > 90){
-                                coroutineScope.launch {
-                                    //scrollState.animateScrollTo(scrollState.maxValue)
-                                }
-                            } else{
-                                coroutineScope.launch {
-                                    scrollState.animateScrollTo(0)
-                                }
-                            }
-
-                        }
-                    }
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(30.dp))
+        // Row for refreshing favourites and searching for new places
+        FunctionRow(
+            favVM,
+            searchVm,
+            showDialog,
+            toggleDialog = {searchVm.toggleSearchDialog()},
+            setLocation = {data -> setHomeLocation(data)},
+            toggleBottomSheet = {favVM.toggleBottomSheet()},
+            navigateToHome = {page: Int -> navigateToHome(page)}
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Favoritter:",
+                fontSize = 30.sp,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
         }
 
-        // button for adding new locations
-        Box(
-            modifier = Modifier
-                // making it fit the design pattern
-                .clip(CircleShape)
-                .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(15.dp))
-                .border(2.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(15.dp))
-                .border(3.dp, Color.White.copy(alpha = 0.02f), RoundedCornerShape(15.dp))
-                .border(4.dp, Color.White.copy(alpha = 0.03f), RoundedCornerShape(15.dp))
-                .background(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            Color.White.copy(alpha = 0.4f),
-                            Color.White.copy(alpha = 0.4f),
-                            Color.White.copy(alpha = 0.6f)
-                        ),
-                    )
-                )
-                .padding(15.dp)
-                .clickable {
-                    favVM.toggleBottomSheet()
-                },
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Color.Black,
+            modifier = Modifier.padding(horizontal = 20.dp)
+        )
+        Spacer(modifier = Modifier.height(20.dp))
 
-            ) {
-            Icon(Icons.Filled.Add, "legg til posisjon")
+        // boxes for each favourite
+        favorites.forEach {
+            FavoriteBox({ data -> setHomeLocation(data) }, it, pagerState)
+            Spacer(modifier = Modifier.height(20.dp))
         }
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -216,71 +148,48 @@ fun FavoriteScreen(
             BottomSheet(favVM, activity, searchVm)
         }
 
-        val showSearchDialog = searchVm.showSearchDialog.collectAsState()
-
-        if (showSearchDialog.value) {
-            SearchDialog(
-                searchVm = searchVm,
-                functionToPerform = { data -> data.toggleInFavourites() }
-            )
-        }
-
 
         Spacer(modifier = Modifier.fillMaxHeight())
 
     }
 }
 
-@Composable
-fun DeleteBox(data: DataHolder, color: Color) {
-    Row {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .clickable { data.toggleInFavourites() }
-                .size(120.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(color)
-        ){
-            val iconColor = {
-                if (color == Color.White) Color.Black else Color.White
-            }
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Fjern",
-                tint = iconColor(),
-                modifier = Modifier.size(40.dp)
-            )
-        }
-        Spacer(modifier = Modifier.width(20.dp))
-
-    }
-}
-
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FunctionRow(
     favVM: FavoriteViewModel,
-    states: List<LazyListState>
+    searchVm: SearchViewModel,
+    showDialog: Boolean,
+    toggleDialog: () -> Unit,
+    toggleBottomSheet: () -> Unit,
+    setLocation: (DataHolder) -> Unit,
+    navigateToHome: (Int) -> Unit
 ) {
-    Row {
-        Icon(
-            Icons.Filled.Refresh,
-            "refresh",
-            modifier = Modifier
-                .clickable {
-                    favVM.updateWeather()
-                }
+    if (showDialog){
+        Search(
+            searchVm = searchVm,
+            toggleDialog = { toggleDialog() },
+            functionToPerform = {data -> setLocation(data) },
+            navigateToHome = {page: Int -> navigateToHome(page)}
         )
-        val coroutine = rememberCoroutineScope()
-        Icon(Icons.Filled.Edit, "edit",
-            modifier = Modifier
-                .clickable {
-                    coroutine.launch {
-                        states[0].animateScrollToItem(1)
-                    }
-                }
+    }
+
+    Row(
+        modifier = Modifier.padding(horizontal = 20.dp)
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        ActionButton(
+            icon = Icons.Filled.Refresh,
+            onClick = {favVM.updateWeather()}
         )
+        Spacer(modifier = Modifier.width(10.dp))
+
+        ActionButton(
+            icon = Icons.Filled.Search,
+            onClick = {toggleBottomSheet()}
+        )
+
+
     }
 }
 

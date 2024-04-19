@@ -20,13 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,16 +35,13 @@ import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
-import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchDialog
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
 @Composable
 fun UpperHalf(
-    activity: MainActivity,
     data: DataHolder,
     background: Background,
     updateAll: () -> Unit,
@@ -56,18 +49,8 @@ fun UpperHalf(
     gptText: String,
     hobbies: List<String>,
     updateMainGpt: (Int, List<String>) -> Unit,
-    searchVm: SearchViewModel,
-    setLocation: (DataHolder) -> Unit
 ) {
     val loc = data.location.name
-    val showSearchDialog = searchVm.showSearchDialog.collectAsState()
-
-    if (showSearchDialog.value) {
-        SearchDialog(
-            searchVm = searchVm,
-            functionToPerform = { newLocationData -> setLocation(newLocationData) }
-        )
-    }
     Box {
         // background image
         Image(
@@ -87,12 +70,9 @@ fun UpperHalf(
 
             // row for actions
             ActionRow(
-                activity = activity,
                 updateAll = { updateAll() },
                 toggleInFavourites = { data.toggleInFavourites() },
                 isInFavourites = DataHolder.Favourites.contains(data),
-                isOnCurrentLocation = data.location.name == "Min posisjon",
-                toggleSearchDialog = { searchVm.toggleSearchDialog() }
             )
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -144,12 +124,9 @@ fun GPTBox(content: String, function: () -> Unit) {
 
 @Composable
 fun ActionRow(
-    activity: MainActivity,
     updateAll: () -> Unit,
     isInFavourites: Boolean,
     toggleInFavourites: () -> Unit,
-    isOnCurrentLocation: Boolean,
-    toggleSearchDialog: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -157,87 +134,26 @@ fun ActionRow(
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
-        // Button for adding or removing from favourites
         // if the location is in the favourites
-        Box(
-            modifier = Modifier
-                .clickable {
-                    toggleInFavourites()
-                }
-                .glassEffect()
-                .padding(5.dp)
-        ) {
-            val iconId = {
-                if (isInFavourites) {
-                    Icons.Filled.Bookmark
-                } else Icons.Filled.BookmarkBorder
-            }
-            Icon(
-                iconId(),
-                "refresh",
-                Modifier.size(50.dp)
-            )
+        val iconId = {
+            if (isInFavourites) {
+                Icons.Filled.Bookmark
+            } else Icons.Filled.BookmarkBorder
         }
+        // Button for adding or removing from favourites
+        ActionButton(
+            icon = iconId(),
+            onClick = {toggleInFavourites()}
+        )
 
         Spacer(modifier = Modifier.width(5.dp))
 
         // button from refreshing the page
-        Box(
-            modifier = Modifier
-                .clickable {
-                    updateAll()
-                }
-                .glassEffect()
-                .padding(5.dp)
-        ) {
-            Icon(
-                Icons.Filled.Refresh,
-                "refresh",
-                Modifier.size(50.dp)
-            )
-        }
+        ActionButton(
+            icon = Icons.Filled.Refresh,
+            onClick = { updateAll() }
+        )
         Spacer(modifier = Modifier.weight(1f))
-
-        // button for searching for a place
-        Box(
-            modifier = Modifier
-                .clickable {
-                    toggleSearchDialog()
-                }
-                .glassEffect()
-                .padding(5.dp)
-        ) {
-            Icon(
-                Icons.Outlined.Search,
-                "søk etter sted",
-                Modifier.size(50.dp)
-            )
-        }
-        Spacer(modifier = Modifier.width(5.dp))
-
-        // button for going to the device location
-        if (!isOnCurrentLocation) {
-            Box(
-                modifier = Modifier
-                    .clickable {
-                        val currentLocation = {
-                            DataHolder.Favourites.find {
-                                it.location.name == "Min posisjon"
-                            }
-
-                        }
-                        activity.getCurrentLocation()
-                    }
-                    .glassEffect()
-                    .padding(5.dp)
-            ) {
-                Icon(
-                    Icons.Outlined.LocationOn,
-                    "go to current location",
-                    Modifier.size(50.dp)
-                )
-            }
-        }
 
     }
 }
