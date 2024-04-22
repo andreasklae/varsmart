@@ -318,7 +318,9 @@ fun FavoriteBox(
                 Status.LOADING -> {
                     Spacer(modifier = Modifier.weight(1f))
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(20f)
+
                     ) {
                         Text(
                             text = data.location.name,
@@ -338,17 +340,21 @@ fun FavoriteBox(
                     Spacer(modifier = Modifier.weight(1f))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxHeight()
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(20f)
                     ) {
                         Spacer(modifier = Modifier.weight(2f))
                         Text(
                             text = data.location.name,
-                            fontSize = 30.sp
+                            fontSize = 30.sp,
+                            textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
                             text = "Oppdatert ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
                             fontSize = 15.sp,
+                            textAlign = TextAlign.Center
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))

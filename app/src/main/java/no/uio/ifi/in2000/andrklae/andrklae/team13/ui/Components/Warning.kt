@@ -21,12 +21,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.Map
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -123,7 +127,7 @@ fun WarningRow(data: DataHolder, range: Int) {
             }
 
         }
-    } else EmptyWarning()
+    } else EmptyWarning(data.location.name)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -179,10 +183,12 @@ fun DisplayWarning(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Map,
-                        contentDescription = "Settings",
+                        contentDescription = "vis i kart",
                         tint = Color.Black,
                         modifier = Modifier.size(30.dp)
                     )
+
+
                 }
                 Spacer(Modifier.weight(1f))
                 ExposedDropdownMenuDefaults.TrailingIcon(
@@ -200,6 +206,10 @@ fun DisplayWarning(
                 Text(
                     text = warningTitle,
                     fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = distance.roundToInt().toString() + "km unna " + location,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
@@ -242,29 +252,51 @@ fun DisplayWarning(
     }
     if (showDialog) {
         Dialog(onDismissRequest = { showDialog = false }) {
-            Surface(
-                color = Color.White,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(0.9f)
-                    .fillMaxHeight(0.7f)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
             ) {
-                Column(
+                Spacer(modifier = Modifier.height(20.dp))
+                Surface(
+                    color = Color.White,
                     modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                        .fillMaxWidth(0.95f)
+                        .fillMaxHeight(0.8f)
+                        .clip(RoundedCornerShape(15.dp))
+
                 ) {
-                    MapWithPolygon(alert)
+                    Column(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(15.dp))
+                            //.padding(1.dp)
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top
+                    )
+                    {
+                        MapWithPolygon(alert)
+                    }
                 }
+                Spacer(modifier = Modifier.height(20.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(Color.White)
+                        .wrapContentWidth()
+                        .clickable { showDialog = false }
+                        .padding(15.dp)
+
+                ) {
+                    Icon(Icons.Filled.Close,"fjern fra favoritter")
+                }
+                Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
 }
 
 @Composable
-fun EmptyWarning() {
+fun EmptyWarning(location: String) {
     val alpha = remember { Animatable(1f) }
 
     Box(
@@ -287,7 +319,7 @@ fun EmptyWarning() {
         ) {
             Row {
                 Text(
-                    text = "Værvarsel",
+                    text = "Farevarsel",
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(start = 20.dp, top = 10.dp, bottom = 5.dp)
@@ -312,7 +344,7 @@ fun EmptyWarning() {
                 ) {
 
                     Text(
-                        text = "Ingen farevarsler i nærheten",
+                        text = "Ingen farevarsler i nærheten av $location",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Light,
                         fontStyle = FontStyle.Italic
@@ -335,7 +367,7 @@ fun WarningIcon(warningLevel: String) {
                 y = 0,
                 x = 0,
                 symbolId = R.drawable.warningiconyellow,
-                50,
+                40,
                 40
             )
 
@@ -345,16 +377,16 @@ fun WarningIcon(warningLevel: String) {
                 x = 0,
                 symbolId = R.drawable.warningiconorange,
                 40,
-                30
+                40
             )
 
         "Red" ->
             ImageIcon(
-                y = 5,
-                x = -2,
+                y = 0,
+                x = 0,
                 symbolId = R.drawable.warningiconred,
-                55,
-                45
+                40,
+                40
             )
 
         else ->
@@ -362,8 +394,8 @@ fun WarningIcon(warningLevel: String) {
                 y = 0,
                 x = 0,
                 symbolId = R.drawable.warningiconyellow,
-                55,
-                45
+                40,
+                40
             )
 
     }

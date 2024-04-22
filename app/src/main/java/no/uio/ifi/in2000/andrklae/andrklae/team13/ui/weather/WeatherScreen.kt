@@ -91,11 +91,11 @@ fun WeatherScreen(
                         age = age,
                         gptText = gptMain,
                         hobbies = hobbies,
-                        updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) },
+                        updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) }
                     )
 
                     if (data.alertStatus.value == Status.SUCCESS) {
-                        WarningRow(data, 500)
+                        WarningRow(data, 40)
                     }
                     Next24(
                         data = data,

@@ -10,7 +10,7 @@ data class Background(
     companion object {
         val images = listOf(
             Background(
-                R.drawable.space,
+                R.drawable.sky,
                 listOf(
                     Color.White,
                     Color(0xFF9FD8F2)
