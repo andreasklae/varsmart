@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -62,6 +64,7 @@ fun UpperHalf(
     updateMainGpt: (Int, List<String>) -> Unit,
 ) {
     val loc = data.location.name
+    val context = LocalContext.current
     Box {
         // background image
         Image(
@@ -78,19 +81,19 @@ fun UpperHalf(
         ) {
 
             Spacer(modifier = Modifier.height(40.dp))
-            Column (
+            Column(
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
                     .glassEffect()
                     .padding(10.dp)
-            ){
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        //.padding(horizontal = 20.dp)
-                        //.glassEffect()
-                        //.padding(10.dp)
-                ){
+                    //.padding(horizontal = 20.dp)
+                    //.glassEffect()
+                    //.padding(10.dp)
+                ) {
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Column(Modifier.weight(20f)) {
@@ -112,25 +115,34 @@ fun UpperHalf(
 
                     // button from refreshing the page
                     IconButton(
-                        onClick = { updateAll() },
+                        onClick = {
+                            Toast.makeText(context, "Oppdaterer været...", Toast.LENGTH_SHORT)
+                                .show()
+                            updateAll()
+                        },
                         modifier = Modifier.size(50.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Refresh,
-                            contentDescription = "lagre i favoritter",
+                            contentDescription = "Oppdater været",
                             modifier = Modifier.size(50.dp)
                         )
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                     // Button for adding or removing from favourites
                     IconButton(
-                        onClick = { data.toggleInFavourites() },
+                        onClick = {
+                            Toast.makeText(context, "Oppdaterer favoritter...", Toast.LENGTH_SHORT)
+                                .show()
+                            data.toggleInFavourites()
+                        },
                         modifier = Modifier.size(50.dp)
                     ) {
                         Icon(
                             imageVector = iconId(),
                             contentDescription = "lagre i favoritter",
-                            modifier = Modifier.size(50.dp))
+                            modifier = Modifier.size(50.dp)
+                        )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
 
@@ -148,9 +160,9 @@ fun UpperHalf(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        //.padding(horizontal = 20.dp)
-                        //.glassEffect()
-                        //.padding(horizontal = 10.dp)
+                    //.padding(horizontal = 20.dp)
+                    //.glassEffect()
+                    //.padding(horizontal = 10.dp)
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
                     // temp and weather
@@ -160,8 +172,7 @@ fun UpperHalf(
                         modifier = Modifier.fillMaxHeight()
                     ) {
                         Text(
-                            text = "Nå: " + data.currentWeather!!.temperature.toString() + "°C"
-                            ,
+                            text = "Nå: " + data.currentWeather!!.temperature.toString() + "°C",
                             textAlign = TextAlign.Center,
                             fontSize = 35.sp
                         )

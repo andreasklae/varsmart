@@ -6,14 +6,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepo
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepoImpl
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepositoryImpl
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepositoryImpl
 import java.time.LocalDateTime
 
 // holds on to data for a given location.
@@ -71,9 +74,9 @@ data class DataHolder(
             )
         )
         val Favourites = mutableStateListOf<DataHolder>(initLocation)
-        val wRepo = WeatherRepository()
-        val aRepo = WarningRepository()
-        val gptRepo = GPTRepo()
+        val wRepo: WeatherRepository = WeatherRepositoryImpl()
+        val aRepo: WarningRepository = WarningRepositoryImpl()
+        val gptRepo: GPTRepo = GPTRepoImpl()
     }
 
     // function to either add or remove object from favourite list

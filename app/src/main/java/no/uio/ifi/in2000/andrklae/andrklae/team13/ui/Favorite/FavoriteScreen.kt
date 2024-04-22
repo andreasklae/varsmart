@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -51,6 +52,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -165,12 +167,13 @@ fun FunctionRow(
     setLocation: (DataHolder) -> Unit,
     navigateToHome: (Int) -> Unit
 ) {
+    val context = LocalContext.current
     if (showDialog){
         Search(
             searchVm = searchVm,
             toggleDialog = { toggleDialog() },
-            functionToPerform = {data -> setLocation(data) },
-            navigateToHome = {page: Int -> navigateToHome(page)}
+            functionToPerform = { data -> setLocation(data) },
+            navigateToHome = { page: Int -> navigateToHome(page) }
         )
     }
 
@@ -180,13 +183,16 @@ fun FunctionRow(
         Spacer(modifier = Modifier.weight(1f))
         ActionButton(
             icon = Icons.Filled.Refresh,
-            onClick = {favVM.updateWeather()}
+            onClick = {
+                Toast.makeText(context, "Oppdaterte favoritter", Toast.LENGTH_SHORT).show()
+                favVM.updateWeather()
+            }
         )
         Spacer(modifier = Modifier.width(10.dp))
 
         ActionButton(
             icon = Icons.Filled.Search,
-            onClick = {toggleBottomSheet()}
+            onClick = { toggleBottomSheet() }
         )
 
 
@@ -379,7 +385,7 @@ fun FavoriteBox(
 
                 }
 
-                Status.FAILED ->{
+                Status.FAILED -> {
                     Spacer(modifier = Modifier.weight(1f))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,

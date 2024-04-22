@@ -2,11 +2,13 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepositoryImpl
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepositoryImpl
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 
-private val LRepo = LocationRepository()
-private val Wrepo = WeatherRepository()
+private val LRepo: LocationRepository = LocationRepositoryImpl()
+private val Wrepo: WeatherRepository = WeatherRepositoryImpl()
 suspend fun main(){
     println("Fetching location: Sagene")
     println("Searching...")

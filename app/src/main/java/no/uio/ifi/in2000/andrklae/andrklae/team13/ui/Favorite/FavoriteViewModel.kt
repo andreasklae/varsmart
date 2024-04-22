@@ -11,10 +11,11 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepositoryImpl
 
 
 class FavoriteViewModel() : ViewModel() {
-    val locationRepository: LocationRepository = LocationRepository()
+    val locationRepository: LocationRepository = LocationRepositoryImpl()
     var favourites = DataHolder.Favourites
 
     init {

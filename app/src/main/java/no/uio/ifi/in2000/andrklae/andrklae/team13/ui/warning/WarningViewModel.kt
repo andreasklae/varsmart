@@ -9,10 +9,11 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepositoryImpl
 
 class WarningViewModel() : ViewModel() {
 
-    val warningRepository: WarningRepository = WarningRepository()
+    val warningRepository: WarningRepository = WarningRepositoryImpl()
 
     private val _data = MutableStateFlow(emptyList<Warning?>())
     val data = _data.asStateFlow()
