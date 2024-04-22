@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationUtil
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MasterUi
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
@@ -17,14 +18,33 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningViewModel
 
 class MainActivity : ComponentActivity() {
-    val settingsVM = SettingsViewModel()
-    val favVM = FavoriteViewModel()
+
     val weatherVM = WeatherViewModel(DataHolder.initLocation, this)
-    val warningVM = WarningViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val favVM = FavoriteViewModel()
+        val warningVM = WarningViewModel()
+        val settingsVM = SettingsViewModel(
+            initAge = PreferenceManager.fetchAge(this),
+            initHobbies = PreferenceManager.fetchHobbies(this),
+            initBackground = PreferenceManager.fetchBackgroundIndex(this)
+        )
 
+        favVM.loadFavourites(this)
+
+        // if "Min posisjon" exists in the favourite list
+        if (DataHolder.Favourites.any { it.location.name == "Min posisjon" }){
+            weatherVM.setLocation(
+                DataHolder.Favourites.find { it.location.name == "Min posisjon" }!!
+            )
+        }
+
+        // if favourite list is not empty
+        else if (DataHolder.Favourites.isNotEmpty()){
+            weatherVM.setLocation(DataHolder.Favourites.first())
+        }
+        else weatherVM.updateAll()
 
         setContent {
             MasterUi(
@@ -85,7 +105,6 @@ class MainActivity : ComponentActivity() {
             LocationUtil.fetchLocation(
                 this
             ) { customLocation ->
-                println("test")
                 if (customLocation != null) {
                     val new = DataHolder(customLocation)
 
@@ -99,6 +118,7 @@ class MainActivity : ComponentActivity() {
                             DataHolder.Favourites.find { it == new }!!
                         )
                     }
+                    PreferenceManager.saveFavourites(this, DataHolder.Favourites)
                 }
             }
         }

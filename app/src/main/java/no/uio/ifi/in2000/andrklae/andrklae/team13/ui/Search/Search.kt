@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -50,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -178,13 +181,14 @@ fun SearchResults(
     toggleDialog: () -> Unit
     ) {
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.verticalScroll(scrollState)
     ) {
         Spacer(modifier = Modifier.height(30.dp))
         searchResults.forEach { location ->
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -215,12 +219,8 @@ fun SearchResults(
                 }
                 Spacer(modifier = Modifier.width(5.dp))
                 // if location allready exists
-                if (DataHolder.Favourites.any{
-                        it.location.name == location.name
-                                &&
-                        it.location.fylke == location.fylke
-                    }
-                ){
+                if (DataHolder.Favourites.any{ it.location == location } ){
+                    val toastString = "${location.name} fjernet fra favoritter"
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
@@ -228,18 +228,17 @@ fun SearchResults(
                             .wrapContentWidth()
                             .clickable {
                                 DataHolder.Favourites.remove(
-                                    DataHolder.Favourites.find {
-                                        it.location.name == location.name
-                                                &&
-                                        it.location.fylke == location.fylke
-                                    }
+                                    DataHolder.Favourites.find { it.location == location }
                                 )
+                                PreferenceManager.saveFavourites(context, DataHolder.Favourites)
+                                Toast.makeText(context, toastString, Toast.LENGTH_SHORT).show()
                             }
                             .padding(10.dp)
                     ) {
                         Icon(Icons.Filled.Bookmark,"fjern fra favoritter")
                     }
                 } else{
+                    val toastString = "${location.name} lagt til i favoritter"
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -249,6 +248,8 @@ fun SearchResults(
                             .clickable {
                                 val newLocation = DataHolder(location)
                                 newLocation.toggleInFavourites()
+                                PreferenceManager.saveFavourites(context, DataHolder.Favourites)
+                                Toast.makeText(context, toastString, Toast.LENGTH_SHORT).show()
                             }
                             .padding(10.dp)
                     ) {

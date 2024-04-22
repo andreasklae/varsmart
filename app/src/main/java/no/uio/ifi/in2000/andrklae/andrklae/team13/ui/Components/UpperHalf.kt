@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
@@ -106,11 +107,17 @@ fun UpperHalf(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    // if the location is in the favourites
+                    // checks if the data is saved in favourites and gives correct icon
                     val iconId = {
                         if (DataHolder.Favourites.contains(data)) {
                             Icons.Filled.Bookmark
                         } else Icons.Filled.BookmarkBorder
+                    }
+                    // checks if the data is saved in favourites and gives correct toast message
+                    val toastString = {
+                        if (DataHolder.Favourites.contains(data)) {
+                            "${data.location.name} fjernet fra favoritter"
+                        } else "${data.location.name} lagt til i favoritter"
                     }
 
                     // button from refreshing the page
@@ -132,9 +139,10 @@ fun UpperHalf(
                     // Button for adding or removing from favourites
                     IconButton(
                         onClick = {
-                            Toast.makeText(context, "Oppdaterer favoritter...", Toast.LENGTH_SHORT)
+                            Toast.makeText(context, toastString(), Toast.LENGTH_SHORT)
                                 .show()
                             data.toggleInFavourites()
+                            PreferenceManager.saveFavourites(context, DataHolder.Favourites)
                         },
                         modifier = Modifier.size(50.dp)
                     ) {

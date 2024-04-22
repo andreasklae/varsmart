@@ -2,8 +2,8 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepositoryInterface
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepositoryImpl
 import kotlin.math.roundToInt
 
 
@@ -19,7 +19,7 @@ suspend fun testWarning(){
 
     val customLocation = CustomLocation(name, lat, lon, "","")
 
-    val warningRepo: WarningRepository = WarningRepositoryImpl()
+    val warningRepo: WarningRepositoryInterface = WarningRepository()
     val allWarnings = warningRepo.fetchAllWarnings()
     var alerts = listOf<Alert>()
     if (allWarnings != null){

@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
@@ -80,7 +81,10 @@ fun FavoriteScreen(
     activity: MainActivity,
     pagerState: PagerState
 ) {
-    // loads the list every time the ui changes (ie a new favourite is added)
+    val context = LocalContext.current
+
+
+    // loads the list every time the ui changes (ie a new favourite is added) and saves it
     favVM.loadData()
     // sorts favorite list to put current location at the top of the list
     val favorites = DataHolder
