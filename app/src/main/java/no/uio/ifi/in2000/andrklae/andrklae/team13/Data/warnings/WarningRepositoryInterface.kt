@@ -13,7 +13,7 @@ interface WarningRepositoryInterface {
 
 
     // mathematical function for calculating distance between two coodinates on earth
-    suspend fun calculateDistance(coord1: LatLng, coord2: LatLng): Double
+    fun calculateDistance(coord1: LatLng, coord2: LatLng): Double
 
     // method looking for the closest point of a polygon
     suspend fun findClosestCoordinateOfAlert(list: List<Polygon>, loc: CustomLocation): LatLng
