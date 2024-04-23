@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -8,7 +10,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,34 +22,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.Map
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,7 +50,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -72,46 +64,88 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
-import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Properties
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
-import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.WarningIcon
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.fontSize
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.BottomSheet
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteBox
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FunctionRow
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.getColorFromString
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.coloredGlassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
-import kotlin.math.roundToInt
 
 @Composable
-fun WarningScreen(warningViewModel: WarningViewModel) {
+fun WarningScreen(warningViewModel: WarningViewModel, context: Context) {
     val warningStatus by warningViewModel.loadingStatus.collectAsState()
-    val data by warningViewModel.data.collectAsState()
+    val data by warningViewModel.warnings.collectAsState()
 
     when (warningStatus) {
         Status.LOADING -> {
-            Text(text = "Loading")
-            CircularProgressIndicator(color = Color.Black)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Spacer(modifier = Modifier.height(45.dp))
+                Text(text = "Alle farevarsler", fontSize = 30.sp)
+                Spacer(modifier = Modifier.height(45.dp))
+                CircularProgressIndicator()
+            }
         }
 
         Status.SUCCESS-> {
-            data[0]?.let { LoadWarningScreen(it) }
-
+            data[0]?.let { LoadWarningScreen(it, { warningViewModel.loadWarnings() }) }
         }
 
         Status.FAILED -> {
-            Text(text = "Failed")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+                ) {
+                Spacer(modifier = Modifier.height(45.dp))
+                Text(text = "Alle farevarsler", fontSize = 30.sp)
+
+                Spacer(modifier = Modifier.height(70.dp))
+
+                Spacer(modifier = Modifier.height(20.dp))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .glassEffect()
+                        .background(Color.Red.copy(alpha = 0.3f))
+                        .padding(20.dp)
+                ) {
+                    Text(text = "Feilet", fontSize = 25.sp)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(text = "Sjekk internett tilkobling", fontSize = 15.sp)
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Box(
+                        modifier = Modifier
+                            .shadow(3.dp, RoundedCornerShape(16.dp))
+                            .padding(3.dp)
+                            .clip(RoundedCornerShape(13.dp))
+                            .background(Color.White)
+                            .clickable {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Tester internettforbindelsen...",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
+                                warningViewModel.loadWarnings()
+
+                            }
+                            .padding(10.dp)
+                    ) {
+
+                        Text(
+                            text = "Last på nyt",
+                            fontSize = 20.sp,
+                        )
+                    }
+                }
+
+            }
         }
     }
 }
@@ -176,7 +210,8 @@ fun DisplayAllWarning() {
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LoadWarningScreen(
-    warning: Warning
+    warning: Warning,
+    reload: () -> Unit
 ) {
     var showMap by remember { mutableStateOf(false) }
     // sorts favorite list to put current location at the top of the list
@@ -199,8 +234,22 @@ fun LoadWarningScreen(
         // spacer
         item {
             Spacer(modifier = Modifier.height(45.dp))
-            Text(text = "Alle Farevarsler", fontSize = 30.sp)
-            Spacer(modifier = Modifier.height(45.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Text(
+                    text = "Alle farevarsler",
+                    fontSize = 30.sp,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+                Box(modifier = Modifier.align(Alignment.CenterEnd)){
+                    ActionButton(icon = Icons.Filled.Refresh, onClick = {reload()})
+                }
+
+            }
+            Spacer(modifier = Modifier.height(20.dp))
 
         }
         item {

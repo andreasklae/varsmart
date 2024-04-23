@@ -66,6 +66,40 @@ data class DateTime(
         )
     }
 
+    // function for getting relatively accurate description of a time interval
+    fun getInterval(dt: DateTime): String{
+
+        // if its a year or more
+        if (this.year != dt.year) {
+            val interval = this.year.toInt() - dt.year.toInt()
+            return interval.toString() + " år siden"
+        }
+
+        // if its less than a year
+        if (this.month != dt.month) {
+            val interval = this.month.toInt() - dt.month.toInt()
+
+            if (interval > 1) return interval.toString() + " måneder siden"
+            else return "Forrige måned"
+        }
+
+        // if its less than a month
+        if (this.day.toInt() - dt.day.toInt() > 7){
+            val weeks = ((this.day.toInt() - dt.day.toInt()).toFloat() / 7.0).toInt()
+            if (weeks > 1) return "$weeks uker siden"
+            else return "En uke siden"
+        }
+
+        // if its less than a week
+        if (this.day != dt.day){
+            return this.dayOfWeek
+        }
+        // if its less than a day
+        else {
+            return this.hour + ":" + this.minute
+        }
+
+    }
     operator fun compareTo(dt: DateTime): Int {
         if (this.year != dt.year) {
             return this.year.toInt() - dt.year.toInt()

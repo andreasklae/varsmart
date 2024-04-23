@@ -32,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.InsertDriveFile
@@ -61,6 +62,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
@@ -68,6 +70,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.fontSize
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.Search
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
+import java.time.LocalDateTime
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -361,11 +364,27 @@ fun FavoriteBox(
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(
-                            text = "Oppdatert ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
-                            fontSize = 15.sp,
-                            textAlign = TextAlign.Center
+                        var current = LocalDateTime.now()
+                        var currentYear = current.year.toString()
+                        var currentMonth = current.monthValue.toString()
+                        var currentDay = current.dayOfMonth.toString()
+                        var currentHour = current.hour.toString()
+                        var currentMinute = current.minute.toString()
+                        var dt = DateTime(
+                            currentYear,
+                            currentMonth,
+                            currentDay,
+                            currentHour,
+                            currentMinute
                         )
+                        val interval = data.lastUpdate.getInterval(dt)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(imageVector = Icons.Filled.Restore, contentDescription = "sist oppdatert")
+                            Text(text = interval)
+
+                        }
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Box(

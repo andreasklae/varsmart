@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -49,10 +50,12 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
+import java.time.LocalDateTime
 
 @Composable
 fun UpperHalf(
@@ -97,12 +100,34 @@ fun UpperHalf(
                 ) {
                     Spacer(modifier = Modifier.width(16.dp))
 
+                    // location name
                     Column(Modifier.weight(20f)) {
                         Text(
                             text = loc,
                             fontSize = 40.sp,
                             textAlign = TextAlign.Left
                         )
+                        var current = LocalDateTime.now()
+                        var currentYear = current.year.toString()
+                        var currentMonth = current.monthValue.toString()
+                        var currentDay = current.dayOfMonth.toString()
+                        var currentHour = current.hour.toString()
+                        var currentMinute = current.minute.toString()
+                        var dt = DateTime(
+                            currentYear,
+                            currentMonth,
+                            currentDay,
+                            currentHour,
+                            currentMinute
+                        )
+                        val interval = data.lastUpdate.getInterval(dt)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(imageVector = Icons.Filled.Restore, contentDescription = "sist oppdatert")
+                            Text(text = interval)
+
+                        }
                     }
 
                     Spacer(modifier = Modifier.weight(1f))
