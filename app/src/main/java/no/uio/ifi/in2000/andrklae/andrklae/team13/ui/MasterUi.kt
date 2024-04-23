@@ -99,7 +99,7 @@ fun MasterUi(
                     pagerState
                 )
 
-                2 -> WarningScreen(warningVM)
+                2 -> WarningScreen(warningVM, activity)
                 3 -> {
                     SettingsScreen(
                         age = age.value,

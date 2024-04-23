@@ -15,8 +15,8 @@ class WarningViewModel() : ViewModel() {
 
     val warningRepositoryInterface: WarningRepositoryInterface = WarningRepository()
 
-    private val _data = MutableStateFlow(emptyList<Warning?>())
-    val data = _data.asStateFlow()
+    private val _warnings = MutableStateFlow(emptyList<Warning?>())
+    val warnings = _warnings.asStateFlow()
 
 
     val statusStates = listOf("loading", "success", "failed")
@@ -32,7 +32,7 @@ class WarningViewModel() : ViewModel() {
             _loadingStatus.value = Status.LOADING
             val newList = listOf(warningRepositoryInterface.fetchAllWarnings())
             if (!newList.contains(null)) {
-                _data.value = newList
+                _warnings.value = newList
                 _loadingStatus.value = Status.SUCCESS
             } else {
                 _loadingStatus.value = Status.FAILED
