@@ -1,9 +1,8 @@
-# team-13
+Innholdet i denne filen:
 
-#medlemmer:
-Andreas Klæboe 
-Shanza Ehsan
-Christian Fjeld Thorkildsen
-Hanan Mohamud
-Muntaha Dheeg
-Viktoriia Olonova
+- Beskriver hvor dokumentasjonen ligger 
+
+- Hvordan man kjører appen. 
+
+- Informasjon om biblioteker som er brukt.
+
