@@ -1,6 +1,9 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings
 
 import android.annotation.SuppressLint
+import android.widget.Toast
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,18 +41,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.MrPraktiskBlink
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
@@ -70,7 +76,7 @@ fun SettingsScreen(
     background: Background,
     onBackgroundChange: (Background) -> Unit
 ) {
-    println(background.imageId)
+    val context = LocalContext.current
 
     val scrollState = rememberScrollState(age)
     Column(
@@ -116,7 +122,10 @@ fun SettingsScreen(
         var pickedBackgroundImage = background
 
         BackgroundImageChooser(
-            onBackgroundChange = { onBackgroundChange(it) },
+            onBackgroundChange = {
+                Toast.makeText(context, "Endrer bakgrunnsbilde...", Toast.LENGTH_SHORT).show()
+                onBackgroundChange(it)
+            },
             pickedBackgroundImage
         )
 
@@ -149,12 +158,22 @@ fun BackgroundImageChooser(
                 .horizontalScroll(scrollState)
         ) {
             Background.images.sortedBy { it != pickedBackground }.forEach {
+                val coroutine = rememberCoroutineScope()
                 Box(
                     modifier = Modifier
                         .padding(5.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .clickable {
-                            onBackgroundChange(it)
+                            coroutine.launch {
+                                onBackgroundChange(it)
+                                scrollState.animateScrollTo(
+                                    value = 0,
+                                    animationSpec = tween(
+                                        durationMillis = 600,  // Duration of the animation
+                                        easing = LinearOutSlowInEasing // Easing
+                                    )
+                                )
+                            }
                         }
                         .then(
                             if (pickedBackground == it) {

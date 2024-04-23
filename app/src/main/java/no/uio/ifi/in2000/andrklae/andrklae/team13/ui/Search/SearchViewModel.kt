@@ -8,11 +8,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepositoryInterface
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 
 class SearchViewModel: ViewModel() {
-    val locationRepository: LocationRepository = LocationRepository()
+    val locationRepository: LocationRepositoryInterface = LocationRepository()
     var favourites = DataHolder.Favourites
 
     val statusStates = listOf("loading", "success", "failed")

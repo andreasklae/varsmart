@@ -1,9 +1,9 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.TestFiles
 
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationDataSource
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepositoryInterface
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepository
 
-private val locationRepo = LocationRepository()
+private val locationRepo: LocationRepositoryInterface = LocationRepository()
 suspend fun main() {
     println("Testing location Repository")
     println()

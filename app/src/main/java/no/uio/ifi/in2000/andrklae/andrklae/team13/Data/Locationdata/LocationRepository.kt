@@ -1,11 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata
 
-import android.content.Context
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
-
-class LocationRepository {
-    suspend fun getLocations(search: String): List<CustomLocation> {
+class LocationRepository() : LocationRepositoryInterface {
+    override suspend fun getLocations(search: String): List<CustomLocation> {
         println("Searching for $search")
         // API-call when known cities is empty
         val dataSource = LocationDataSource()
@@ -20,7 +16,7 @@ class LocationRepository {
         return dataSource.fetchAddresses(newString)
     }
 
-    suspend fun coordsToCity(lat: Double, lon: Double): CustomLocation? {
+    override suspend fun coordsToCity(lat: Double, lon: Double): CustomLocation? {
         val dataSource = LocationDataSource()
         val data = dataSource.reverseGeocoding(lat, lon)
 
@@ -30,5 +26,4 @@ class LocationRepository {
             return CustomLocation("Min posisjon", lat, lon, "", "")
         }
     }
-
 }

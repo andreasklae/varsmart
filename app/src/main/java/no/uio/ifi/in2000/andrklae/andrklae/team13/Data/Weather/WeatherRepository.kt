@@ -1,20 +1,21 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepositoryInterface
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseAndSunset
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.Sunrise.SunriseDataSource
 
-class WeatherRepository {
-    val wDataSource = WeatherDataSource()
-    val locRepo = LocationRepository()
-    val sunrisesunsetData = SunriseDataSource()
+class WeatherRepository() : WeatherRepositoryInterface {
+    override val wDataSource = WeatherDataSource()
+    override val locRepo: LocationRepositoryInterface = LocationRepository()
+    override val sunrisesunsetData = SunriseDataSource()
 
-    suspend fun getLocation(search: String): CustomLocation {
+    override suspend fun getLocation(search: String): CustomLocation {
         return locRepo.getLocations(search).first()
     }
 
-    suspend fun getWeather(customLocation: CustomLocation): WeatherForecast? {
+    override suspend fun getWeather(customLocation: CustomLocation): WeatherForecast? {
         try {
             val weather = wDataSource.fetchWeather(customLocation)
             return weather
@@ -24,7 +25,7 @@ class WeatherRepository {
 
     }
 
-    suspend fun getRiseAndSet(loc: CustomLocation, time: DateTime): SunriseAndSunset? {
+    override suspend fun getRiseAndSet(loc: CustomLocation, time: DateTime): SunriseAndSunset? {
         try {
             return sunrisesunsetData.fetchSunriseandSunset(loc, time)
         } catch (exception: Exception) {

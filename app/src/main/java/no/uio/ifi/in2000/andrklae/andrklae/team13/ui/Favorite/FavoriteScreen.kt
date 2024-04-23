@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -51,12 +52,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
@@ -78,7 +81,10 @@ fun FavoriteScreen(
     activity: MainActivity,
     pagerState: PagerState
 ) {
-    // loads the list every time the ui changes (ie a new favourite is added)
+    val context = LocalContext.current
+
+
+    // loads the list every time the ui changes (ie a new favourite is added) and saves it
     favVM.loadData()
     // sorts favorite list to put current location at the top of the list
     val favorites = DataHolder
@@ -165,12 +171,13 @@ fun FunctionRow(
     setLocation: (DataHolder) -> Unit,
     navigateToHome: (Int) -> Unit
 ) {
+    val context = LocalContext.current
     if (showDialog){
         Search(
             searchVm = searchVm,
             toggleDialog = { toggleDialog() },
-            functionToPerform = {data -> setLocation(data) },
-            navigateToHome = {page: Int -> navigateToHome(page)}
+            functionToPerform = { data -> setLocation(data) },
+            navigateToHome = { page: Int -> navigateToHome(page) }
         )
     }
 
@@ -180,13 +187,16 @@ fun FunctionRow(
         Spacer(modifier = Modifier.weight(1f))
         ActionButton(
             icon = Icons.Filled.Refresh,
-            onClick = {favVM.updateWeather()}
+            onClick = {
+                Toast.makeText(context, "Oppdaterte favoritter", Toast.LENGTH_SHORT).show()
+                favVM.updateWeather()
+            }
         )
         Spacer(modifier = Modifier.width(10.dp))
 
         ActionButton(
             icon = Icons.Filled.Search,
-            onClick = {toggleBottomSheet()}
+            onClick = { toggleBottomSheet() }
         )
 
 
@@ -318,7 +328,9 @@ fun FavoriteBox(
                 Status.LOADING -> {
                     Spacer(modifier = Modifier.weight(1f))
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(20f)
+
                     ) {
                         Text(
                             text = data.location.name,
@@ -338,17 +350,21 @@ fun FavoriteBox(
                     Spacer(modifier = Modifier.weight(1f))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxHeight()
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(20f)
                     ) {
                         Spacer(modifier = Modifier.weight(2f))
                         Text(
                             text = data.location.name,
-                            fontSize = 30.sp
+                            fontSize = 30.sp,
+                            textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
                             text = "Oppdatert ${data.lastUpdate.hour}:${data.lastUpdate.minute}",
                             fontSize = 15.sp,
+                            textAlign = TextAlign.Center
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -373,7 +389,7 @@ fun FavoriteBox(
 
                 }
 
-                Status.FAILED ->{
+                Status.FAILED -> {
                     Spacer(modifier = Modifier.weight(1f))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,

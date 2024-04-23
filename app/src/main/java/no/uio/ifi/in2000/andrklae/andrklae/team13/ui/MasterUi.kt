@@ -103,7 +103,7 @@ fun MasterUi(
                 3 -> {
                     SettingsScreen(
                         age = age.value,
-                        onAgeChange = { fraction -> settingsVM.changeAgeByFraction(fraction) },
+                        onAgeChange = { fraction -> settingsVM.changeAgeByFraction(fraction, activity) },
                         sliderPosition = sliderPosition.value,
                         onSliderChange = { newPosition ->
                             settingsVM.changeSliderPosition(
@@ -111,11 +111,11 @@ fun MasterUi(
                             )
                         },
                         hobbies = hobbies.value,
-                        onAddHobby = { hobby -> settingsVM.addHobby(hobby) },
-                        onRemoveHobby = { hobby -> settingsVM.removeHobby(hobby) },
+                        onAddHobby = { hobby -> settingsVM.addHobby(hobby, activity) },
+                        onRemoveHobby = { hobby -> settingsVM.removeHobby(hobby, activity) },
                         background = background.value,
                         onBackgroundChange = { background ->
-                            settingsVM.changeBackround(background)
+                            settingsVM.changeBackround(background, activity)
                         }
                     )
                 }

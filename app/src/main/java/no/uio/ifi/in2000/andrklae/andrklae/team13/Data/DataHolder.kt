@@ -3,16 +3,17 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data
 import android.annotation.SuppressLint
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepo
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepoImpl
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepositoryInterface
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepositoryInterface
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
 import java.time.LocalDateTime
 
@@ -61,6 +62,7 @@ data class DataHolder(
 
     @SuppressLint("MutableCollectionMutableState")
     companion object {
+        // location to show on homeScreen if there are no favourites
         val initLocation = DataHolder(
             CustomLocation(
                 "Ålesund",
@@ -70,10 +72,15 @@ data class DataHolder(
                 "Møre og Romsdal"
             )
         )
-        val Favourites = mutableStateListOf<DataHolder>(initLocation)
-        val wRepo = WeatherRepository()
-        val aRepo = WarningRepository()
-        val gptRepo = GPTRepo()
+        val Favourites = mutableStateListOf<DataHolder>()
+        suspend fun setFavourites(favorites: List<DataHolder>){
+            favorites.forEach {
+                Favourites.add(it)
+            }
+        }
+        val wRepo: WeatherRepositoryInterface = WeatherRepository()
+        val aRepo: WarningRepositoryInterface = WarningRepository()
+        val gptRepo: GPTRepo = GPTRepoImpl()
     }
 
     // function to either add or remove object from favourite list

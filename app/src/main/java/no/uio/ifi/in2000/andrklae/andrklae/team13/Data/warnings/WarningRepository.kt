@@ -3,13 +3,13 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings
 import com.google.android.gms.maps.model.LatLng
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 
-class WarningRepository {
+class WarningRepository() : WarningRepositoryInterface {
     companion object {
-        val warningDataSource: WarningDataSource = WarningDataSource()
+        private val warningDataSource: WarningDataSource = WarningDataSource()
     }
 
     // fetches all warnings
-    suspend fun fetchAllWarnings(): Warning? {
+    override suspend fun fetchAllWarnings(): Warning? {
         try {
             return warningDataSource.fetchAllWarnings()
         } catch (e: Exception) {
@@ -19,7 +19,7 @@ class WarningRepository {
     }
 
     // Turns the warnings into a list of Alert objects sorted by the distance to them
-    suspend fun fetchAlertList(allWarnings: Warning, loc: CustomLocation): List<Alert> {
+    override suspend fun fetchAlertList(allWarnings: Warning, loc: CustomLocation): List<Alert> {
         val alerts = allWarnings.weatherAlert.features
         val alertList = mutableListOf<Alert>()
 
@@ -55,7 +55,7 @@ class WarningRepository {
 
 
     // mathematical function for calculating distance between two coodinates on earth
-    suspend fun calculateDistance(coord1: LatLng, coord2: LatLng): Double {
+    override suspend fun calculateDistance(coord1: LatLng, coord2: LatLng): Double {
         val earthRadius = 6371.0 // Radius of the Earth in kilometers
         val dLat = Math.toRadians(coord2.latitude - coord1.latitude)
         val dLon = Math.toRadians(coord2.longitude - coord1.longitude)
@@ -71,7 +71,10 @@ class WarningRepository {
     }
 
     // method looking for the closest point of a polygon
-    suspend fun findClosestCoordinateOfAlert(list: List<Polygon>, loc: CustomLocation): LatLng {
+    override suspend fun findClosestCoordinateOfAlert(
+        list: List<Polygon>,
+        loc: CustomLocation
+    ): LatLng {
         val myCoord = LatLng(loc.lat, loc.lon)
         var closestCoord: LatLng? = null
         var closestDist: Double = Double.MAX_VALUE // Initialize with the maximum value
@@ -94,7 +97,7 @@ class WarningRepository {
     }
 
     // function looking for all polygons of an alert
-    suspend fun findAllPolygons(list: List<*>): List<Polygon> {
+    override suspend fun findAllPolygons(list: List<*>): List<Polygon> {
         val polygonList = mutableListOf<Polygon>()
         // nested list
         list.forEach {
@@ -118,7 +121,7 @@ class WarningRepository {
         return polygonList
     }
 
-    fun isPointInsidePolygon(polygon: List<LatLng>, point: LatLng): Boolean {
+    override fun isPointInsidePolygon(polygon: List<LatLng>, point: LatLng): Boolean {
         // Counter for the number of times a ray
         // starting from the point intersects with polygon edges.
         var intersections = 0
@@ -140,7 +143,7 @@ class WarningRepository {
         return intersections % 2 == 1
     }
 
-    fun areLinesIntersecting(p1: LatLng, p2: LatLng, q1: LatLng, q2: LatLng): Boolean {
+    override fun areLinesIntersecting(p1: LatLng, p2: LatLng, q1: LatLng, q2: LatLng): Boolean {
         // Quick bounding box test to rule out lines that are too far apart to intersect
         if (maxOf(p1.longitude, p2.longitude) < minOf(q1.longitude, q2.longitude)) {
             return false
@@ -164,11 +167,6 @@ class WarningRepository {
     }
 }
 
-fun flatten(list: List<*>): List<*> =
-    list.flatMap {
-        if (it is List<*>) flatten(it) else listOf(it)
-    }
-
 data class Alert(val alert: Feature, val distance: Double, val polygonList: List<Polygon>)
 
 data class Polygon(val coordinates: List<LatLng>) {
@@ -178,4 +176,3 @@ data class Polygon(val coordinates: List<LatLng>) {
         return string
     }
 }
-

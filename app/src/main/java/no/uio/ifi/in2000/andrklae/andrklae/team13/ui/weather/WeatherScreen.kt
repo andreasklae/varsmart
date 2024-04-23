@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,7 +71,7 @@ fun WeatherScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-
+            val context = LocalContext.current
             // keeps track of the status of the data
             when (data.weatherStatus.value) {
                 // loading
@@ -91,11 +93,11 @@ fun WeatherScreen(
                         age = age,
                         gptText = gptMain,
                         hobbies = hobbies,
-                        updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) },
+                        updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) }
                     )
 
                     if (data.alertStatus.value == Status.SUCCESS) {
-                        WarningRow(data, 500)
+                        WarningRow(data, 40)
                     }
                     Next24(
                         data = data,
@@ -155,7 +157,14 @@ fun WeatherScreen(
                                         .padding(3.dp)
                                         .clip(RoundedCornerShape(13.dp))
                                         .background(Color.White)
-                                        .clickable { updateAll() }
+                                        .clickable {
+                                            Toast.makeText(
+                                                context,
+                                                "Tester internettforbindelsen...",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            updateAll()
+                                        }
                                         .padding(10.dp)
                                 ) {
 
