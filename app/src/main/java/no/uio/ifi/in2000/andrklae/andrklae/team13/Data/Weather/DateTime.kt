@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather
 
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -8,15 +7,15 @@ import java.time.format.DateTimeFormatter
 data class DateTime(
     val year: String,
     val initMonth: String,
-    val intiDay: String,
-    val intiHour: String,
+    val initDay: String,
+    val initHour: String,
     val initMinute: String = "00"
 ) {
 
 
     // Ensure each value are two digits
-    val day = if (intiDay.length == 1) "0$intiDay" else intiDay
-    val hour = if (intiHour.length == 1) "0$intiHour" else intiHour
+    val day = if (initDay.length == 1) "0$initDay" else initDay
+    val hour = if (initHour.length == 1) "0$initHour" else initHour
     val month = if (initMonth.length == 1) "0$initMonth" else initMonth
     val minute = if (initMinute.length == 1) "0$initMinute" else initMinute
 
@@ -25,11 +24,11 @@ data class DateTime(
     val date: String = "$day/$month/$year"
     val time: String = "$hour:00"
 
-    val DateInt = LocalDate.of(year.toInt(), month.toInt(), intiDay.toInt())
+    val DateInt = LocalDate.of(year.toInt(), month.toInt(), initDay.toInt())
     val dayOfWeek = dayToNorwegian(DateInt)
 
-    private fun dayToNorwegian(dateInt: LocalDate?): String {
-        val day = DateInt.dayOfWeek
+    private fun dayToNorwegian(dateInt: LocalDate): String {
+        val day = dateInt.dayOfWeek
             .toString().lowercase()
             .replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase() else it.toString()
@@ -62,8 +61,8 @@ data class DateTime(
         return DateTime(
             year = nextDay.year.toString(),
             initMonth = nextDay.monthValue.toString(),
-            intiDay = nextDay.dayOfMonth.toString(),
-            intiHour = "12"
+            initDay = nextDay.dayOfMonth.toString(),
+            initHour = "12"
         )
     }
 
@@ -79,6 +78,9 @@ data class DateTime(
         }
         if (this.hour != dt.hour) {
             return this.hour.toInt() - dt.hour.toInt()
+        }
+        if (this.minute != dt.minute) {
+            return this.minute.toInt() - dt.minute.toInt()
         }
         return 0
     }
