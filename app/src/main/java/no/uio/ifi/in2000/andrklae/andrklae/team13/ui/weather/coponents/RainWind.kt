@@ -18,8 +18,8 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ImageIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
-val fontSize = 15.sp
-val iconHeight = 70
+val fontSize = 20.sp
+val iconHeight = 75
 
 @Composable
 fun RainWind(data: DataHolder) {
@@ -68,7 +68,7 @@ fun Rain(data: DataHolder) {
             text = rainOrSnow(),
             fontSize = fontSize,
         )
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(15.dp))
         RainSymbol(weather.precipitation, rainOrSnow())
         Text(
             text = "${weather.precipitation}mm",
@@ -88,7 +88,7 @@ fun Wind(data: DataHolder) {
             text = "Vind",
             fontSize = fontSize,
         )
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(15.dp))
         weather!!.windSpeed?.let { WindSymbol(it) }
         Text(
             text = "${weather.windSpeed}m/s",
@@ -102,7 +102,7 @@ private fun RainSymbol(precipitation: Double, rainOrSnow: String) {
     when {
         // light rain
         precipitation > 0 && precipitation <= 2.5 -> {
-            ImageIcon(y = 0, x = 0, symbolId = R.drawable.light, width = 300, height = 100)
+            ImageIcon(y = 0, x = 0, symbolId = R.drawable.light, width = 200, height = iconHeight)
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Lett ${rainOrSnow.lowercase()}"
@@ -110,7 +110,7 @@ private fun RainSymbol(precipitation: Double, rainOrSnow: String) {
         }
         // moderate
         precipitation > 2.5 && precipitation <= 7.6 -> {
-            ImageIcon(y = 0, x = 0, symbolId = R.drawable.moderate, width = 300, height = 100)
+            ImageIcon(y = 0, x = 0, symbolId = R.drawable.moderate, width = 200, height = iconHeight)
             Spacer(modifier = Modifier.height(10.dp))
 
             // gets the verb version of rainOrSnow
@@ -122,7 +122,7 @@ private fun RainSymbol(precipitation: Double, rainOrSnow: String) {
 
         // Heavy
         precipitation > 7.6 -> {
-            ImageIcon(y = 0, x = 0, symbolId = R.drawable.heavy, width = 300, height = 100)
+            ImageIcon(y = 0, x = 0, symbolId = R.drawable.heavy, width = 200, height = iconHeight)
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Det bøtter ned!"
@@ -131,12 +131,7 @@ private fun RainSymbol(precipitation: Double, rainOrSnow: String) {
 
         // No rain
         else -> {
-            Row(
-                horizontalArrangement = Arrangement.Center
-            ) {
-                ImageIcon(y = 0, x = 0, symbolId = R.drawable.no, width = 20, height = 100)
-                ImageIcon(y = 0, x = 0, symbolId = R.drawable.smile, width = 100, height = 100)
-            }
+            ImageIcon(y = 0, x = 0, symbolId = R.drawable.no, width = 200, height = iconHeight)
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Ingen ${rainOrSnow.lowercase()}"
@@ -152,7 +147,7 @@ fun WindSymbol(windSpeed: Double) {
         // Light wind
         windSpeed <= 5.5 -> {
             ImageIcon(
-                y = 0, x = 0, symbolId = R.drawable.lightwind, width = 300, height = 100
+                y = 0, x = 0, symbolId = R.drawable.lightwind, width = 300, height = iconHeight
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -162,7 +157,7 @@ fun WindSymbol(windSpeed: Double) {
         // moderate Wind
         windSpeed > 5.5 && windSpeed <= 10.7 -> {
             ImageIcon(
-                y = 0, x = 0, symbolId = R.drawable.moderatewind, width = 200, height = 100
+                y = 0, x = 0, symbolId = R.drawable.moderatewind, width = 200, height = iconHeight
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -172,7 +167,7 @@ fun WindSymbol(windSpeed: Double) {
         // strong wind
         windSpeed > 10.7 && windSpeed <= 17.1 -> {
             ImageIcon(
-                y = 0, x = 0, symbolId = R.drawable.strongwind, width = 300, height = 100
+                y = 0, x = 0, symbolId = R.drawable.strongwind, width = 300, height = iconHeight
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -182,7 +177,7 @@ fun WindSymbol(windSpeed: Double) {
         // extreme wind
         windSpeed > 17.1 -> {
             ImageIcon(
-                y = 0, x = 0, symbolId = R.drawable.extremewind, width = 300, height = 100
+                y = 0, x = 0, symbolId = R.drawable.extremewind, width = 300, height = iconHeight
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -192,7 +187,7 @@ fun WindSymbol(windSpeed: Double) {
         // no wind
         else -> {
             ImageIcon(
-                y = 0, x = 0, symbolId = R.drawable.nowind, width = 300, height = 100
+                y = 0, x = 0, symbolId = R.drawable.nowind, width = 300, height = iconHeight
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
