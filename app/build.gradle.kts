@@ -49,7 +49,8 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/io.netty.versions.properties"
         }
     }
 }
@@ -114,14 +115,10 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
-    implementation ("androidx.compose.animation:animation:1.6.4")
+    implementation ("androidx.compose.animation:animation:1.6.6")
 
     // for GPT
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
-    implementation ("com.android.volley:volley:1.2.0")
-    implementation ("com.aallam.openai:openai-client:3.0.0")
+    implementation(group = "com.azure", name = "azure-ai-openai", version = "1.0.0-beta.3")
 
     // Hilt
     implementation ("com.google.dagger:hilt-android:2.49")

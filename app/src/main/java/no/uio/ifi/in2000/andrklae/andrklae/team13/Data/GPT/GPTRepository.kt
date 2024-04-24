@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT
 
-import com.aallam.openai.api.BetaOpenAI
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 
 class GPTRepository() : GPTRepositoryInterface {
@@ -9,7 +8,6 @@ class GPTRepository() : GPTRepositoryInterface {
             "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum "
     override val dataSource = GPTDataSource()
 
-    @OptIn(BetaOpenAI::class)
     override suspend fun fetchCurrent(
         weather: WeatherTimeForecast,
         next24: List<WeatherTimeForecast>,

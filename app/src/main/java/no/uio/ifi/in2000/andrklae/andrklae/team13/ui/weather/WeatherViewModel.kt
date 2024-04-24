@@ -82,6 +82,7 @@ class WeatherViewModel(
         viewModelScope.launch {
             // to keep track of loading status
             var loading = true
+            _GPTCurrentAnimation.value = MrPraktiskAnimations.THINKING
             _GPTCurrent.value = ""
             launch {
                 // simulates three dots loading
@@ -111,6 +112,8 @@ class WeatherViewModel(
         viewModelScope.launch {
             // to keep track of loading status
             var loading = true
+            _GPT24hAnimation.value = MrPraktiskAnimations.THINKING
+
             _GPT24h.value = ""
             launch {
                 while (loading) {
@@ -135,6 +138,7 @@ class WeatherViewModel(
 
     fun updateGptWeek(age: Int, hobbies: List<String>) {
         viewModelScope.launch {
+            _GPTWeekAnimation.value = MrPraktiskAnimations.THINKING
             // to keep track of loading status
             var loading = true
             _GPTWeek.value = ""
