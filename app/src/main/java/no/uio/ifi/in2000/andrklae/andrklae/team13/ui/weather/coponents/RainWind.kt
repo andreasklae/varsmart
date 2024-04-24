@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ImageIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 val fontSize = 15.sp

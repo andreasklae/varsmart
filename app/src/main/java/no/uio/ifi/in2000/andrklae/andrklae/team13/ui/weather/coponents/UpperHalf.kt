@@ -1,20 +1,18 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,33 +26,30 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ImageIcon
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.MrPraktisk
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import java.time.LocalDateTime
 
 @Composable
@@ -66,6 +61,7 @@ fun UpperHalf(
     gptText: String,
     hobbies: List<String>,
     updateMainGpt: (Int, List<String>) -> Unit,
+    animation: MrPraktiskAnimations
 ) {
     val loc = data.location.name
     val context = LocalContext.current
@@ -92,19 +88,19 @@ fun UpperHalf(
                     .padding(10.dp)
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Top,
                     modifier = Modifier
                     //.padding(horizontal = 20.dp)
                     //.glassEffect()
                     //.padding(10.dp)
                 ) {
-                    Spacer(modifier = Modifier.width(16.dp))
+                    //Spacer(modifier = Modifier.width(16.dp))
 
                     // location name
                     Column(Modifier.weight(20f)) {
                         Text(
                             text = loc,
-                            fontSize = 40.sp,
+                            fontSize = 30.sp,
                             textAlign = TextAlign.Left
                         )
                         var current = LocalDateTime.now()
@@ -152,12 +148,12 @@ fun UpperHalf(
                                 .show()
                             updateAll()
                         },
-                        modifier = Modifier.size(50.dp)
+                        modifier = Modifier.size(40.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Refresh,
                             contentDescription = "Oppdater været",
-                            modifier = Modifier.size(50.dp)
+                            modifier = Modifier.size(40.dp)
                         )
                     }
                     Spacer(modifier = Modifier.width(5.dp))
@@ -169,12 +165,12 @@ fun UpperHalf(
                             data.toggleInFavourites()
                             PreferenceManager.saveFavourites(context, DataHolder.Favourites)
                         },
-                        modifier = Modifier.size(50.dp)
+                        modifier = Modifier.size(40.dp)
                     ) {
                         Icon(
                             imageVector = iconId(),
                             contentDescription = "lagre i favoritter",
-                            modifier = Modifier.size(50.dp)
+                            modifier = Modifier.size(40.dp)
                         )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
@@ -197,30 +193,32 @@ fun UpperHalf(
                     //.glassEffect()
                     //.padding(horizontal = 10.dp)
                 ) {
-                    Spacer(modifier = Modifier.weight(1f))
+                    //Spacer(modifier = Modifier.weight(1f))
                     // temp and weather
                     Column(
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                        horizontalAlignment = Alignment.Start,
                         modifier = Modifier.fillMaxHeight()
                     ) {
                         Text(
-                            text = "Nå: " + data.currentWeather!!.temperature.toString() + "°C",
-                            textAlign = TextAlign.Center,
+                            text = data.currentWeather!!.temperature.toString() + "°C",
+                            textAlign = TextAlign.Start,
                             fontSize = 35.sp
                         )
-                        Row {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Icon(
                                 imageVector = Icons.Filled.ArrowUpward,
                                 contentDescription = "Høyest",
-                                tint = Color(0xffc94242)
+                                tint = Color(0xFFFD755D)
                             )
                             Text(text = data.findHighestAndLowestTemp()[1] + "°C")
                             Spacer(modifier = Modifier.width(5.dp))
                             Icon(
                                 imageVector = Icons.Filled.ArrowDownward,
                                 contentDescription = "Lavest",
-                                tint = Color.Blue
+                                tint = Color(0xFF64A3F0)
                             )
                             Text(data.findHighestAndLowestTemp()[0] + "°C")
                         }
@@ -236,13 +234,18 @@ fun UpperHalf(
             Spacer(modifier = Modifier.height(10.dp))
 
             Spacer(modifier = Modifier.height(10.dp))
-            GPTBox(gptText, { updateMainGpt(age, hobbies) })
+            GPTBox(gptText, { updateMainGpt(age, hobbies) }, animation)
         }
     }
 }
 
 @Composable
-fun GPTBox(content: String, function: () -> Unit) {
+fun GPTBox(
+    content: String,
+    function: () -> Unit,
+    animation: MrPraktiskAnimations
+
+) {
     Column(
         horizontalAlignment = Alignment.End,
         modifier = Modifier
@@ -252,17 +255,19 @@ fun GPTBox(content: String, function: () -> Unit) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(min = 50.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.White)
                 .padding(10.dp)
         ) {
             Text(
                 text = content,
-                fontSize = 12.sp
+                fontSize = 15.sp,
+                lineHeight = 15.sp,
             )
         }
         ImageIcon(y = 0, x = -20, symbolId = R.drawable.arrowdown, width = 60, height = 25)
-        MrPraktiskBlink({ function() })
+        MrPraktisk({ function() }, animation)
     }
 }
 

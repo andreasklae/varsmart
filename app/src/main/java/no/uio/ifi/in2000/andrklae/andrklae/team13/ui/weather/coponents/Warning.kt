@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
@@ -28,9 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.Map
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -57,6 +55,7 @@ import androidx.compose.ui.window.Dialog
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ImageIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import kotlin.math.roundToInt

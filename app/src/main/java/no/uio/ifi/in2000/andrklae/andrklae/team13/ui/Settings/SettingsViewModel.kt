@@ -27,14 +27,14 @@ class SettingsViewModel(
 
     fun changeAgeByFraction(fraction: Float = 0f, context: Context) {
         viewModelScope.launch {
-            _age.value = 9 + (16 * fraction).toInt()
+            _age.value = 13 + ((25 - 13) * fraction).toInt()
             PreferenceManager.saveAge(context, _age.value)
         }
     }
 
     fun ageIntToFraction(int: Int): Float{
-        val interval = 16
-        val fraction = (int - 9).toFloat() / interval.toFloat()
+        val interval = (25 - 13)
+        val fraction = (int - 13).toFloat() / interval.toFloat()
         return fraction
     }
 

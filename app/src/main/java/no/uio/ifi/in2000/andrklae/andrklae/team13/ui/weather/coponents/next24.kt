@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -14,14 +14,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 @Composable
@@ -29,7 +29,8 @@ fun Next24(
     data: DataHolder,
     age: Int,
     gpt24h: String,
-    updateGpt: (Int) -> Unit
+    updateGpt: (Int) -> Unit,
+    animation: MrPraktiskAnimations
 ) {
     val next24 = data.next24h
     val scrollState = rememberScrollState()
@@ -52,7 +53,7 @@ fun Next24(
 
         }
         Spacer(modifier = Modifier.height(10.dp))
-        GptSpeechBubble(gpt24h, { updateGpt(age) })
+        GptSpeechBubble(gpt24h, { updateGpt(age) }, animation)
     }
 }
 

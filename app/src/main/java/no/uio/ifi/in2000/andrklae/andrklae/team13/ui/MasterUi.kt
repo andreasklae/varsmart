@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteScreen
@@ -45,8 +44,13 @@ fun MasterUi(
     val sliderPosition = settingsVM.sliderPosition.collectAsState()
     var hobbies = settingsVM.hobbies.collectAsState()
 
-    val gptMain by weatherVM.GPTMain.collectAsState()
+    val gptCurrent by weatherVM.GPTCurrent.collectAsState()
+    val currentAnimation by weatherVM.GPTCurrentAnimation.collectAsState()
     val gpt24h by weatherVM.GPT24h.collectAsState()
+    val gpt24hAnimation by weatherVM.GPT24hAnimation.collectAsState()
+    val gptWeek by weatherVM.GPTWeek.collectAsState()
+    val gptWeekAnimation by weatherVM.GPTWeekAnimation.collectAsState()
+
     val currentData by weatherVM.data.collectAsState()
 
     val pagerState = rememberPagerState(
@@ -78,11 +82,16 @@ fun MasterUi(
                         background = background.value,
                         updateAll = { weatherVM.updateAll() },
                         age = age.value,
-                        gptMain = gptMain,
+                        gptMain = gptCurrent,
+                        mainAnimation = currentAnimation,
                         hobbies = hobbies.value,
-                        updateMainGpt = { age, list -> weatherVM.updateMainGpt(age, list) },
+                        updateMainGpt = { age, list -> weatherVM.updateGptCurrent(age, list) },
                         gpt24h = gpt24h,
-                        update24hGpt = { age -> weatherVM.updateGPT24h(age) }
+                        gpt24hAnimation = gpt24hAnimation,
+                        update24hGpt = { age -> weatherVM.updateGPT24h(age) },
+                        gptWeek = gptWeek,
+                        weekAnimation = gptWeekAnimation,
+                        updateGptWeek = { age, list -> weatherVM.updateGptWeek(age, list) }
                     )
                 }
 

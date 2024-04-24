@@ -21,7 +21,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,15 +31,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
-import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.Next24
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.RainWind
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.UpperHalf
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.WarningRow
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.WeekTable
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.Next24
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.RainWind
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.UpperHalf
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.WarningRow
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.WeekTable
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 
@@ -56,10 +54,16 @@ fun WeatherScreen(
     updateAll: () -> Unit,
     age: Int,
     gptMain: String,
+    mainAnimation: MrPraktiskAnimations,
     hobbies: List<String>,
     updateMainGpt: (Int, List<String>) -> Unit,
     gpt24h: String,
-    update24hGpt: (Int) -> Unit
+    gpt24hAnimation: MrPraktiskAnimations,
+    update24hGpt: (Int) -> Unit,
+    gptWeek: String,
+    updateGptWeek: (Int, List<String>) -> Unit,
+    weekAnimation: MrPraktiskAnimations
+
 ) {
     val scrollState = rememberScrollState()
     Box {
@@ -93,7 +97,8 @@ fun WeatherScreen(
                         age = age,
                         gptText = gptMain,
                         hobbies = hobbies,
-                        updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) }
+                        updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) },
+                        animation = mainAnimation
                     )
 
                     if (data.alertStatus.value == Status.SUCCESS) {
@@ -103,11 +108,19 @@ fun WeatherScreen(
                         data = data,
                         age = age,
                         gpt24h = gpt24h,
-                        updateGpt = { update24hGpt(age) }
+                        updateGpt = { update24hGpt(age) },
+                        animation = gpt24hAnimation
                     )
 
                     RainWind(data)
-                    WeekTable(data)
+                    WeekTable(
+                        data = data,
+                        age = age,
+                        hobbies = hobbies,
+                        gptText = gptWeek,
+                        updateWeekGpt = {age, hobbies -> updateGptWeek(age, hobbies) },
+                        animation = weekAnimation
+                    )
                     Spacer(modifier = Modifier.height(20.dp))
                 }
                 // failed
@@ -188,6 +201,7 @@ fun WeatherScreen(
                             gptText = gptMain,
                             hobbies = hobbies,
                             updateMainGpt = { age, hobbies -> updateMainGpt(age, hobbies) },
+                            animation = mainAnimation
                         )
 
                         WarningRow(data, 500)
@@ -196,12 +210,20 @@ fun WeatherScreen(
                             data = data,
                             age = age,
                             gpt24h = gpt24h,
-                            updateGpt = { update24hGpt(age) }
+                            updateGpt = { update24hGpt(age) },
+                            animation = gpt24hAnimation
                         )
 
                         RainWind(data)
 
-                        WeekTable(data)
+                        WeekTable(
+                            data = data,
+                            age = age,
+                            hobbies = hobbies,
+                            gptText = gptWeek,
+                            updateWeekGpt = { age, hobies -> updateGptWeek(age, hobbies) },
+                            animation = weekAnimation
+                        )
 
                         Spacer(modifier = Modifier.height(20.dp))
 
