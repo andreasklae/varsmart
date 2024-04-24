@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
             initHobbies = PreferenceManager.fetchHobbies(this),
             initBackground = PreferenceManager.fetchBackgroundIndex(this)
         )
+        getCurrentLocation()
 
         favVM.loadFavourites(this)
 

@@ -63,7 +63,8 @@ data class InstantWeatherDetails(
     val air_temperature: Double,
     val cloud_area_fraction: Double,
     val relative_humidity: Double,
-    val wind_speed: Double
+    val wind_speed: Double,
+    val wind_from_direction: Double
 ) {
     override fun toString(): String {
         return "Pressure: $air_pressure_at_sea_level hPa, Temperature: $air_temperature °C, " +
