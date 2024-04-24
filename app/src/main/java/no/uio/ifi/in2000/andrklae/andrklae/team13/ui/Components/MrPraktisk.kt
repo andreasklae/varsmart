@@ -39,16 +39,30 @@ fun MrPraktisk(generateText: () -> Unit, animation: MrPraktiskAnimations) {
     val speak by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.speak)
     )
+    val think by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.blink)
+    )
 
     val composition = {
         when (animation) {
             MrPraktiskAnimations.BLINK -> blink
             MrPraktiskAnimations.SPEAK -> speak
+            MrPraktiskAnimations.THINKING -> think
         }
     }
     Box(
         modifier = Modifier
-            .clickable { generateText() }
+            .clickable {
+                // only allow one prompt at a time
+                if (
+                    animation != MrPraktiskAnimations.SPEAK
+                    &&
+                    animation != MrPraktiskAnimations.THINKING
+                ){
+                    generateText()
+
+                }
+            }
     ) {
         LottieAnimation(
             composition = composition(),
