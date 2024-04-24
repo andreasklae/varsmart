@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 
 class WeatherViewModel(
@@ -23,17 +24,26 @@ class WeatherViewModel(
     private val _data = MutableStateFlow(dataHolder)
     val data = _data.asStateFlow()
 
-    private val _GPTMain = MutableStateFlow("Trykk på meg for å spørre om praktiske tips!")
-    val GPTMain = _GPTMain.asStateFlow()
+    private val _GPTCurrent = MutableStateFlow("Trykk på meg for å spørre om praktiske tips!")
+    val GPTCurrent = _GPTCurrent.asStateFlow()
+    private val _GPTCurrentAnimation = MutableStateFlow(MrPraktiskAnimations.BLINK)
+    val GPTCurrentAnimation = _GPTCurrentAnimation.asStateFlow()
 
 
     private val _GPT24h = MutableStateFlow("Trykk på meg for å spørre om været det neste døgnet")
     val GPT24h = _GPT24h.asStateFlow()
+    private val _GPT24hAnimation = MutableStateFlow(MrPraktiskAnimations.BLINK)
+    val GPT24hAnimation = _GPT24hAnimation.asStateFlow()
+
+    private val _GPTWeek = MutableStateFlow("Trykk på meg for å spørre om været denne uka")
+    val GPTWeek = _GPTWeek.asStateFlow()
+    private val _GPTWeekAnimation = MutableStateFlow(MrPraktiskAnimations.BLINK)
+    val GPTWeekAnimation = _GPTWeekAnimation.asStateFlow()
 
     fun updateAll() {
         viewModelScope.launch {
             data.value.updateAll()
-            _GPTMain.value = "Trykk på meg for å spørre om praktiske tips!"
+            _GPTCurrent.value = "Trykk på meg for å spørre om praktiske tips!"
             _GPT24h.value = "Trykk på meg for å spørre om været det neste døgnet"
         }
     }
@@ -54,13 +64,13 @@ class WeatherViewModel(
                 }
 
                 // if gpt data is already loaded
-                if (data.value.mainGpt.value != "") {
-                    _GPTMain.value = data.value.mainGpt.value
-                } else _GPTMain.value = "Trykk på meg for å spørre om praktiske tips!"
+                if (data.value.gptCurrent.value != "") {
+                    _GPTCurrent.value = data.value.gptCurrent.value
+                } else _GPTCurrent.value = "Trykk på meg for å spørre om praktiske tips!"
 
                 // if gpt data is already loaded
-                if (data.value.mainGpt.value != "") {
-                    _GPTMain.value = data.value.mainGpt.value
+                if (data.value.gptCurrent.value != "") {
+                    _GPTCurrent.value = data.value.gptCurrent.value
                 } else _GPT24h.value = "Trykk på meg for å spørre om været det neste døgnet"
                 _GPT24h.value = data.value.gpt24h.value
 
@@ -68,15 +78,15 @@ class WeatherViewModel(
         }
     }
 
-    fun updateMainGpt(age: Int, hobbies: List<String>) {
+    fun updateGptCurrent(age: Int, hobbies: List<String>) {
         viewModelScope.launch {
             // to keep track of loading status
             var loading = true
-            _GPTMain.value = ""
+            _GPTCurrent.value = ""
             launch {
                 // simulates three dots loading
                 while (loading) {
-                    _GPTMain.value = dotLoading(_GPTMain.value)
+                    _GPTCurrent.value = dotLoading(_GPTCurrent.value)
                     delay(200)
                 }
             }
@@ -84,13 +94,15 @@ class WeatherViewModel(
                 data.value.updateGPTCurrent(age, hobbies)
                 // done loading
                 loading = false
-                _GPTMain.value = ""
+                _GPTCurrent.value = ""
+                _GPTCurrentAnimation.value = MrPraktiskAnimations.SPEAK
                 // simulates writing
-                data.value.mainGpt.value.forEach {
-                    _GPTMain.value += it
-                    delay(10)
-
+                data.value.gptCurrent.value.forEach {
+                    _GPTCurrent.value += it
+                    delay(1)
                 }
+                _GPTCurrentAnimation.value = MrPraktiskAnimations.BLINK
+
             }
         }
     }
@@ -111,10 +123,40 @@ class WeatherViewModel(
                 // done loading
                 loading = false
                 _GPT24h.value = ""
+                _GPT24hAnimation.value = MrPraktiskAnimations.SPEAK
                 data.value.gpt24h.value.forEach {
                     _GPT24h.value += it
-                    delay(15)
+                    delay(1)
                 }
+                _GPT24hAnimation.value = MrPraktiskAnimations.BLINK
+            }
+        }
+    }
+
+    fun updateGptWeek(age: Int, hobbies: List<String>) {
+        viewModelScope.launch {
+            // to keep track of loading status
+            var loading = true
+            _GPTWeek.value = ""
+            launch {
+                // simulates three dots loading
+                while (loading) {
+                    _GPTWeek.value = dotLoading(_GPTWeek.value)
+                    delay(200)
+                }
+            }
+            launch {
+                data.value.updateGPTWeek(age, hobbies)
+                // done loading
+                loading = false
+                _GPTWeek.value = ""
+                _GPTWeekAnimation.value = MrPraktiskAnimations.SPEAK
+                data.value.gptWeek.value.forEach {
+                    _GPTWeek.value += it
+                    delay(1)
+                }
+                _GPTWeekAnimation.value = MrPraktiskAnimations.BLINK
+
             }
         }
     }

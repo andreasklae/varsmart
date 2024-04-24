@@ -99,7 +99,7 @@ class WarningRepository() : WarningRepositoryInterface {
     }
 
     // function looking for all polygons of an alert
-    override suspend fun findAllPolygons(list: List<*>): List<Polygon> {
+    override fun findAllPolygons(list: List<*>): List<Polygon> {
         val polygonList = mutableListOf<Polygon>()
         // nested list
         list.forEach {

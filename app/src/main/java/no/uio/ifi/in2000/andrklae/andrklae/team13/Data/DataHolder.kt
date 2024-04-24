@@ -3,8 +3,9 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data
 import android.annotation.SuppressLint
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepo
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepoImpl
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepositoryInterface
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
@@ -26,12 +27,13 @@ data class DataHolder(
     var weather: WeatherForecast? = null
     val weatherStatus = mutableStateOf(Status.LOADING)
     var currentWeather: WeatherTimeForecast? = null
-
-    val mainGpt = mutableStateOf("")
-
     var next24h: List<WeatherTimeForecast> = listOf()
     var week: List<WeatherTimeForecast> = listOf()
+
+    // variables for gpt
+    val gptCurrent = mutableStateOf("")
     val gpt24h = mutableStateOf("")
+    val gptWeek = mutableStateOf("")
 
     // variables for sunrise and sunset
     var rise: String? = null
@@ -80,7 +82,7 @@ data class DataHolder(
         }
         val wRepo: WeatherRepositoryInterface = WeatherRepository()
         val aRepo: WarningRepositoryInterface = WarningRepository()
-        val gptRepo: GPTRepo = GPTRepoImpl()
+        val gptRepo: GPTRepositoryInterface = GPTRepository()
     }
 
     // function to either add or remove object from favourite list
@@ -137,14 +139,20 @@ data class DataHolder(
     }
 
     suspend fun updateGPTCurrent(age: Int, hobbies: List<String>) {
-        mainGpt.value = ""
+        gptCurrent.value = ""
         // fetches from api
-        mainGpt.value = gptRepo.fetchCurrent(currentWeather!!, next24h, age, hobbies)
+        gptCurrent.value = gptRepo.fetchCurrent(currentWeather!!, next24h, age, hobbies)
     }
 
     suspend fun updateGPT24h(age: Int) {
         gpt24h.value = ""
         gpt24h.value = gptRepo.fetch24h(next24h, age)
+    }
+
+    suspend fun updateGPTWeek(age: Int, hobbies: List<String>) {
+        gptWeek.value = ""
+        // fetches from api
+        gptWeek.value = gptRepo.fetchWeek(week, age, hobbies)
     }
 
     suspend fun updateNext24h(newWeather: WeatherForecast) {

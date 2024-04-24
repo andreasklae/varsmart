@@ -19,7 +19,7 @@ interface WarningRepositoryInterface {
     suspend fun findClosestCoordinateOfAlert(list: List<Polygon>, loc: CustomLocation): LatLng
 
     // function looking for all polygons of an alert
-    suspend fun findAllPolygons(list: List<*>): List<Polygon>
+    fun findAllPolygons(list: List<*>): List<Polygon>
 
     fun isPointInsidePolygon(polygon: List<LatLng>, point: LatLng): Boolean
 

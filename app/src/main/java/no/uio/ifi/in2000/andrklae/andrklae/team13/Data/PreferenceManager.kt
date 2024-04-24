@@ -76,7 +76,7 @@ object PreferenceManager {
             "AppNamePrefs",
             Context.MODE_PRIVATE
         )
-            .getInt("age", 9)
+            .getInt("age", 13)
         return age
     }
 

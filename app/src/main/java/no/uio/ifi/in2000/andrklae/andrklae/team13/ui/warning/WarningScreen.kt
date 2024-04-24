@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -64,19 +63,20 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Geometry
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Polygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.WarningIcon
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.WarningIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.getColorFromString
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 @Composable
 fun WarningScreen(warningViewModel: WarningViewModel, context: Context) {
     val warningStatus by warningViewModel.loadingStatus.collectAsState()
-    val data by warningViewModel.warnings.collectAsState()
+    val warnings by warningViewModel.warnings.collectAsState()
 
     when (warningStatus) {
         Status.LOADING -> {
@@ -93,7 +93,7 @@ fun WarningScreen(warningViewModel: WarningViewModel, context: Context) {
         }
 
         Status.SUCCESS-> {
-            data[0]?.let { LoadWarningScreen(it, { warningViewModel.loadWarnings() }) }
+            warnings[0]?.let { LoadWarningScreen(it, { warningViewModel.loadWarnings() }, warningViewModel) }
         }
 
         Status.FAILED -> {
@@ -151,7 +151,10 @@ fun WarningScreen(warningViewModel: WarningViewModel, context: Context) {
 }
 
 @Composable
-fun DisplayAllWarning() {
+fun DisplayAllWarning(
+    alerts: List<Feature>,
+    findAllPolygons: (Geometry) -> List<Polygon>
+) {
     GoogleMap(
         modifier = Modifier
             .fillMaxSize(),
@@ -160,12 +163,11 @@ fun DisplayAllWarning() {
             position = CameraPosition.fromLatLngZoom(LatLng(59.9, 10.7), 5f)
         }
     ) {
-        val alerts = DataHolder.Favourites[0].alertList
         alerts.forEach {
             var isPolygonSelected by remember { mutableStateOf(false) }
-            val polygonColor = it.alert.properties.riskMatrixColor
-            val polygons = it.polygonList
-            val area = it.alert.properties.area
+            val polygonColor = it.properties.riskMatrixColor
+            val polygons = findAllPolygons(it.geometry)
+            val area = it.properties.area
             polygons.forEach { polygon ->
                 Polygon(
                     points = polygon.coordinates,
@@ -193,8 +195,8 @@ fun DisplayAllWarning() {
 
                         ),
                         title = area,
-                        snippet = "${it.alert.properties.eventAwarenessName}: " +
-                                "${it.alert.properties.triggerLevel}",
+                        snippet = "${it.properties.eventAwarenessName}: " +
+                                "${it.properties.triggerLevel}",
                         icon = BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_RED),
                         alpha = 0.8f
@@ -211,7 +213,8 @@ fun DisplayAllWarning() {
 @Composable
 fun LoadWarningScreen(
     warning: Warning,
-    reload: () -> Unit
+    reload: () -> Unit,
+    warningViewModel: WarningViewModel
 ) {
     var showMap by remember { mutableStateOf(false) }
     // sorts favorite list to put current location at the top of the list
@@ -319,7 +322,12 @@ fun LoadWarningScreen(
                         verticalArrangement = Arrangement.Top
                     )
                     {
-                        DisplayAllWarning()
+                        DisplayAllWarning(
+                            warning.features,
+                            { geometry: Geometry ->
+                                warningViewModel.warningRepositoryInterface.findAllPolygons(geometry.coordinates)
+                            }
+                        )
 
                     }
                 }

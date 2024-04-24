@@ -1,4 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT
 
-enum class mrPraktiskAnimations {
+enum class MrPraktiskAnimations {
+    BLINK,
+    SPEAK
 }

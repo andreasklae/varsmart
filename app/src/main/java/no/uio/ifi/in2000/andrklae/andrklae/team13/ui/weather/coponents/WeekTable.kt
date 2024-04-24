@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -19,12 +20,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.Header
 
 @Composable
-fun WeekTable(data: DataHolder) {
+fun WeekTable(
+    data: DataHolder,
+    age: Int,
+    hobbies: List<String>,
+    gptText: String,
+    updateWeekGpt: (Int, List<String>) -> Unit,
+    animation: MrPraktiskAnimations
+) {
     val week = data.week
     Column {
         Header(header = "Været til uka")
@@ -79,6 +88,13 @@ fun WeekTable(data: DataHolder) {
                 }
             }
         }
+        Spacer(modifier = Modifier.height(10.dp))
+        GptSpeechBubble(
+            gptText,
+            { updateWeekGpt(age, hobbies) },
+            animation
+            )
+
     }
 
 }

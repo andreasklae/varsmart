@@ -3,7 +3,7 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT
 import com.aallam.openai.api.BetaOpenAI
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 
-class GPTRepoImpl() : GPTRepo {
+class GPTRepository() : GPTRepositoryInterface {
     override val dummyResponse = "dummy response: Lorem ipsum dolor sit amet " +
             "consectetur adipisicing elit. Maxime mollitia, " +
             "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum "
@@ -17,11 +17,11 @@ class GPTRepoImpl() : GPTRepo {
         hobbyList: List<String>
     ): String {
         var prompt = (
-                "gi relevante råd basert på været,maks 40 ord,ett avsnitt. " +
+                "gi relevante tips basert på været,maks 40 ord,ett avsnitt,utf-8. " +
                         "Du er kortfattet,jovial,uformell,enkel å forstå. " +
-                        "ta hensyn til hobbyene mine dersom det er relevant" +
+
                         "Skriv som om jeg er $age år" +
-                        "hobbyer: ${hobbyList.toString()}" +
+
                         "Værdata: " +
 
                         "sted: ${weather.customLocation.name} " +
@@ -38,6 +38,12 @@ class GPTRepoImpl() : GPTRepo {
                     "regn: ${it.precipitation}mm " +
                     "vind: ${it.windSpeed}m/s }")
         }
+        if (hobbyList.isNotEmpty()){
+            prompt += "ta hensyn til hobbyene mine, men kun om det er relevant" +
+                    "ta hensyn til hvilken årstid det er f.eks. ikke foreslå en skitur på sommeren"+
+                    "hobbyer: ${hobbyList.toString()}"
+        }
+
         return dataSource.getGPTResponse(prompt)
         //delay(2000)
         //return dummyResponse
@@ -60,5 +66,32 @@ class GPTRepoImpl() : GPTRepo {
         return dataSource.getGPTResponse(prompt)
         //delay(2000)
         //return dummyResponse
+    }
+
+    override suspend fun fetchWeek(
+        week: List<WeatherTimeForecast>,
+        age: Int,
+        hobbyList: List<String>
+    ): String {
+        var prompt = "På maks 50 ord, oppsumer været den kommende uken" +
+                "Du er jovial,uformell,enkel å forstå" +
+                "Kun utf-8" +
+                "skriv som om jeg er $age år"
+
+        if (hobbyList.isNotEmpty()){
+            prompt += "gi tips ang. hobby(ene) mine. hvilke(n) dag(er) det passer best å drive med dem?" +
+                    "ta hensyn til hvilken årstid det er, f.eks. ikke foreslå en skitur i juni"+
+                    "hobbyer: ${hobbyList.toString()}"
+        }
+
+        prompt += "vær:"
+        week.forEach {
+            prompt += ("${it.time.dayOfWeek}{" +
+                    "temp: ${it.temperature}C " +
+                    "skydekke: ${it.cloudCoverage} " +
+                    "regn: ${it.precipitation}mm " +
+                    "vind: ${it.windSpeed}m/s }")
+        }
+        return dataSource.getGPTResponse(prompt)
     }
 }

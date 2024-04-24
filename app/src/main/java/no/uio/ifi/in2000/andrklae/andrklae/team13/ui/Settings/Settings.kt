@@ -38,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,8 +55,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.MrPraktiskBlink
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.MrPraktisk
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 @SuppressLint("UnrememberedMutableState")
@@ -317,7 +317,7 @@ fun InfoBox() {
             fontSize = 12.sp
         )
     }
-    MrPraktiskBlink {}
+    MrPraktisk(animation = MrPraktiskAnimations.BLINK, generateText = {})
 }
 
 @Composable

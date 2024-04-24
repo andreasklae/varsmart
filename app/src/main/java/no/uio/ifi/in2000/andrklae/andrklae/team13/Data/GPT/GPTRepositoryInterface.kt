@@ -1,10 +1,9 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT
 
 import com.aallam.openai.api.BetaOpenAI
-import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 
-interface GPTRepo {
+interface GPTRepositoryInterface {
     val dummyResponse: String
     val dataSource: GPTDataSource
 
@@ -12,6 +11,12 @@ interface GPTRepo {
     suspend fun fetchCurrent(
         weather: WeatherTimeForecast,
         next24: List<WeatherTimeForecast>,
+        age: Int,
+        hobbyList: List<String>
+    ): String
+
+    suspend fun fetchWeek(
+        week: List<WeatherTimeForecast>,
         age: Int,
         hobbyList: List<String>
     ): String
