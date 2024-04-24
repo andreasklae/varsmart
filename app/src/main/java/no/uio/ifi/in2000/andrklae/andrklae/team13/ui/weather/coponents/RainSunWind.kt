@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,7 +36,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
 val fontSize = 20.sp
 val iconHeight = 75
-val windIconSize = 100
+val windIconSize = 120
 
 @Composable
 fun RainSunWind(data: DataHolder) {
@@ -186,6 +187,7 @@ fun Rain(data: DataHolder) {
 @Composable
 fun Wind(data: DataHolder) {
     val weather = data.currentWeather
+    val direction = data.currentWeather!!.windDirection!!
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(10.dp)
@@ -208,54 +210,72 @@ fun Wind(data: DataHolder) {
                 weather!!.windSpeed?.let { WindSymbol(it) }
             }
             Spacer(modifier = Modifier.weight(1f))
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size((windIconSize + 15).dp)
-                    .clip(CircleShape)
-                    .background(Color.Black)
-                    .padding(5.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .padding(2.dp)
-
-            ){
-                Text(
-                    text = "N",
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
-                Text(
-                    text = "Ø",
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                )
-                Text(
-                    text = "S",
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                )
-                Text(
-                    text = "V",
-                    modifier = Modifier.align(Alignment.CenterStart)
-                )
-                Icon(
-                    imageVector = Icons.Default.ArrowRightAlt,
-                    contentDescription = "kurs",
-                    modifier = Modifier
-                        .size((windIconSize - 30).dp)
-                        .rotate((data.currentWeather!!.windDirection!! - 90).toFloat())
-                )
-            }
-
+            Compass(direction = direction)
             Spacer(modifier = Modifier.weight(1f))
         }
         Spacer(modifier = Modifier.height(10.dp))
+
+        val directionString = {
+            when {
+                direction >= 0 && direction < 22.5 -> "Sørlig"
+                direction >= 22.5 && direction < 67.5 -> "Sørvestlig"
+                direction >= 67.5 && direction < 112.5 -> "Vestlig"
+                direction >= 112.5 && direction < 157.5 -> "Nordvestlig"
+                direction >= 157.5 && direction < 202.5 -> "Nordlig"
+                direction >= 202.5 && direction < 247.5 -> "Nordøstlig"
+                direction >= 247.5 && direction < 292.5 -> "Østlig"
+                else -> "Sørøstlig"
+
+            }
+        }
         Text(
-            text = "Svak vind"
-        )
-        Text(
-            text = "${weather!!.windSpeed}m/s",
+            text = "${weather!!.windSpeed}m/s ${directionString()}",
             fontSize = fontSize,
         )
     }
+}
+
+@Composable
+fun Compass(direction: Double){
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size((windIconSize + 15).dp)
+            .clip(CircleShape)
+            .background(Color.Black)
+            .padding(5.dp)
+            .clip(CircleShape)
+            .background(Color.White)
+            .padding(2.dp)
+
+    ){
+        Text(
+            text = "N",
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
+        Text(
+            text = "Ø",
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
+        Text(
+            text = "S",
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+        Text(
+            text = "V",
+            modifier = Modifier.align(Alignment.CenterStart)
+        )
+        // arrow / needle
+        Icon(
+            imageVector = Icons.Default.ArrowRightAlt,
+            contentDescription = "kurs",
+            modifier = Modifier
+                .size((windIconSize - 30).dp)
+                .rotate(direction.toFloat() - 90)
+        )
+    }
+
+
 }
 
 @Composable
@@ -309,6 +329,10 @@ fun WindSymbol(windSpeed: Double) {
         windSpeed <= 5.5 -> {
             ImageIcon(
                 y = 0, x = 0, symbolId = R.drawable.lightwind, width = windIconSize, height = windIconSize
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Svak vind"
             )
         }
         // moderate Wind
