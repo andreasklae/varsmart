@@ -320,7 +320,7 @@ fun InfoBox() {
             text = "Hei! Jeg er Mr. Praktisk, din personlige KI assistent. " +
                     "Ser du meg på hjemskjermen betyr det at " +
                     "du kan trykke på meg for å få råd og informasjon. " +
-                    "Jeg er basert på OpenAI sin GPT 3.5 som betyr " +
+                    "Jeg er basert på OpenAI GPT 4, en kunstig intelligens, som betyr " +
                     "at du bør ta det jeg sier med en klype salt. " +
                     "Ha en fin dag!",
             fontSize = 12.sp
