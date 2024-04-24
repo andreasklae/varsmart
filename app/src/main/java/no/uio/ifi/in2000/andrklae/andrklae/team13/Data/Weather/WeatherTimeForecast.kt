@@ -12,6 +12,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocati
 * cloudCoverage -- A Double. is measured as a percentage
 * humidity -- A Double. is measured as a percentage
 * windSpeed -- A Double. Measured in m/s. wind direction is not specified
+* windDirection -- A Double. degrees (0-360) as compass direction
 * precipitation -- A Double. Measured in mm.
 * symbolName -- A string, represents weather symbol
 */
@@ -31,6 +32,7 @@ data class WeatherTimeForecast(
     val cloudCoverage: Double? = timeSeries?.data?.instant?.details?.cloud_area_fraction
     val humidity: Double? = timeSeries?.data?.instant?.details?.relative_humidity
     val windSpeed: Double? = timeSeries?.data?.instant?.details?.wind_speed
+    val windDirection: Double? = timeSeries?.data?.instant?.details?.wind_from_direction
     val precipitation: Double = timeSeries?.data?.next_1_hours?.details?.precipitation_amount
         ?: timeSeries?.data?.next_6_hours?.details?.precipitation_amount ?: 0.0
     val symbolName: String? = timeSeries?.data?.next_1_hours?.summary?.symbol_code

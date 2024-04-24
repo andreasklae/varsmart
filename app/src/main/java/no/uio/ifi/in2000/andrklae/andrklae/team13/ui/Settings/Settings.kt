@@ -18,8 +18,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -277,7 +280,8 @@ fun HobbyBox(
             Spacer(modifier = Modifier.height(10.dp))
             FlowRow {
                 hobbies.forEach {
-                    Box(
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .padding(vertical = 5.dp)
                             .clip(RoundedCornerShape(6.dp))
@@ -285,10 +289,15 @@ fun HobbyBox(
                             .background(Color.Red.copy(alpha = 0.5f))
                             .padding(5.dp)
                     ) {
-                        Row {
-                            Text(text = it)
-                            Icon(imageVector = Icons.Filled.Close, contentDescription = "Play",)
-                        }
+                        Text(
+                            text = it,
+                            modifier = Modifier
+                                .widthIn(max = 150.dp)
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "fjern",
+                        )
 
                     }
                     Spacer(modifier = Modifier.width(5.dp))

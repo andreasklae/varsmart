@@ -35,7 +35,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.Next24
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.RainWind
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.RainSunWind
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.UpperHalf
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.WarningRow
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.WeekTable
@@ -112,7 +112,7 @@ fun WeatherScreen(
                         animation = gpt24hAnimation
                     )
 
-                    RainWind(data)
+                    RainSunWind(data)
                     WeekTable(
                         data = data,
                         age = age,
@@ -214,7 +214,7 @@ fun WeatherScreen(
                             animation = gpt24hAnimation
                         )
 
-                        RainWind(data)
+                        RainSunWind(data)
 
                         WeekTable(
                             data = data,

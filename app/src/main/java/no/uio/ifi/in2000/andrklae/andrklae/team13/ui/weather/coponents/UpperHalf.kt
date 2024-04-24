@@ -176,15 +176,6 @@ fun UpperHalf(
                     Spacer(modifier = Modifier.width(10.dp))
 
                 }
-                //Spacer(modifier = Modifier.height(20.dp))
-                var rise = ""
-                var set = ""
-
-                // if sunrise api is successful
-                if (data.sunStatus.value == Status.SUCCESS) {
-                    rise = data.rise!!.substringAfter("T").substringBefore("+")
-                    set = data.set!!.substringAfter("T").substringBefore("+")
-                }
                 // basic info
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
