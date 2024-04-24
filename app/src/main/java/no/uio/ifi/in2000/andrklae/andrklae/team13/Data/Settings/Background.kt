@@ -20,7 +20,7 @@ data class Background(
                 R.drawable.flowers,
                 listOf(
                     Color.White,
-                    Color(0xFF90EE90)
+                    Color(0xFFB9C8A3)
                 )
             ),
             Background(
