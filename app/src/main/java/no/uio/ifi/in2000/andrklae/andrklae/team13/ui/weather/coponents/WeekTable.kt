@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.Header
 
 @Composable
 fun WeekTable(data: DataHolder) {
