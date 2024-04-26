@@ -1,18 +1,38 @@
-Innholdet i denne filen:
-- Beskrivelse av diagrammer generert i Mermaid.
+MODELING
 
-- De viktigste funksjonelle kravene til applikasjonen bør beskrives:
-  med use case diagram, samt sekvensdiagram og tekstlig beskrivelse av de viktigste use-casene.
+*Functional requirements*
+In this section the most important functional requirements from our requirement specification
+are represented with use-cases and a sequence diagram.
 
-MIDLERTIDIGE USE-CASE BESKRIVELSER:
+Use-case 1: Add an optional city in Norway as a favorite.
+Actor: User
+Pre-condition: User has internet-access
+Post-condition: The city is added to the favorite-list overview
 
-Use-case 1: Vis aktuell temperatur og værforhold 
-Aktør: Bruker 
-Beskrivelse: 
-Brukeren åpner appen og den viser automatisk temperaturen og værforholdene for brukerens nåværende lokasjon. 
-Hvis brukeren ønsker å se værforholdene for en annen lokasjon, kan de søke opp eller velge en annen forhåndsinnstilt lokasjon.
+- Description:
+1. The user opens the app and is on the home-screen
+2. The user navigates to the search-screen
+3. The user clicks on the search-tool
+4. The user writes the city-name in the searchbar
+5. The system displays the city as an option on the screen.
+6. The user clicks on a bookmark-icon to add the city as a favorite
+
+- Alternative flow: Checks weather-data first
+5.1 The user clicks on the city option
+5.2 The system provides weather-data for the city on the home-screen
+
+-->This use case is represented in a use-case-diagram: ![img_1.png](usecase1.png)
 
 
+
+*Activity diagram*
+Activity: Open the app for the first time
+![img.png](img.png)
+
+
+
+De viktigste funksjonelle kravene til applikasjonen bør beskrives
+med use case diagram, samt sekvensdiagram og tekstlig beskrivelse av de viktigste use-casene.
 
 
  
