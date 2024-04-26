@@ -48,7 +48,7 @@ class GPTDataSource {
                 // variables for the api
                 val request = ChatRequest(
                     messages = listOf(Message("user", prompt)),
-                    max_tokens = 1000,
+                    max_tokens = 4000,
                     temperature = 0.7,
                     frequency_penalty = 0.0,
                     presence_penalty = 0.0,
@@ -63,8 +63,11 @@ class GPTDataSource {
                     body = json.encodeToString(request)
                 }
 
+                println(response)
+
                 // serializes the Json response
                 val responseBody = response.bodyAsText()
+                println("Gpt response: $responseBody")
                 val gptResponse = json.decodeFromString<GPTChatResponse>(responseBody)
 
                 // returns the response from the ai

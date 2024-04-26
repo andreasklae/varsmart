@@ -137,6 +137,9 @@ fun DisplayWarning(
 ) {
     val warningDescription = "${alert.alert.properties.instruction}" +
             " \n${alert.alert.properties.description} ${alert.alert.properties.consequences}"
+    val interval = alert.alert.`when`.interval
+    val start = isoToReadable(interval[0])
+    val end = isoToReadable(interval [1])
     val warningTitle = alert.alert.properties.thing(alert.alert.properties.area)
     val warningLevel = alert.alert.properties.riskMatrixColor
     val distance = alert.distance
@@ -209,6 +212,10 @@ fun DisplayWarning(
                 )
                 Text(
                     text = distance.roundToInt().toString() + "km unna " + location,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Gjelder fra $start til $end",
                     fontWeight = FontWeight.Bold
                 )
                 Text(
@@ -292,6 +299,35 @@ fun DisplayWarning(
             }
         }
     }
+}
+
+fun isoToReadable(iso: String): String {
+    val date = iso.split("T").first().split("-")
+    val month = date[1]
+    val day = date[2]
+
+    val time = iso.split("T")[1].split(":")
+    val hour = time[0]
+    val minute = time[1]
+
+    val monthName = {
+        when (month.toInt()){
+            1 -> "Januar"
+            2 -> "Februar"
+            3 -> "Mars"
+            4 -> "April"
+            5 -> "Mai"
+            6 -> "Juni"
+            7 -> "Juli"
+            8 -> "August"
+            9 -> "September"
+            10 -> "Oktober"
+            11 -> "November"
+            else -> "Desember"
+        }
+    }
+
+    return "$day. ${monthName()} $hour:$minute"
 }
 
 @Composable

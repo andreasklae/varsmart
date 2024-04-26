@@ -45,6 +45,7 @@ class WeatherViewModel(
             data.value.updateAll()
             _GPTCurrent.value = "Trykk på meg for å spørre om praktiske tips!"
             _GPT24h.value = "Trykk på meg for å spørre om været det neste døgnet"
+            _GPTWeek.value = "Trykk på meg for å spørre om været denne uka"
         }
     }
 
@@ -63,16 +64,20 @@ class WeatherViewModel(
                     updateAll()
                 }
 
-                // if gpt data is already loaded
+                // if gpt current data is already loaded
                 if (data.value.gptCurrent.value != "") {
                     _GPTCurrent.value = data.value.gptCurrent.value
                 } else _GPTCurrent.value = "Trykk på meg for å spørre om praktiske tips!"
 
-                // if gpt data is already loaded
-                if (data.value.gptCurrent.value != "") {
+                // if gpt 24h data is already loaded
+                if (data.value.gpt24h.value != "") {
                     _GPTCurrent.value = data.value.gptCurrent.value
                 } else _GPT24h.value = "Trykk på meg for å spørre om været det neste døgnet"
-                _GPT24h.value = data.value.gpt24h.value
+
+                // if gpt week data is already loaded
+                if (data.value.gptWeek.value != "") {
+                    _GPTWeek.value = data.value.gptWeek.value
+                } else _GPT24h.value = "Trykk på meg for å spørre om været denne uka"
 
             }
         }

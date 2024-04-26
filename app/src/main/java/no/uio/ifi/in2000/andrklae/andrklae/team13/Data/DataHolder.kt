@@ -141,7 +141,7 @@ data class DataHolder(
     suspend fun updateGPTCurrent(age: Int, hobbies: List<String>) {
         gptCurrent.value = ""
         // fetches from api
-        gptCurrent.value = gptRepo.fetchCurrent(currentWeather!!, next24h, age, hobbies)
+        gptCurrent.value = gptRepo.fetchCurrent(currentWeather!!, next24h, age, hobbies, alertList)
     }
 
     suspend fun updateGPT24h(age: Int) {
