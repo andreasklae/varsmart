@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning
 
 import android.content.Context
+import android.location.GnssAntennaInfo.Listener
 import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
@@ -50,10 +51,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveListener
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -61,8 +64,10 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
+import com.google.maps.android.compose.currentCameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import com.google.maps.android.ktx.model.cameraPosition
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Geometry
@@ -92,15 +97,21 @@ fun WarningScreen(warningViewModel: WarningViewModel, context: Context) {
             }
         }
 
-        Status.SUCCESS-> {
-            warnings[0]?.let { LoadWarningScreen(it, { warningViewModel.loadWarnings() }, warningViewModel) }
+        Status.SUCCESS -> {
+            warnings[0]?.let {
+                LoadWarningScreen(
+                    it,
+                    { warningViewModel.loadWarnings() },
+                    warningViewModel
+                )
+            }
         }
 
         Status.FAILED -> {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
-                ) {
+            ) {
                 Spacer(modifier = Modifier.height(45.dp))
                 Text(text = "Alle farevarsler", fontSize = 30.sp)
 
@@ -153,8 +164,10 @@ fun WarningScreen(warningViewModel: WarningViewModel, context: Context) {
 @Composable
 fun DisplayAllWarning(
     alerts: List<Feature>,
-    findAllPolygons: (Geometry) -> List<Polygon>
+    findAllPolygons: (Geometry) -> List<Polygon>,
+    warningViewModel: WarningViewModel
 ) {
+    var hasMoved by remember { mutableStateOf(false) }
     GoogleMap(
         modifier = Modifier
             .fillMaxSize(),
@@ -163,17 +176,17 @@ fun DisplayAllWarning(
             position = CameraPosition.fromLatLngZoom(LatLng(59.9, 10.7), 5f)
         }
     ) {
-        alerts.forEach {
+        alerts.forEach {feature ->
             var isPolygonSelected by remember { mutableStateOf(false) }
-            val polygonColor = it.properties.riskMatrixColor
-            val polygons = findAllPolygons(it.geometry)
-            val area = it.properties.area
+            val polygonColor = feature.properties.riskMatrixColor
+            val polygons = findAllPolygons(feature.geometry)
+            val area = feature.properties.area
             polygons.forEach { polygon ->
                 Polygon(
                     points = polygon.coordinates,
                     clickable = true,
                     fillColor = if (isPolygonSelected)
-                        getColorFromString(polygonColor).copy(alpha = 0.8f)
+                        Color.DarkGray.copy(0.9f)
                     else getColorFromString(polygonColor).copy(alpha = 0.5f),
                     strokeColor = Color.Black,
                     strokeWidth = 5f,
@@ -181,13 +194,16 @@ fun DisplayAllWarning(
                     onClick = {
                         // Handle polygon click event
                         if (isPolygonSelected) {
+                            warningViewModel.resetPreview()
                             isPolygonSelected = false
                         } else {
+                            warningViewModel.setPreview(feature)
                             isPolygonSelected = true
                         }
                     }
                 )
                 if (isPolygonSelected) {
+                    /*
                     Marker(
                         state =
                         rememberMarkerState(
@@ -195,17 +211,26 @@ fun DisplayAllWarning(
 
                         ),
                         title = area,
-                        snippet = "${it.properties.eventAwarenessName}: " +
-                                "${it.properties.triggerLevel}",
+                        snippet = "${feature.properties.eventAwarenessName}: " +
+                                "${feature.properties.triggerLevel}",
                         icon = BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_RED),
                         alpha = 0.8f
                     )
 
+                     */
+
                 }
 
             }
+            if (currentCameraPositionState.isMoving) {
+                isPolygonSelected = false
+            }
         }
+        if (currentCameraPositionState.isMoving) {
+            warningViewModel.resetPreview()
+        }
+
     }
 }
 
@@ -217,6 +242,7 @@ fun LoadWarningScreen(
     warningViewModel: WarningViewModel
 ) {
     var showMap by remember { mutableStateOf(false) }
+    val selected by warningViewModel.selectedWarning.collectAsState()
     // sorts favorite list to put current location at the top of the list
 
     // column of all favourites
@@ -325,10 +351,33 @@ fun LoadWarningScreen(
                         DisplayAllWarning(
                             warning.features,
                             { geometry: Geometry ->
-                                warningViewModel.warningRepositoryInterface.findAllPolygons(geometry.coordinates)
-                            }
+                                warningViewModel.warningRepositoryInterface.findAllPolygons(
+                                    geometry
+                                        .coordinates
+                                )
+                            },
+                            warningViewModel
                         )
+                    }
+                    if (!(selected == null)) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            // Add a spacer to push the bottom content to the bottom
+                            Spacer(modifier = Modifier.weight(1f))
 
+                            // Use Box to align the content to the bottom center
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.CenterHorizontally)
+                            ) {
+                                WarningBox(selected!!, true)
+                            }
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
@@ -337,11 +386,13 @@ fun LoadWarningScreen(
                         .clip(CircleShape)
                         .background(Color.White)
                         .wrapContentWidth()
-                        .clickable { showMap = false }
+                        .clickable {
+                            showMap = false
+                        }
                         .padding(15.dp)
 
                 ) {
-                    Icon(Icons.Filled.Close,"fjern fra favoritter")
+                    Icon(Icons.Filled.Close, "Lukk kartet")
                 }
                 Spacer(modifier = Modifier.weight(1f))
             }
@@ -353,7 +404,7 @@ fun LoadWarningScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WarningBox(feature: Feature) {
+fun WarningBox(feature: Feature, forMap: Boolean = false) {
 
     val warningDescription = "${feature.properties.instruction}" +
             " \n${feature.properties.description} ${feature.properties.consequences}"
@@ -365,7 +416,13 @@ fun WarningBox(feature: Feature) {
     Box(modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 20.dp)
-        .glassEffect(Color(0xffffff8a))
+        .glassEffect(
+            if (forMap) {
+                Color.White
+            } else {
+                Color(0xffffff8a)
+            }
+        )
 
         .animateContentSize(
             animationSpec = spring(
@@ -379,7 +436,7 @@ fun WarningBox(feature: Feature) {
         Column(
             modifier = Modifier
                 .alpha(alpha.value)
-                .fillMaxSize()
+
                 .padding(horizontal = 20.dp, vertical = 10.dp)
         ) {
             Row(
