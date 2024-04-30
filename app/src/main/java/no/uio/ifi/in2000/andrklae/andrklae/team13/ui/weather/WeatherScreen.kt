@@ -193,6 +193,7 @@ fun WeatherScreen(
                     }
                     // if it has previous data
                     else {
+                        Toast.makeText(context, "Kunne ikke oppdatere, mangler internett", Toast.LENGTH_SHORT).show()
                         UpperHalf(
                             data = data,
                             background = background,
