@@ -144,8 +144,6 @@ fun UpperHalf(
                     // button from refreshing the page
                     IconButton(
                         onClick = {
-                            Toast.makeText(context, "Oppdaterer været...", Toast.LENGTH_SHORT)
-                                .show()
                             updateAll()
                         },
                         modifier = Modifier.size(40.dp)

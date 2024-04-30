@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherTimeForecast
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 
 class GPTRepository() : GPTRepositoryInterface {
     override val dummyResponse = "dummy response: Lorem ipsum dolor sit amet " +
@@ -12,11 +13,15 @@ class GPTRepository() : GPTRepositoryInterface {
         weather: WeatherTimeForecast,
         next24: List<WeatherTimeForecast>,
         age: Int,
-        hobbyList: List<String>
+        hobbyList: List<String>,
+        alerts: List<Alert>
     ): String {
         var prompt = (
-                "gi relevante tips basert på været,maks 40 ord,ett avsnitt,utf-8. " +
-                        "Du er kortfattet,jovial,uformell,enkel å forstå. " +
+                "gi relevante tips basert på været, ca. 40 ord, maks 50 ord, 1 avsnitt, utf-8. " +
+                        "Du er kortfattet, " +
+                        "jovial, uformell, " +
+                        "enkel å forstå, " +
+                        "unngår komplisert data i ditt svar. " +
 
                         "Skriv som om jeg er $age år" +
 
@@ -35,6 +40,18 @@ class GPTRepository() : GPTRepositoryInterface {
                     "skydekke: ${it.cloudCoverage} " +
                     "regn: ${it.precipitation}mm " +
                     "vind: ${it.windSpeed}m/s }")
+        }
+        if (alerts.isNotEmpty()){
+            prompt += "farevarsler: "
+            alerts.forEach {
+                prompt += it.alert.properties.area + ": " + it.distance + "km unna. {" +
+                        it.alert.properties.awarenessSeriousness + ". " +
+                        it.alert.properties.eventAwarenessName + ". " +
+                        it.alert.properties.consequences + ". " +
+                        it.alert.properties.description + ". " +
+                        it.alert.properties.instruction +
+                        "}"
+            }
         }
         if (hobbyList.isNotEmpty()){
             prompt += "ta hensyn til hobbyene mine, men kun om det er relevant" +

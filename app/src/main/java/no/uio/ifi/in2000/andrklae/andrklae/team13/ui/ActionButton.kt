@@ -30,7 +30,7 @@ fun ActionButton(
         Icon(
             icon,
             "refresh",
-            Modifier.size(50.dp)
+            Modifier.size(40.dp)
         )
     }
 }

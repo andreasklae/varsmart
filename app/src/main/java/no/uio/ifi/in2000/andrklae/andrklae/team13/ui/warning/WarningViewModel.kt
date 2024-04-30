@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepositoryInterface
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.WarningRepository
@@ -23,6 +25,9 @@ class WarningViewModel() : ViewModel() {
     private val _loadingStatus = MutableStateFlow(Status.LOADING)
     val loadingStatus = _loadingStatus.asStateFlow()
 
+    private val _selectedWarning = MutableStateFlow<Feature?>(null)
+    val selectedWarning = _selectedWarning.asStateFlow()
+
     init {
         loadWarnings()
     }
@@ -38,6 +43,14 @@ class WarningViewModel() : ViewModel() {
                 _loadingStatus.value = Status.FAILED
             }
         }
+    }
+
+    fun setPreview(feature: Feature) {
+        _selectedWarning.value = feature
+    }
+
+    fun resetPreview() {
+        _selectedWarning.value = null
     }
 }
 

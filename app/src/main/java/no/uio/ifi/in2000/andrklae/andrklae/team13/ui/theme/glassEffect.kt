@@ -12,33 +12,60 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-fun Modifier.glassEffect(color: Color = Color.White): Modifier {
-    return this
-        .clip(RoundedCornerShape(15.dp))
-        .border(1.dp, color.copy(alpha = 0.3f), RoundedCornerShape(15.dp))
-        .border(2.dp, color.copy(alpha = 0.05f), RoundedCornerShape(15.dp))
-        .border(3.dp, color.copy(alpha = 0.02f), RoundedCornerShape(15.dp))
-        .border(4.dp, color.copy(alpha = 0.03f), RoundedCornerShape(15.dp))
-        .background(
-            brush = Brush.verticalGradient(
-                colors = listOf(
-                    color.copy(alpha = 0.7f),
-                    color.copy(alpha = 0.4f),
-                    color.copy(alpha = 0.7f)
-                ),
-            )
-        )
-        .background(
-            brush = Brush.horizontalGradient(
-                colors = listOf(
-                    color.copy(alpha = 0.7f),
-                    color.copy(alpha = 0.4f),
-                    color.copy(alpha = 0.7f)
-                ),
-            )
-        )
+val alernative = 0.9f
 
-
+fun Modifier.glassEffect(color: Color = Color.White, alt: Boolean = false): Modifier {
+    if (alt) {
+        return this
+            .clip(RoundedCornerShape(15.dp))
+            .border(1.dp, color.copy(alpha = alernative), RoundedCornerShape(15.dp))
+            .border(2.dp, color.copy(alpha = alernative), RoundedCornerShape(15.dp))
+            .border(3.dp, color.copy(alpha = alernative), RoundedCornerShape(15.dp))
+            .border(4.dp, color.copy(alpha = alernative), RoundedCornerShape(15.dp))
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        color.copy(alpha = alernative),
+                        color.copy(alpha = alernative),
+                        color.copy(alpha = alernative)
+                    ),
+                )
+            )
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        color.copy(alpha = alernative),
+                        color.copy(alpha = alernative),
+                        color.copy(alpha = alernative)
+                    ),
+                )
+            )
+    } else {
+        return this
+            .clip(RoundedCornerShape(15.dp))
+            .border(1.dp, color.copy(alpha = 0.3f), RoundedCornerShape(15.dp))
+            .border(2.dp, color.copy(alpha = 0.05f), RoundedCornerShape(15.dp))
+            .border(3.dp, color.copy(alpha = 0.02f), RoundedCornerShape(15.dp))
+            .border(4.dp, color.copy(alpha = 0.03f), RoundedCornerShape(15.dp))
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        color.copy(alpha = 0.7f),
+                        color.copy(alpha = 0.4f),
+                        color.copy(alpha = 0.7f)
+                    ),
+                )
+            )
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        color.copy(alpha = 0.7f),
+                        color.copy(alpha = 0.4f),
+                        color.copy(alpha = 0.7f)
+                    ),
+                )
+            )
+    }
 }
 
 fun Modifier.coloredGlassEffect(color: Color = Color.White): Modifier {
@@ -66,6 +93,4 @@ fun Modifier.coloredGlassEffect(color: Color = Color.White): Modifier {
                 ),
             )
         )
-
-
 }

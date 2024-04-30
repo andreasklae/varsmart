@@ -193,6 +193,7 @@ fun WeatherScreen(
                     }
                     // if it has previous data
                     else {
+                        Toast.makeText(context, "Kunne ikke oppdatere, mangler internett", Toast.LENGTH_SHORT).show()
                         UpperHalf(
                             data = data,
                             background = background,
@@ -221,7 +222,7 @@ fun WeatherScreen(
                             age = age,
                             hobbies = hobbies,
                             gptText = gptWeek,
-                            updateWeekGpt = { age, hobies -> updateGptWeek(age, hobbies) },
+                            updateWeekGpt = { age, hobbies -> updateGptWeek(age, hobbies) },
                             animation = weekAnimation
                         )
 

@@ -105,9 +105,9 @@ data class DataHolder(
         val templist = mutableListOf<Double>(currentWeather!!.temperature!!.toDouble())
         next24h.forEach {
             // makes sure that it only fetches the temperatures for this day and not tomorrow
-            // note: the api doesn't fetch data in the past,
+            // note: this does not include temperatures in the past,
             // so the highest and lowest will not include past temperatures
-            if (it.time.hour.toInt() < currentHour.toInt() || it.time.hour.toInt() == 0) {
+            if (it.time.day == currentDay) {
                 templist.add(it.temperature!!.toDouble())
             }
         }
@@ -141,7 +141,7 @@ data class DataHolder(
     suspend fun updateGPTCurrent(age: Int, hobbies: List<String>) {
         gptCurrent.value = ""
         // fetches from api
-        gptCurrent.value = gptRepo.fetchCurrent(currentWeather!!, next24h, age, hobbies)
+        gptCurrent.value = gptRepo.fetchCurrent(currentWeather!!, next24h, age, hobbies, alertList)
     }
 
     suspend fun updateGPT24h(age: Int) {
@@ -156,42 +156,44 @@ data class DataHolder(
     }
 
     suspend fun updateNext24h(newWeather: WeatherForecast) {
-        val time = dt
-        val hour = dt.hour
-
-        // Creates DateTime objects for the next 24 Hours
-        val hours = mutableListOf<DateTime>()
-        for (i in 1..24) {
-
-            // makes sure that it is the correct day
-            if (hour.toInt() + i < 24) {
-                hours.add(
-                    DateTime(
-                        time.year,
-                        time.month,
-                        time.day,
-                        (time.hour.toInt() + i).toString()
-                    )
-                )
-            } else {
-                hours.add(
-                    DateTime(
-                        time.year,
-                        time.month,
-                        (time.day.toInt() + 1).toString(),
-                        (time.hour.toInt() + i - 24).toString()
-                    )
-                )
-            }
-        }
-
+        // new list for the next 24 hours
         val newList = mutableListOf<WeatherTimeForecast>()
-        // add a weather object for each hour in a day
-        hours.forEach {
-            newList.add(WeatherTimeForecast(newWeather, it, location))
+        // a list of datetimes from the api
+        val timelist = newWeather.properties.timeseries
+        // finds the index of the current time in the datetime list
+        val currentTime = timelist.first{
+            // matches the hour
+            it.time.split("T")[1].split(":")[0] == dt.hour
+        }
+        val startIndex = newWeather.properties.timeseries.indexOf(currentTime)
+
+        // for loop that runs 23 times and finds the weather
+        for (i in 1..24) {
+            // creates a datetime object
+            val time = newWeather.properties.timeseries[i + startIndex].time
+            val date = time.split("T")[0].split("-")
+            val year = date[0]
+            val month = date[1]
+            val day = date[2]
+            val hour = time.split("T")[1].split(":")[0]
+            val dateTime = DateTime(
+                year = year,
+                initMonth = month,
+                initDay = day,
+                initHour = hour
+            )
+
+            // creates a weatherTimeForecast object
+            val forecast = WeatherTimeForecast(
+                newWeather,
+                dateTime,
+                location
+            )
+
+            // adds it to the list
+            newList.add(forecast)
         }
         next24h = newList
-
     }
 
     suspend fun updateWeek(newWeather: WeatherForecast) {

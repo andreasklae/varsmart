@@ -30,22 +30,16 @@ class MainActivity : ComponentActivity() {
             initHobbies = PreferenceManager.fetchHobbies(this),
             initBackground = PreferenceManager.fetchBackgroundIndex(this)
         )
-        getCurrentLocation()
 
         favVM.loadFavourites(this)
 
-        // if "Min posisjon" exists in the favourite list
-        if (DataHolder.Favourites.any { it.location.name == "Min posisjon" }){
-            weatherVM.setLocation(
-                DataHolder.Favourites.find { it.location.name == "Min posisjon" }!!
-            )
-        }
-
         // if favourite list is not empty
-        else if (DataHolder.Favourites.isNotEmpty()){
-            weatherVM.setLocation(DataHolder.Favourites.first())
-        }
-        else weatherVM.updateAll()
+        if (DataHolder.Favourites.isNotEmpty()){
+            weatherVM.setLocation(
+                DataHolder.Favourites
+                    .sortedBy { it.location.name == "Min posisjon" }
+                    .first())
+        } else weatherVM.updateAll()
 
         setContent {
             MasterUi(
