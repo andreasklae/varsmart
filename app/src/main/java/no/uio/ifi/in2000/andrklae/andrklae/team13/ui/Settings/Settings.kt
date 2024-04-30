@@ -151,7 +151,7 @@ fun BackgroundImageChooser(
             .padding(10.dp)
     ) {
         Text(
-            text = "Hvilken bakgrunn vil du ha på hjemskjermen??",
+            text = "Hvilken bakgrunn vil du ha?",
             fontSize = 15.sp
         )
         var scrollState = rememberScrollState()
