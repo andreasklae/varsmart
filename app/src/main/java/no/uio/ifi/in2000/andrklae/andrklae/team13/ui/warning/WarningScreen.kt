@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveListener
+import com.google.android.gms.maps.UiSettings
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -171,7 +172,7 @@ fun DisplayAllWarning(
     GoogleMap(
         modifier = Modifier
             .fillMaxSize(),
-        uiSettings = MapUiSettings(zoomControlsEnabled = true),
+        uiSettings = MapUiSettings(zoomControlsEnabled = false),
         cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(LatLng(59.9, 10.7), 5f)
         }
@@ -186,7 +187,7 @@ fun DisplayAllWarning(
                     points = polygon.coordinates,
                     clickable = true,
                     fillColor = if (isPolygonSelected)
-                        Color.DarkGray.copy(0.9f)
+                        getColorFromString(polygonColor).copy(alpha = 0.9f)
                     else getColorFromString(polygonColor).copy(alpha = 0.5f),
                     strokeColor = Color.Black,
                     strokeWidth = 5f,
@@ -415,12 +416,23 @@ fun WarningBox(feature: Feature, forMap: Boolean = false) {
 
     Box(modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 20.dp)
+        .padding(
+            horizontal = if (forMap) {
+                5.dp
+            } else {
+                20.dp
+            }
+        )
         .glassEffect(
             if (forMap) {
                 Color.White
             } else {
                 Color(0xffffff8a)
+            },
+            if (forMap) {
+                true
+            } else {
+                false
             }
         )
 
