@@ -17,7 +17,7 @@ Dersom f.eks. vær-apiet feiler, så kan fortsatt Farevarsel-skjermen vise farev
 man mangler internett, vil man fortsatt kunne endre på innstillinger, siden dette ikke krever
 internetttilkobling. Dette er for å følge prinsippet om lav kobling. For å følge prinsippet om høy
 kohesjon, er hver komponent også kun ansvarlig for sine egne arbeidsoppgaver. Farevarsel skjermen
-er f.eks. ikke ansvarlig for api-kall til hjem skjermen.   
+er f.eks. ikke ansvarlig for api-kall til hjem skjermen.
 
 **Datalaget:**
 I datalaget finner man blant annet klassen DataHolder. DataHolder er et knutepunkt for all data til 
@@ -40,3 +40,5 @@ de aller nyeste kan være litt upålitelige fordi de ikke har blitt testet i lik
 API-nivå 28 føltes derfor som et trygt valg. Det kan benyttes av 90,3% av Android-enheter og
 tilsvarerAndroid 9 (Pie) som ble lansert i 2018 (Android API Levels, 2024). Det møter også
 Google Play sine minimumskrav til API-nivå for app-oppdateringer.
+
+![img_2.png](architecture)
