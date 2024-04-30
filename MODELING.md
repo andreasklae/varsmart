@@ -1,25 +1,79 @@
-Innholdet i denne filen:
-- Beskrivelse av diagrammer generert i Mermaid.
+MODELING
 
-- De viktigste funksjonelle kravene til applikasjonen bør beskrives:
-  med use case diagram, samt sekvensdiagram og tekstlig beskrivelse av de viktigste use-casene.
+*Functional requirements*
+In this section the most important functional requirements from our requirement specification
+are represented with use-cases and a sequence diagram.
 
-MIDLERTIDIGE USE-CASE BESKRIVELSER:
+Important functions in our app:
+- Check the weather for a location
+- Get a weather-related tip from mr. practical
+- Add a city to favorite list
+- Check alerts nearby you
 
-Use-case 1: Vis aktuell temperatur og værforhold 
-Aktør: Bruker 
-Beskrivelse: 
-Brukeren åpner appen og den viser automatisk temperaturen og værforholdene for brukerens nåværende lokasjon. 
-Hvis brukeren ønsker å se værforholdene for en annen lokasjon, kan de søke opp eller velge en annen forhåndsinnstilt lokasjon.
+*USE-CASES*
+
+Use-case 1: Check the weather for a location
+Actor: User
+Pre-condition: User has internet-access
+Post-condition: Weather-data is displayed on the Home-screen
+
+- Description:
+1. The user opens the app and is on the home-screen
+2. The user navigates to the search-screen
+3. The user clicks on the search-tool
+4. The user writes the city-name in the searchbar
+5. The user clicks on the city option.
+6. The system provides weather-data for the city on the home-screen
+
+-----------------------
+
+Use-case 2: Get a weather-related tip from mr. practical
+Actor: User
+Pre-condition: Weather-data for a location is displayed on the Home-screen
+Post-condition: Mr.Practical gives a weather-related tip
+
+1. The user clicks on Mr.Practical for a tip
+2. Mr.practical generates and displays a message on the screen
+
+----------------------
+
+Use-case 4: Add an optional city in Norway as a favorite.
+Actor: User
+Pre-condition: User has internet-access
+Post-condition: The city is added to the favorite-list overview
+
+- Description:
+1. The user opens the app and is on the home-screen
+2. The user navigates to the search-screen
+3. The user clicks on the search-tool
+4. The user writes the city-name in the searchbar
+5. The system displays the city as an option on the screen.
+6. The user clicks on a bookmark-icon to add the city as a favorite
+
+- Alternative flow: Checks weather-data first
+5.1 The user clicks on the city option
+5.2 The system provides weather-data for the city on the home-screen
+
+---------------------
+Use-case 4: Check alerts nearby you
+Actor: User
+Pre-condition: User has internet-access
+Post-condition: The city is added to the favorite-list overview
 
 
+-->This use case is represented in a use-case-diagram: ![img_1.png](usecaseDiagram.png)
+
+
+*Activity diagram*
+Activity: Open the app for the first time
+![img.png](img.png)
+
+
+De viktigste funksjonelle kravene til applikasjonen bør beskrives
+med use case diagram, samt sekvensdiagram og tekstlig beskrivelse av de viktigste use-casene.
 
 
  
-
-
-
-
 
 - Modelleringen bør også inneholde klassediagram som reflekterer use-case og sekvensdiagrammene.
 
