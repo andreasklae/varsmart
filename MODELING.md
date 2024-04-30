@@ -6,13 +6,38 @@ are represented with use-cases and a sequence diagram.
 
 Important functions in our app:
 - Check the weather for a location
-- Get a weather-related tip from mr. practical 
-- Check alerts nearby you
+- Get a weather-related tip from mr. practical
 - Add a city to favorite list
+- Check alerts nearby you
 
+*USE-CASES*
 
+Use-case 1: Check the weather for a location
+Actor: User
+Pre-condition: User has internet-access
+Post-condition: Weather-data is displayed on the Home-screen
 
-Use-case 1: Add an optional city in Norway as a favorite.
+- Description:
+1. The user opens the app and is on the home-screen
+2. The user navigates to the search-screen
+3. The user clicks on the search-tool
+4. The user writes the city-name in the searchbar
+5. The user clicks on the city option.
+6. The system provides weather-data for the city on the home-screen
+
+-----------------------
+
+Use-case 2: Get a weather-related tip from mr. practical
+Actor: User
+Pre-condition: Weather-data for a location is displayed on the Home-screen
+Post-condition: Mr.Practical gives a weather-related tip
+
+1. The user clicks on Mr.Practical for a tip
+2. Mr.practical generates and displays a message on the screen
+
+----------------------
+
+Use-case 4: Add an optional city in Norway as a favorite.
 Actor: User
 Pre-condition: User has internet-access
 Post-condition: The city is added to the favorite-list overview
@@ -29,12 +54,19 @@ Post-condition: The city is added to the favorite-list overview
 5.1 The user clicks on the city option
 5.2 The system provides weather-data for the city on the home-screen
 
--->This use case is represented in a use-case-diagram: ![img_1.png](usecase1.png)
+---------------------
+Use-case 4: Check alerts nearby you
+Actor: User
+Pre-condition: User has internet-access
+Post-condition: The city is added to the favorite-list overview
+
+
+-->This use case is represented in a use-case-diagram: ![img_1.png](usecaseDiagram.png)
+
 
 *Activity diagram*
 Activity: Open the app for the first time
 ![img.png](img.png)
-![img_1.png](architecture)
 
 
 De viktigste funksjonelle kravene til applikasjonen bør beskrives
