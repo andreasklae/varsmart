@@ -221,7 +221,7 @@ fun WeatherScreen(
                             age = age,
                             hobbies = hobbies,
                             gptText = gptWeek,
-                            updateWeekGpt = { age, hobies -> updateGptWeek(age, hobbies) },
+                            updateWeekGpt = { age, hobbies -> updateGptWeek(age, hobbies) },
                             animation = weekAnimation
                         )
 
