@@ -76,7 +76,8 @@ fun WeatherScreen(
                 .verticalScroll(scrollState)
         ) {
             val context = LocalContext.current
-            // keeps track of the status of the data
+
+            // Changes the ui based on the status of the weather api call
             when (data.weatherStatus.value) {
                 // loading
                 Status.LOADING -> {
@@ -125,7 +126,8 @@ fun WeatherScreen(
                 }
                 // failed
                 Status.FAILED -> {
-                    // if it doesnt have any data loaded previously
+                    Toast.makeText(context, "Kunne ikke oppdatere, mangler internett", Toast.LENGTH_SHORT).show()
+                    // if it doesn't have any data loaded previously
                     if (data.weather == null) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Spacer(modifier = Modifier.height(80.dp))
@@ -171,11 +173,6 @@ fun WeatherScreen(
                                         .clip(RoundedCornerShape(13.dp))
                                         .background(Color.White)
                                         .clickable {
-                                            Toast.makeText(
-                                                context,
-                                                "Tester internettforbindelsen...",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
                                             updateAll()
                                         }
                                         .padding(10.dp)
@@ -191,9 +188,9 @@ fun WeatherScreen(
                         }
 
                     }
+
                     // if it has previous data
                     else {
-                        Toast.makeText(context, "Kunne ikke oppdatere, mangler internett", Toast.LENGTH_SHORT).show()
                         UpperHalf(
                             data = data,
                             background = background,

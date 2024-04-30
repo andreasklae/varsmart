@@ -97,7 +97,7 @@ fun WarningScreen(warningViewModel: WarningViewModel, context: Context) {
                 Spacer(modifier = Modifier.height(45.dp))
                 Text(text = "Alle farevarsler", fontSize = 30.sp)
                 Spacer(modifier = Modifier.height(45.dp))
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = Color.Black)
             }
         }
 
