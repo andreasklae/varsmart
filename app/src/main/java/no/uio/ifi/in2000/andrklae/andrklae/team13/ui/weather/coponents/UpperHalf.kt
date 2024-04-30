@@ -202,14 +202,14 @@ fun UpperHalf(
                                 contentDescription = "Høyest",
                                 tint = Color(0xFFFD755D)
                             )
-                            Text(text = data.findHighestAndLowestTemp()[1] + "°C")
+                            Text(text = data.highest.toString() + "°C")
                             Spacer(modifier = Modifier.width(5.dp))
                             Icon(
                                 imageVector = Icons.Filled.ArrowDownward,
                                 contentDescription = "Lavest",
                                 tint = Color(0xFF64A3F0)
                             )
-                            Text(data.findHighestAndLowestTemp()[0] + "°C")
+                            Text(data.lowest.toString() + "°C")
                         }
                     }
                     Spacer(modifier = Modifier.weight(1f))
