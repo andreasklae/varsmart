@@ -4,6 +4,14 @@ MODELING
 In this section the most important functional requirements from our requirement specification
 are represented with use-cases and a sequence diagram.
 
+Important functions in our app:
+- Check the weather for a location
+- Get a weather-related tip from mr. practical 
+- Check alerts nearby you
+- Add a city to favorite list
+
+
+
 Use-case 1: Add an optional city in Norway as a favorite.
 Actor: User
 Pre-condition: User has internet-access
@@ -23,12 +31,10 @@ Post-condition: The city is added to the favorite-list overview
 
 -->This use case is represented in a use-case-diagram: ![img_1.png](usecase1.png)
 
-
-
 *Activity diagram*
 Activity: Open the app for the first time
 ![img.png](img.png)
-
+![img_1.png](architecture)
 
 
 De viktigste funksjonelle kravene til applikasjonen bør beskrives
@@ -36,10 +42,6 @@ med use case diagram, samt sekvensdiagram og tekstlig beskrivelse av de viktigst
 
 
  
-
-
-
-
 
 - Modelleringen bør også inneholde klassediagram som reflekterer use-case og sekvensdiagrammene.
 
