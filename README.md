@@ -1,6 +1,7 @@
 # Værsmart
 
 *Contributors:*
+
 Developed by andrklae, christft, hananam, viktorol, muntahad and shanzae.
 Azure access provided by UiO
 Weather data provided by MET Norway
@@ -39,32 +40,32 @@ To run the app;
 
 The project is created with:
 
-*Backend resources*
+### *Backend resources*
 
 - Android Core KTX 1.12.0
 - Junit 4.13.2
 - Google Dagger Hilt 2.49
 
-*UI tools*
+### *UI tools*
 
 - Google Maps Android SDK 5.0.0
 - Coil Compose 2.5.0
 - Coil SVG 2.1.0
 - Airbnb Lottie 5.2.0
 
-##### Jetpack Compose UI App Development Toolkit
+#### Jetpack Compose UI App Development Toolkit
 
 - Compose Material3 1.2.1
 - Compose Animation 1.6.6
 
-*API & Data*
+### *API & Data*
 
 - Ktor Client 2.3.8
 - Azure OpenAI 1.0.0-beta.3
 - Google Play Services Location 21.2.0
 - Google Play Services Maps 18.2.0
 
-*Repositories for dependency libraries*
+### *Repositories for dependency libraries*
 
 - Maven Central Repository
 - Google Repository
