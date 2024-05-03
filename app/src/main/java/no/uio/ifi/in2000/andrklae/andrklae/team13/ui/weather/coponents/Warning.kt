@@ -72,13 +72,10 @@ var expanded = false
 fun WarningRow(
     data: DataHolder,
     range: Int,
-    setPreview: (Feature) -> Unit,
+    setPreview: () -> Unit,
     resetPreview: () -> Unit,
-    ifSelected: Feature?
+    selected: Boolean
 ) {
-
-    var selected by remember { mutableStateOf(ifSelected) }
-
     val alerts = data.alertList
     val filteredAlerts = alerts.filter { it.distance <= range }
     if (filteredAlerts.isNotEmpty()) {
@@ -108,7 +105,7 @@ fun WarningRow(
                 DisplayWarning(
                     alert,
                     data.location.name,
-                    setPreview = { feature -> setPreview(feature) },
+                    setPreview = { setPreview() },
                     resetPreview = { resetPreview() },
                     selected = selected
                 )
@@ -151,9 +148,9 @@ fun WarningRow(
 fun DisplayWarning(
     alert: Alert,
     location: String,
-    setPreview: (Feature) -> Unit,
+    setPreview: () -> Unit,
     resetPreview: () -> Unit,
-    selected: Feature?
+    selected: Boolean
 ) {
     val warningDescription = "${alert.alert.properties.instruction}" +
             " \n${alert.alert.properties.description} ${alert.alert.properties.consequences}"
@@ -166,8 +163,6 @@ fun DisplayWarning(
     var showDialog by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     val alpha = remember { Animatable(1f) }
-
-    var ifSelected by remember { mutableStateOf(selected) }
 
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -304,10 +299,12 @@ fun DisplayWarning(
                     {
                         MapWithPolygon(
                             alert,
-                            setPreview = { feature -> setPreview(feature) },
-                            resetPreview = { resetPreview() })
+                            setPreview = { setPreview() },
+                            resetPreview = { resetPreview() },
+                            selected = selected
+                        )
                     }
-                    if (!(ifSelected == null)) {
+                    if (selected) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -325,7 +322,7 @@ fun DisplayWarning(
                             ) {
                                 LazyColumn() {
                                     item {
-                                        WarningBox(ifSelected!!, true)
+                                        WarningBox(alert.alert, true)
                                     }
                                 }
 

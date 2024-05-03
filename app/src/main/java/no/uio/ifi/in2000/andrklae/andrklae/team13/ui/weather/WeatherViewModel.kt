@@ -41,7 +41,7 @@ class WeatherViewModel(
     private val _GPTWeekAnimation = MutableStateFlow(MrPraktiskAnimations.BLINK)
     val GPTWeekAnimation = _GPTWeekAnimation.asStateFlow()
 
-    private val _selectedWarning = MutableStateFlow<Feature?>(null)
+    private val _selectedWarning = MutableStateFlow(false)
     val selectedWarning = _selectedWarning.asStateFlow()
 
     fun updateAll() {
@@ -190,12 +190,12 @@ class WeatherViewModel(
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, metrics) / metrics.density
     }
 
-    fun setPreview(feature: Feature?) {
-        _selectedWarning.value = feature
+    fun setPreview() {
+        _selectedWarning.value = true
     }
 
     fun resetPreview() {
-        _selectedWarning.value = null
+        _selectedWarning.value = false
     }
 
 }

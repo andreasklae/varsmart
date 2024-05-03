@@ -23,7 +23,8 @@ Environment:
 
 Connectivity:
 
-- To use the user's location, the user will be asked to give permissions for location
+- To use the user's location, the user must have enabled location data on their device, and they
+  will be asked to give permissions for the app to use their location.
 - The app needs an internet connection to update the stored weather data from the previous session
 
 ## Running the app
@@ -31,12 +32,14 @@ Connectivity:
 The project can be downloaded or cloned from
 our [GitHub Repository](https://github.uio.no/IN2000-V24/team-13)
 
+The API-keys can be FOUND AT
+
 To run the app;
 
 1. Unpack if it's a .zip file
 2. Open the project in Android Studio
 3. Select a simulator or device to run the app on
-4. Click run 'app' or run run unitTests
+4. Click run 'app' or run unitTests
 
 ## Dependencies, libraries and repositories
 

@@ -68,12 +68,11 @@ fun WeatherScreen(
     gptWeek: String,
     updateGptWeek: (Int, List<String>) -> Unit,
     weekAnimation: MrPraktiskAnimations,
-    setPreview: (Feature) -> Unit,
+    setPreview: () -> Unit,
     resetPreview: () -> Unit,
-    ifSelected: Feature?
+    selected: Boolean
 
 ) {
-    var selected by remember { mutableStateOf(ifSelected) }
     val scrollState = rememberScrollState()
     Box {
         // contents
@@ -114,9 +113,9 @@ fun WeatherScreen(
                         WarningRow(
                             data,
                             40,
-                            setPreview = { feature -> setPreview(feature) },
+                            setPreview = { setPreview() },
                             resetPreview = { resetPreview() },
-                            ifSelected = selected
+                            selected = selected
                         )
                     }
                     Next24(
@@ -227,9 +226,9 @@ fun WeatherScreen(
                         WarningRow(
                             data,
                             500,
-                            setPreview = { feature -> setPreview(feature) },
+                            setPreview = { setPreview() },
                             resetPreview = { resetPreview() },
-                            ifSelected = selected
+                            selected = selected
                         )
 
                         Next24(

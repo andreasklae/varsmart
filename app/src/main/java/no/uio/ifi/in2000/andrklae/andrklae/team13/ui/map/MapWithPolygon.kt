@@ -21,7 +21,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 
 @Composable
-fun MapWithPolygon(alert: Alert, setPreview: (Feature) -> Unit, resetPreview: () -> Unit) {
+fun MapWithPolygon(alert: Alert, setPreview: (Feature) -> Unit, resetPreview: () -> Unit, selected: Boolean) {
     val polygon = alert.polygonList
     val polygonColor = alert.alert.properties.riskMatrixColor
     val area = alert.alert.properties.area
@@ -51,6 +51,7 @@ fun MapWithPolygon(alert: Alert, setPreview: (Feature) -> Unit, resetPreview: ()
                 strokeWidth = 5f,
                 tag = area,
                 onClick = {
+                    println(selected)
                     // Handle polygon click event
                     if (isPolygonSelected) {
                         resetPreview()
