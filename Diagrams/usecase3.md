@@ -13,10 +13,15 @@
         App->>LocationApi: searchLocations(cityName)
         LocationApi-->>App: list of locations that match search
         App->> U: Show location list
-        U->>App: Click on wanted location
+        alt checks weather first
+        U->>App: click on wanted location
         App->>App: setLocation(wantedLocation)
         App->>U:navigate to homeScreen with the loading indicator
         App->>Met: fetchWeather(wantedLocation)
         Met-->>App: weatherData
-        App ->>U: Show weather data
+        App ->>U: Show weather data      
+        end
+        U->>App: Click on bookmark-button on the wanted location
+        App->>App: toggleInFavourites()
+        App->>App: saveFavourites()
 ```
