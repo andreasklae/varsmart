@@ -1,7 +1,9 @@
-**Hierarchy diagram**
+**Hierarchy diagram:**
+
 https://drive.google.com/file/d/1asMJJfmhjXVysWA2iL5xV9gVdO8HuDO0/view?usp=sharing
 
 **Design patterns and dataflow**.
+
 Our app is based on the "MVVM-pattern". This pattern consists of three components; Model, View and
 Viewmodel, where each component has its own responsibilities. For dataflow, we follow udf
 (unidirectional dataflow). The ui passes events (like button clicks or textfield changes) to the
@@ -11,6 +13,7 @@ is only one source of truth. For the code, we primarily use Stateflow (asStateFl
 collectAsState())
 
 **Ui layer:**
+
 Master UI is a Compose function with an horizontal pager which contains all the different screens,
 as well as the bottom bar. Each screen has its viewmodel, which is declared in MainActivity. We
 chose to hoist the viewmodels to MainActivity, to ensure that a new viewmodel is not created each
@@ -27,6 +30,7 @@ also follow the principle of high cohesion, we have made sure that each componen
 responsible for its own tasks. For example, one screen does not manage the api calls for another.
 
 **Data layer:**
+
 In the data layer, we have made a class called DataHolder. Dataholder is a single source of truth
 for all the data for a location. For example, if the user want to see the weather for Bergen, a
 DataHolder object will be created, and manage each of the api calls. The DataHolder object contains
@@ -46,7 +50,8 @@ For storing long term memory, we are using shared preferences. For managing the 
 created an object called PreferenceManager. This objects holds all function for saving and fetching
 the data. The data we chose to store are all settings and the location data for the favourite list.
 
-**Api-level**
+**Api-level:**
+
 We have chosen API-level 28. We wanted a balance between being compatible with many devices, while
 still potentially being able to use modern android functionality. We prioritized the latter the
 most, because we did not want to be constrained by lack of features. However, we also wanted a
