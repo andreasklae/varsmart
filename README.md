@@ -3,7 +3,9 @@
 *Contributors:*
 
 Developed by andrklae, christft, hananam, viktorol, muntahad and shanzae.
+
 Azure access provided by UiO
+
 Weather data provided by MET Norway
 
 ## Overview
