@@ -2,6 +2,7 @@
 
 https://drive.google.com/file/d/1asMJJfmhjXVysWA2iL5xV9gVdO8HuDO0/view?usp=sharing
 
+
 **Design patterns and dataflow**.
 
 Our app is based on the "MVVM-pattern". This pattern consists of three components; Model, View and
@@ -11,6 +12,7 @@ viewmodel which then handles the business logic. The viewmodel passes the states
 ensures state encapsulation which means that the states will only be updated in one place and there 
 is only one source of truth. For the code, we primarily use Stateflow (asStateFlow() and
 collectAsState())
+
 
 **Ui layer:**
 
@@ -28,6 +30,7 @@ metAlerts api. Or if the device is disconnected from the internet, the user can 
 the settings, as this does not require internet. This is to follow the principle of low coupling.To
 also follow the principle of high cohesion, we have made sure that each component is only
 responsible for its own tasks. For example, one screen does not manage the api calls for another.
+
 
 **Data layer:**
 
@@ -49,6 +52,7 @@ show the name of each location if the api fails.
 For storing long term memory, we are using shared preferences. For managing the data, we have
 created an object called PreferenceManager. This objects holds all function for saving and fetching
 the data. The data we chose to store are all settings and the location data for the favourite list.
+
 
 **Api-level:**
 
