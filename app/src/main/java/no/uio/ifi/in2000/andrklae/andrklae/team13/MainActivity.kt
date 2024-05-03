@@ -1,13 +1,18 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13
 
+import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.app.ActivityCompat
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
@@ -81,7 +86,25 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     } else {
-
+                        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                            // Permission was denied and "Don't ask again" was checked.
+                            // Prompt the user to enable location from settings
+                            val builder = AlertDialog.Builder(this)
+                            builder.setTitle("Location permission required")
+                                .setMessage("Please enable location to use this feature.")
+                                .setPositiveButton("Settings") { dialog, which ->
+                                    // Open the device's location settings
+                                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                                    startActivity(intent)
+                                }
+                                .setNegativeButton("Cancel") { dialog, which ->
+                                    // User canceled, handle accordingly
+                                }
+                                .show()
+                        } else {
+                            // Permission was denied but can be requested again.
+                            // You can show a rationale to the user explaining why the permission is needed and request it again.
+                        }
                     }
                 }
             } else {
