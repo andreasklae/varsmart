@@ -13,7 +13,7 @@ class LocationRepository() : LocationRepositoryInterface {
             .replace("ø", "%C3%B8")
             .replace("å", "%C3%A5")
 
-        return dataSource.fetchAddresses(newString)
+        return dataSource.searchLocations(newString)
     }
 
     override suspend fun coordsToCity(lat: Double, lon: Double): CustomLocation? {
