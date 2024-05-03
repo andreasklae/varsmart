@@ -25,7 +25,7 @@ all the "children" needs to update according to the ui state. This makes the com
 testable, reusable and independent.
 
 Each screen is entirely independent of each-other. If one fails, the others do not. If, for example,
-the weather forecast api fails, the waring screen will still show the warnings fetched from the
+the weather forecast api fails, the warning screen will still show the warnings fetched from the
 metAlerts api. Or if the device is disconnected from the internet, the user can still change
 the settings, as this does not require internet. This is to follow the principle of low coupling.To
 also follow the principle of high cohesion, we have made sure that each component is only
