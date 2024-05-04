@@ -19,7 +19,7 @@ class LocationDataSource() {
         }
     }
 
-    suspend fun fetchAddresses(search: String): List<CustomLocation> {
+    suspend fun searchLocations(search: String): List<CustomLocation> {
         val APIKey = "AIzaSyBofr2wZtjab3DBuYh46BDxeUWUit5l-sw"
         val path =
             "https://maps.googleapis.com/maps/api/geocode/json?components=route:" +

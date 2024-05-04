@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepositoryInterface
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepository
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
@@ -29,6 +28,9 @@ data class DataHolder(
     var currentWeather: WeatherTimeForecast? = null
     var next24h: List<WeatherTimeForecast> = listOf()
     var week: List<WeatherTimeForecast> = listOf()
+    var highest: Double? = null
+    var lowest: Double? = null
+
 
     // variables for gpt
     val gptCurrent = mutableStateOf("")
@@ -101,20 +103,19 @@ data class DataHolder(
         updateSunriseAndSunset()
     }
 
-    fun findHighestAndLowestTemp(): List<String> {
+    fun findHighestAndLowestTemp(){
         val templist = mutableListOf<Double>(currentWeather!!.temperature!!.toDouble())
         next24h.forEach {
             // makes sure that it only fetches the temperatures for this day and not tomorrow
-            // note: this does not include temperatures in the past,
+            // note: the api doesn't fetch data more than 2 hours in the past,
             // so the highest and lowest will not include past temperatures
             if (it.time.day == currentDay) {
                 templist.add(it.temperature!!.toDouble())
             }
         }
 
-        val highest = templist.max()
-        val lowest = templist.min()
-        return listOf(lowest.toString(), highest.toString())
+        highest = templist.max()
+        lowest = templist.min()
     }
 
     suspend fun updateWeather() {
@@ -129,6 +130,7 @@ data class DataHolder(
             lastUpdate = getCurrentTime()
             weather = newWeather
             currentWeather = WeatherTimeForecast(newWeather, dt, location)
+            findHighestAndLowestTemp()
             updateNext24h(newWeather)
             updateWeek(newWeather)
             // sets status to success
