@@ -103,13 +103,13 @@ data class DataHolder(
         updateSunriseAndSunset()
     }
 
-    fun findHighestAndLowestTemp(){
-        val templist = mutableListOf<Double>(currentWeather!!.temperature!!.toDouble())
+    fun findHighestAndLowestTemp(current: WeatherTimeForecast) {
+        val templist = mutableListOf<Double>(current.temperature!!.toDouble())
         next24h.forEach {
             // makes sure that it only fetches the temperatures for this day and not tomorrow
             // note: the api doesn't fetch data more than 2 hours in the past,
             // so the highest and lowest will not include past temperatures
-            if (it.time.day == currentDay) {
+            if (it.time.day.toInt() == currentDay.toInt()) {
                 templist.add(it.temperature!!.toDouble())
             }
         }
@@ -130,7 +130,7 @@ data class DataHolder(
             lastUpdate = getCurrentTime()
             weather = newWeather
             currentWeather = WeatherTimeForecast(newWeather, dt, location)
-            findHighestAndLowestTemp()
+            findHighestAndLowestTemp(currentWeather!!)
             updateNext24h(newWeather)
             updateWeek(newWeather)
             // sets status to success
