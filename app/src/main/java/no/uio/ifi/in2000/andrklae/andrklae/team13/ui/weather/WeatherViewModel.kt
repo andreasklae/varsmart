@@ -176,10 +176,10 @@ class WeatherViewModel(
 
     fun dotLoading(input: String): String {
         var dots = input
-        if (dots == ". . . ") {
+        if (dots == "• • • ") {
             dots = ""
         } else {
-            dots += ". "
+            dots += "• "
         }
         return dots
     }
