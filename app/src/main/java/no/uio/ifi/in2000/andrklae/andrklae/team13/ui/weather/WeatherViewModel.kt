@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 
 class WeatherViewModel(
@@ -39,6 +40,9 @@ class WeatherViewModel(
     val GPTWeek = _GPTWeek.asStateFlow()
     private val _GPTWeekAnimation = MutableStateFlow(MrPraktiskAnimations.BLINK)
     val GPTWeekAnimation = _GPTWeekAnimation.asStateFlow()
+
+    private val _selectedWarning = MutableStateFlow(false)
+    val selectedWarning = _selectedWarning.asStateFlow()
 
     fun updateAll() {
         viewModelScope.launch {
@@ -184,6 +188,14 @@ class WeatherViewModel(
     fun spToDp(sp: Float): Float {
         val metrics = activity.resources.displayMetrics
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, metrics) / metrics.density
+    }
+
+    fun setPreview() {
+        _selectedWarning.value = true
+    }
+
+    fun resetPreview() {
+        _selectedWarning.value = false
     }
 
 }

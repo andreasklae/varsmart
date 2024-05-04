@@ -171,7 +171,6 @@ fun DisplayAllWarning(
     findAllPolygons: (Geometry) -> List<Polygon>,
     warningViewModel: WarningViewModel
 ) {
-    var hasMoved by remember { mutableStateOf(false) }
     GoogleMap(
         modifier = Modifier
             .fillMaxSize(),
@@ -180,7 +179,7 @@ fun DisplayAllWarning(
             position = CameraPosition.fromLatLngZoom(LatLng(59.9, 10.7), 5f)
         }
     ) {
-        alerts.forEach {feature ->
+        alerts.forEach { feature ->
             var isPolygonSelected by remember { mutableStateOf(false) }
             val polygonColor = feature.properties.riskMatrixColor
             val polygons = findAllPolygons(feature.geometry)
@@ -206,26 +205,6 @@ fun DisplayAllWarning(
                         }
                     }
                 )
-                if (isPolygonSelected) {
-                    /*
-                    Marker(
-                        state =
-                        rememberMarkerState(
-                            position = calculatePolygonCenter(polygon.coordinates)
-
-                        ),
-                        title = area,
-                        snippet = "${feature.properties.eventAwarenessName}: " +
-                                "${feature.properties.triggerLevel}",
-                        icon = BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_RED),
-                        alpha = 0.8f
-                    )
-
-                     */
-
-                }
-
             }
             if (currentCameraPositionState.isMoving) {
                 isPolygonSelected = false

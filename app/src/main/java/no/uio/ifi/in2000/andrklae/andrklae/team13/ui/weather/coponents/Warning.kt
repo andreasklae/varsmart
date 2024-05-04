@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -54,17 +55,27 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Geometry
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ImageIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.DisplayAllWarning
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningBox
 import kotlin.math.roundToInt
 
 var expanded = false
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WarningRow(data: DataHolder, range: Int) {
+fun WarningRow(
+    data: DataHolder,
+    range: Int,
+    setPreview: () -> Unit,
+    resetPreview: () -> Unit,
+    selected: Boolean
+) {
     val alerts = data.alertList
     val filteredAlerts = alerts.filter { it.distance <= range }
     if (filteredAlerts.isNotEmpty()) {
@@ -93,7 +104,10 @@ fun WarningRow(data: DataHolder, range: Int) {
 
                 DisplayWarning(
                     alert,
-                    data.location.name
+                    data.location.name,
+                    setPreview = { setPreview() },
+                    resetPreview = { resetPreview() },
+                    selected = selected
                 )
             }
 
@@ -133,13 +147,16 @@ fun WarningRow(data: DataHolder, range: Int) {
 @Composable
 fun DisplayWarning(
     alert: Alert,
-    location: String
+    location: String,
+    setPreview: () -> Unit,
+    resetPreview: () -> Unit,
+    selected: Boolean
 ) {
     val warningDescription = "${alert.alert.properties.instruction}" +
             " \n${alert.alert.properties.description} ${alert.alert.properties.consequences}"
     val interval = alert.alert.`when`.interval
     val start = isoToReadable(interval[0])
-    val end = isoToReadable(interval [1])
+    val end = isoToReadable(interval[1])
     val warningTitle = alert.alert.properties.thing(alert.alert.properties.area)
     val warningLevel = alert.alert.properties.riskMatrixColor
     val distance = alert.distance
@@ -280,7 +297,37 @@ fun DisplayWarning(
                         verticalArrangement = Arrangement.Top
                     )
                     {
-                        MapWithPolygon(alert)
+                        MapWithPolygon(
+                            alert,
+                            setPreview = { setPreview() },
+                            resetPreview = { resetPreview() },
+                            selected = selected
+                        )
+                    }
+                    if (selected) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            // Add a spacer to push the bottom content to the bottom
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            // Use Box to align the content to the bottom center
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.CenterHorizontally)
+                            ) {
+                                LazyColumn() {
+                                    item {
+                                        WarningBox(alert.alert, true)
+                                    }
+                                }
+
+                            }
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
@@ -289,14 +336,17 @@ fun DisplayWarning(
                         .clip(CircleShape)
                         .background(Color.White)
                         .wrapContentWidth()
-                        .clickable { showDialog = false }
+                        .clickable {
+                            showDialog = false
+                        }
                         .padding(15.dp)
 
                 ) {
-                    Icon(Icons.Filled.Close,"fjern fra favoritter")
+                    Icon(Icons.Filled.Close, "Lukk kartet")
                 }
                 Spacer(modifier = Modifier.weight(1f))
             }
+
         }
     }
 }
@@ -311,7 +361,7 @@ fun isoToReadable(iso: String): String {
     val minute = time[1]
 
     val monthName = {
-        when (month.toInt()){
+        when (month.toInt()) {
             1 -> "Januar"
             2 -> "Februar"
             3 -> "Mars"

@@ -53,6 +53,8 @@ fun MasterUi(
 
     val currentData by weatherVM.data.collectAsState()
 
+    val selected by weatherVM.selectedWarning.collectAsState()
+
     val pagerState = rememberPagerState(
         pageCount = { 4 },
     )
@@ -91,7 +93,10 @@ fun MasterUi(
                         update24hGpt = { age -> weatherVM.updateGPT24h(age) },
                         gptWeek = gptWeek,
                         weekAnimation = gptWeekAnimation,
-                        updateGptWeek = { age, list -> weatherVM.updateGptWeek(age, list) }
+                        updateGptWeek = { age, list -> weatherVM.updateGptWeek(age, list) },
+                        setPreview = { weatherVM.setPreview() },
+                        resetPreview = { weatherVM.resetPreview() },
+                        selected = selected
                     )
                 }
 

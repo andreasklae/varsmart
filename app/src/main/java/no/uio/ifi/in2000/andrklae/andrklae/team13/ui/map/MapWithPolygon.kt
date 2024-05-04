@@ -14,12 +14,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
+import com.google.maps.android.compose.currentCameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 
 @Composable
-fun MapWithPolygon(alert: Alert) {
+fun MapWithPolygon(alert: Alert, setPreview: (Feature) -> Unit, resetPreview: () -> Unit, selected: Boolean) {
     val polygon = alert.polygonList
     val polygonColor = alert.alert.properties.riskMatrixColor
     val area = alert.alert.properties.area
@@ -49,27 +51,22 @@ fun MapWithPolygon(alert: Alert) {
                 strokeWidth = 5f,
                 tag = area,
                 onClick = {
+                    println(selected)
                     // Handle polygon click event
                     if (isPolygonSelected) {
+                        resetPreview()
                         isPolygonSelected = false
                     } else {
+                        setPreview(alert.alert)
                         isPolygonSelected = true
                     }
                 }
             )
-            if (isPolygonSelected) {
-                Marker(
-                    state = rememberMarkerState(position = centers[polygon.indexOf(it)]),
-                    title = area,
-                    snippet = "${alert.alert.properties.eventAwarenessName}: " +
-                            "${alert.alert.properties.triggerLevel}",
-                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED),
-                    alpha = 0.8f
-                )
-            }
-
         }
-
+        if (currentCameraPositionState.isMoving) {
+            isPolygonSelected = false
+            resetPreview()
+        }
     }
 }
 

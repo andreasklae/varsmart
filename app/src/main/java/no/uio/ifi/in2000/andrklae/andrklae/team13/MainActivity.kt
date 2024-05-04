@@ -1,13 +1,19 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13
 
+import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.app.ActivityCompat
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
@@ -95,33 +101,55 @@ class MainActivity : ComponentActivity() {
     // function for fetching the current location of the device
     fun getCurrentLocation() {
         println("Henter nåværende lokasjon")
-        if (LocationUtil.hasLocationPermission(this)) {
-            // If permission is already granted, attempt to fetch the location immediately
-            LocationUtil.fetchLocation(
-                this
-            ) { customLocation ->
-                if (customLocation != null) {
-                    val new = DataHolder(customLocation)
+        val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-                    // i data doesnt exist
-                    if (!DataHolder.Favourites.contains(new)) {
-                        new.toggleInFavourites()
-                        weatherVM.setLocation(new)
-                    } else {
-                        weatherVM.setLocation(
-                            // will never be null because of the if statement above
-                            DataHolder.Favourites.find { it == new }!!
-                        )
-                    }
-                    PreferenceManager.saveFavourites(this, DataHolder.Favourites)
+        // Check if location data is enabled
+        val locationEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        if (!locationEnabled
+        ) {
+            // Prompt the user to enable location from settings
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Handling kreves, posisjon kunne ikke hentes")
+                .setMessage("Venligst slå på posisjon for å hente været for din posisjon.")
+                .setPositiveButton("Instillinger") { dialog, which ->
+                    // Open the device's location settings
+                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivity(intent)
                 }
+                .setNegativeButton("Cancel") { dialog, which ->
+                    // User canceled, handle accordingly
+                }
+                .show()
+        } else {
+            if (LocationUtil.hasLocationPermission(this)) {
+                // If permission is already granted, attempt to fetch the location immediately
+                LocationUtil.fetchLocation(
+                    this
+                ) { customLocation ->
+                    if (customLocation != null) {
+                        val new = DataHolder(customLocation)
+
+                        // i data doesnt exist
+                        if (!DataHolder.Favourites.contains(new)) {
+                            new.toggleInFavourites()
+                            weatherVM.setLocation(new)
+                        } else {
+                            weatherVM.setLocation(
+                                // will never be null because of the if statement above
+                                DataHolder.Favourites.find { it == new }!!
+                            )
+                        }
+                        PreferenceManager.saveFavourites(this, DataHolder.Favourites)
+                    }
+                }
+            }
+
+            // request permission if not granted
+            else {
+                LocationUtil.requestPermission(this)
             }
         }
 
-        // request permission if not granted
-        else {
-            LocationUtil.requestPermission(this)
-        }
     }
 
     // function for checking if the user as internet

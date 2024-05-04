@@ -21,6 +21,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +38,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.Next24
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.RainSunWind
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.UpperHalf
@@ -62,7 +67,10 @@ fun WeatherScreen(
     update24hGpt: (Int) -> Unit,
     gptWeek: String,
     updateGptWeek: (Int, List<String>) -> Unit,
-    weekAnimation: MrPraktiskAnimations
+    weekAnimation: MrPraktiskAnimations,
+    setPreview: () -> Unit,
+    resetPreview: () -> Unit,
+    selected: Boolean
 
 ) {
     val scrollState = rememberScrollState()
@@ -103,7 +111,13 @@ fun WeatherScreen(
                     )
 
                     if (data.alertStatus.value == Status.SUCCESS) {
-                        WarningRow(data, 40)
+                        WarningRow(
+                            data,
+                            40,
+                            setPreview = { setPreview() },
+                            resetPreview = { resetPreview() },
+                            selected = selected
+                        )
                     }
                     Next24(
                         data = data,
@@ -119,7 +133,7 @@ fun WeatherScreen(
                         age = age,
                         hobbies = hobbies,
                         gptText = gptWeek,
-                        updateWeekGpt = {age, hobbies -> updateGptWeek(age, hobbies) },
+                        updateWeekGpt = { age, hobbies -> updateGptWeek(age, hobbies) },
                         animation = weekAnimation
                     )
                     Spacer(modifier = Modifier.height(20.dp))
@@ -191,6 +205,11 @@ fun WeatherScreen(
 
                     // if it has previous data
                     else {
+                        Toast.makeText(
+                            context,
+                            "Kunne ikke oppdatere, mangler internett",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         UpperHalf(
                             data = data,
                             background = background,
@@ -202,7 +221,13 @@ fun WeatherScreen(
                             animation = mainAnimation
                         )
 
-                        WarningRow(data, 500)
+                        WarningRow(
+                            data,
+                            500,
+                            setPreview = { setPreview() },
+                            resetPreview = { resetPreview() },
+                            selected = selected
+                        )
 
                         Next24(
                             data = data,
