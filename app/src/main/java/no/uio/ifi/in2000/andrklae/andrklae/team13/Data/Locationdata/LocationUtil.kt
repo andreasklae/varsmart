@@ -8,6 +8,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import java.security.Permission
+import java.util.jar.Manifest
 
 object LocationUtil {
     val REQUEST_CODE = 1001
