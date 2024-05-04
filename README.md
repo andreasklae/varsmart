@@ -23,8 +23,9 @@ Environment:
 
 Connectivity:
 
-- To use the user's location, the user must have enabled location data on their device, and they
-  will be asked to give permissions for the app to use their location.
+- To use the user's location, the user must enable location data on their device, and they
+  will be asked to give permissions for the app to use their location. The user will be asked to
+  enable their location if they do not already have it enabled.
 - The app needs an internet connection to update the stored weather data from the previous session
 
 ## Running the app
