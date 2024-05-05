@@ -18,11 +18,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -96,7 +94,7 @@ fun SettingsScreen(
             text = "Innstillinger",
             fontSize = 40.sp
         )
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(60.dp))
 
         InfoBox()
         Spacer(modifier = Modifier.height(15.dp))
@@ -106,7 +104,7 @@ fun SettingsScreen(
             age,
             sliderPosition,
             onSliderChange = { onSliderChange(it) },
-            valueChange = { onAgeChange(it) }
+            onValueChange = { onAgeChange(it) }
         )
         Spacer(modifier = Modifier.height(15.dp))
 
@@ -309,7 +307,6 @@ fun HobbyBox(
 
 @Composable
 fun InfoBox() {
-    Spacer(modifier = Modifier.height(30.dp))
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
@@ -331,10 +328,10 @@ fun InfoBox() {
 
 @Composable
 fun AgeSlider(
-    alder: Int,
+    age: Int,
     sliderPosition: Float,
     onSliderChange: (Float) -> Unit,
-    valueChange: (Float) -> Unit
+    onValueChange: (Float) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -368,10 +365,10 @@ fun AgeSlider(
                 disabledInactiveTickColor = Color.White
             )
         )
-        valueChange(sliderPosition)
+        onValueChange(sliderPosition)
         val text = {
-            if (alder == 25) "25+ år"
-            else alder.toString() + " år"
+            if (age == 25) "25+ år"
+            else age.toString() + " år"
         }
         Text(text = text())
 

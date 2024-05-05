@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13
 
-import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -13,13 +12,15 @@ import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.core.app.ActivityCompat
+import androidx.compose.runtime.collectAsState
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Favorite.FavoriteViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.MasterUi
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.onboarding.Onboarding
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.onboarding.OnboardingViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningViewModel
 
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
 
         val favVM = FavoriteViewModel()
         val warningVM = WarningViewModel()
+        val onboardingVM = OnboardingViewModel(this)
         val settingsVM = SettingsViewModel(
             initAge = PreferenceManager.fetchAge(this),
             initHobbies = PreferenceManager.fetchHobbies(this),
@@ -48,13 +50,19 @@ class MainActivity : ComponentActivity() {
         } else weatherVM.updateAll()
 
         setContent {
-            MasterUi(
-                activity = this,
-                settingsVM = settingsVM,
-                favVM = favVM,
-                weatherVM = weatherVM,
-                warningVM = warningVM
-            )
+            val onboardingCompleted = onboardingVM.onboardingCompleted.collectAsState()
+            if (onboardingCompleted.value){
+                MasterUi(
+                    activity = this,
+                    settingsVM = settingsVM,
+                    favVM = favVM,
+                    weatherVM = weatherVM,
+                    warningVM = warningVM
+                )
+            }
+            else{
+                Onboarding(this, onboardingVM, settingsVM)
+            }
         }
     }
 

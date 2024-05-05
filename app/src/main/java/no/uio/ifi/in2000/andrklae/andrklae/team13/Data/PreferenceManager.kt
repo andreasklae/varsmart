@@ -1,10 +1,40 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data
 
 import android.content.Context
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.SliderPositions
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
 
 object PreferenceManager {
+
+    // function to initialize onboarding
+    fun startOnboarding(context: Context){
+        context.getSharedPreferences("AppNamePrefs", Context.MODE_PRIVATE).edit().apply {
+            putBoolean("onboardingCompleted", false)
+            apply()
+        }
+    }
+
+    // function to complete onboarding
+    fun completeOnboarding(
+        context: Context
+    ){
+        context.getSharedPreferences("AppNamePrefs", Context.MODE_PRIVATE).edit().apply {
+            putBoolean("onboardingCompleted", true)
+            apply()
+        }
+    }
+
+    // function for fetching the status of the onboarding
+    fun fetchOnboardingStatus(context: Context): Boolean{
+        val status = context.getSharedPreferences(
+            "AppNamePrefs",
+            Context.MODE_PRIVATE
+        )
+            .getBoolean("onboardingCompleted", false)
+        return status
+    }
+
     // function to save the list of favourites
     fun saveFavourites (context: Context, favourites: List<DataHolder>){
         println("saving favourites")

@@ -59,8 +59,6 @@ fun MasterUi(
         pageCount = { 4 },
     )
 
-
-
     Column(
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxSize()
