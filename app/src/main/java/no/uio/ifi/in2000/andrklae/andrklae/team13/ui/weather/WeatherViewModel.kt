@@ -63,7 +63,21 @@ class WeatherViewModel(
 
         if (!isSame) {
             viewModelScope.launch {
-                _data.value = dataHolder
+                if (dataHolder.location.name.uppercase().equals("MIN POSISJON")) {
+                    println("TESTERr")
+                    dataHolder.location = DataHolder.locRepo.coordsToCity(
+                        dataHolder.location.lat,
+                        dataHolder.location.lon
+                    )
+                        ?.let { customLocation ->
+                            customLocation
+                        } ?: dataHolder.location
+                    println("GREIE: ")
+                    println(dataHolder.location.name)
+                    _data.value = dataHolder
+                } else {
+                    _data.value = dataHolder
+                }
                 if (_data.value.weather == null) {
                     updateAll()
                 }

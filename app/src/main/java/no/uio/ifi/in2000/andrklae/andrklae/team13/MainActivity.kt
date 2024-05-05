@@ -139,8 +139,8 @@ class MainActivity : ComponentActivity() {
 
                         // i data doesnt exist
                         if (!DataHolder.Favourites.contains(new)) {
-                            new.toggleInFavourites()
                             weatherVM.setLocation(new)
+                            new.toggleInFavourites()
                         } else {
                             weatherVM.setLocation(
                                 // will never be null because of the if statement above

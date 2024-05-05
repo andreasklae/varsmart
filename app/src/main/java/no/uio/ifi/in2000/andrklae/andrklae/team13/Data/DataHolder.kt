@@ -7,6 +7,8 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepositoryInterfac
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.GPTRepository
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepository
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationRepositoryInterface
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherForecast
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepositoryInterface
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.WeatherRepository
@@ -20,7 +22,7 @@ import java.time.LocalDateTime
 // holds on to data for a given location.
 // puts weather, gpt messages, location, sunrise/set, warnings and time in one object
 data class DataHolder(
-    val location: CustomLocation
+    var location: CustomLocation
 ) {
     // variables for weather
     var weather: WeatherForecast? = null
@@ -66,6 +68,12 @@ data class DataHolder(
 
     @SuppressLint("MutableCollectionMutableState")
     companion object {
+
+        val wRepo: WeatherRepositoryInterface = WeatherRepository()
+        val aRepo: WarningRepositoryInterface = WarningRepository()
+        val gptRepo: GPTRepositoryInterface = GPTRepository()
+        val locRepo: LocationRepositoryInterface = LocationRepository()
+
         // location to show on homeScreen if there are no favourites
         val initLocation = DataHolder(
             CustomLocation(
@@ -77,14 +85,20 @@ data class DataHolder(
             )
         )
         val Favourites = mutableStateListOf<DataHolder>()
-        suspend fun setFavourites(favorites: List<DataHolder>){
+        suspend fun setFavourites(favorites: List<DataHolder>) {
             favorites.forEach {
-                Favourites.add(it)
+                if (it.location.name.uppercase().equals("MIN POSISJON")) {
+                    it.location = locRepo.coordsToCity(it.location.lat, it.location.lon)
+                        ?.let { customLocation ->
+                            customLocation
+                        } ?: it.location
+                    Favourites.add(it)
+                } else {
+                    Favourites.add(it)
+                }
             }
         }
-        val wRepo: WeatherRepositoryInterface = WeatherRepository()
-        val aRepo: WarningRepositoryInterface = WarningRepository()
-        val gptRepo: GPTRepositoryInterface = GPTRepository()
+
     }
 
     // function to either add or remove object from favourite list
