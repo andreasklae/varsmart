@@ -130,8 +130,8 @@ data class DataHolder(
             lastUpdate = getCurrentTime()
             weather = newWeather
             currentWeather = WeatherTimeForecast(newWeather, dt, location)
-            findHighestAndLowestTemp(currentWeather!!)
             updateNext24h(newWeather)
+            findHighestAndLowestTemp(currentWeather!!)
             updateWeek(newWeather)
             // sets status to success
             weatherStatus.value = Status.SUCCESS
