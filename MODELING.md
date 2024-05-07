@@ -1,6 +1,6 @@
-MODELING
+#MODELING
 
-*Functional requirements*
+##Functional requirements
 In this section the most important functional requirements from our requirement specification
 are represented with use-cases and a sequence diagram.
 
@@ -10,7 +10,7 @@ Important functions in our app:
 - Add a city to favorite list
 - Check alerts nearby you
 
-*USE-CASES*
+##USE-CASES
 
 Use-case 1: Check the weather for a location
 Actor: User
@@ -32,6 +32,7 @@ Actor: User
 Pre-condition: Weather-data for a location is displayed on the Home-screen
 Post-condition: Mr.Practical gives a weather-related tip
 
+- Description:
 1. The user clicks on Mr.Practical for a tip
 2. Mr.practical generates and displays a message on the screen
 
@@ -55,16 +56,28 @@ Post-condition: The city is added to the favorite-list overview
 5.2 The system provides weather-data for the city on the home-screen
 
 ---------------------
-Use-case 4: Check alerts nearby you
+Use-case 5: Check alerts nearby you
 Actor: User
-Pre-condition: User has internet-access
-Post-condition: The city is added to the favorite-list overview
+Pre-condition: User has internet-access and is on the home-screen w/a location
+Post-condition: The user gets alerts or message about no alerts nearby
+
+- Description:
+1.0 The home-screen displays a dropdown-box with the nearest alert(s), or a msg about no alert.
+
+- Alternative flow: Checks alert-screen
+
+1.1 The user navigates to alert-screen
+2. The screen displays a list of all alerts, arranged by distance to user.
 
 
--->This use case is represented in a use-case-diagram: ![img_1.png](usecaseDiagram.png)
 
+###USE CASE- DIAGRAM
+-->These use cases are represented in a use-case-diagram:
+![img_1.png](usecaseDiagram.png)
 
-*Activity diagram*
+- Should i include openAI as an actor in the use case- diagram?
+
+#Activity diagram
 Activity: Open the app for the first time
 ![img.png](img.png)
 
