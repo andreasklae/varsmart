@@ -27,6 +27,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.InsertDriveFile
+import androidx.compose.material.icons.filled.AddLocationAlt
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Restore
@@ -39,6 +41,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -47,6 +50,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -64,8 +68,10 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ActionButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.Search
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.coloredGlassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import java.time.LocalDateTime
+import kotlin.math.round
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -79,9 +85,6 @@ fun FavoriteScreen(
     activity: MainActivity,
     pagerState: PagerState
 ) {
-    val context = LocalContext.current
-
-
     // loads the list every time the ui changes (ie a new favourite is added) and saves it
     favVM.loadData()
     // sorts favorite list to put current location at the top of the list
@@ -114,10 +117,11 @@ fun FavoriteScreen(
             favVM,
             searchVm,
             showDialog,
-            toggleDialog = {searchVm.toggleSearchDialog()},
-            setLocation = {data -> setHomeLocation(data)},
-            toggleBottomSheet = {favVM.toggleBottomSheet()},
-            navigateToHome = {page: Int -> navigateToHome(page)}
+            toggleDialog = { searchVm.toggleSearchDialog() },
+            setLocation = { data -> setHomeLocation(data) },
+            toggleBottomSheet = { favVM.toggleBottomSheet() },
+            navigateToHome = { page: Int -> navigateToHome(page) },
+            activity = activity
         )
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -172,11 +176,12 @@ fun FunctionRow(
     toggleDialog: () -> Unit,
     toggleBottomSheet: () -> Unit,
     setLocation: (DataHolder) -> Unit,
-    navigateToHome: (Int) -> Unit
+    navigateToHome: (Int) -> Unit,
+    activity: MainActivity
 ) {
     val context = LocalContext.current
 
-    // seacrh dialog
+    // search dialog
     if (showDialog){
         Search(
             searchVm = searchVm,
@@ -190,6 +195,21 @@ fun FunctionRow(
     Row(
         modifier = Modifier.padding(horizontal = 20.dp)
     ) {
+        Box(modifier = Modifier
+            .size(220.dp, 50.dp).clip(RoundedCornerShape(12.dp))
+            //.background(Color.White)
+            .coloredGlassEffect(Color(233, 237, 233)).padding(5.dp)
+            .clickable { searchVm.toggleSearchDialog() }) {
+            Text(
+                text = "Søk etter byer:",
+                modifier = Modifier.align(Alignment.CenterStart)
+                    .padding(start = 20.dp),
+                color = Color.Black,
+                fontSize = 16.sp,
+                fontStyle = FontStyle.Italic
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+        }
         Spacer(modifier = Modifier.weight(1f))
         // refresh button
         ActionButton(
@@ -203,8 +223,8 @@ fun FunctionRow(
 
         // search button
         ActionButton(
-            icon = Icons.Filled.Search,
-            onClick = { toggleBottomSheet() }
+            icon = Icons.Filled.AddLocationAlt,
+            onClick = { activity.getCurrentLocation() }
         )
 
 
@@ -387,7 +407,10 @@ fun FavoriteBox(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(imageVector = Icons.Filled.Restore, contentDescription = "sist oppdatert")
+                            Icon(
+                                imageVector = Icons.Filled.Restore,
+                                contentDescription = "sist oppdatert"
+                            )
                             Text(text = interval)
 
                         }
@@ -445,7 +468,7 @@ fun FavoriteBox(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = Icons.Outlined.InsertDriveFile,
+                                    imageVector = Icons.AutoMirrored.Outlined.InsertDriveFile,
                                     contentDescription = "Last på nytt",
                                     modifier = Modifier
                                         .size(70.dp)

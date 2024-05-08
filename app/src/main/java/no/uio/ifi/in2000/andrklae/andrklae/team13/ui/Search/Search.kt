@@ -36,12 +36,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -101,15 +105,15 @@ fun Search(
                         onSearchChange = { text -> searchVm.changeSearchText(text) },
                         toggleSearching = { bool -> searchVm.toggleSearching(bool) }
                     )
-                    when (searchStatus){
-                        // when api is loading
+                    when (searchStatus) {
+                        // loading searches
                         Status.LOADING -> {
                             Spacer(modifier = Modifier.height(20.dp))
                             CircularProgressIndicator(color = Color.Black)
                         }
                         // found location(s)
                         Status.SUCCESS -> {
-                            Box (
+                            Box(
                                 modifier = Modifier
                                     // creates a fade on the top and bottom of the scrolling column
                                     .drawWithContent {
@@ -142,8 +146,8 @@ fun Search(
                                 // shows list of search results
                                 SearchResults(
                                     searchResults = searchResults,
-                                    functionToPerform = { data -> functionToPerform(data)},
-                                    navigateToHome = {page: Int -> navigateToHome(page)},
+                                    functionToPerform = { data -> functionToPerform(data) },
+                                    navigateToHome = { page: Int -> navigateToHome(page) },
                                     toggleDialog = { searchVm.toggleSearchDialog() }
                                 )
                             }
@@ -167,7 +171,7 @@ fun Search(
                     .padding(15.dp)
 
             ) {
-                Icon(Icons.Filled.Close,"fjern fra favoritter")
+                Icon(Icons.Filled.Close, "fjern fra favoritter")
             }
             Spacer(modifier = Modifier.weight(1f))
 
@@ -184,7 +188,7 @@ fun SearchResults(
     functionToPerform: (DataHolder) -> Unit,
     navigateToHome: (Int) -> Unit,
     toggleDialog: () -> Unit
-    ) {
+) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     Column(
@@ -209,7 +213,7 @@ fun SearchResults(
                         toggleDialog()
                     }
 
-            ){
+            ) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -224,8 +228,8 @@ fun SearchResults(
                     )
                 }
                 Spacer(modifier = Modifier.width(5.dp))
-                // if location already exists
-                if (DataHolder.Favourites.any{ it.location == location } ){
+                // if location allready exists
+                if (DataHolder.Favourites.any { it.location == location }) {
                     val toastString = "${location.name} fjernet fra favoritter"
                     // button for toggeling the location in favourites
                     Box(
@@ -238,13 +242,15 @@ fun SearchResults(
                                     DataHolder.Favourites.find { it.location == location }
                                 )
                                 PreferenceManager.saveFavourites(context, DataHolder.Favourites)
-                                Toast.makeText(context, toastString, Toast.LENGTH_SHORT).show()
+                                Toast
+                                    .makeText(context, toastString, Toast.LENGTH_SHORT)
+                                    .show()
                             }
                             .padding(10.dp)
                     ) {
-                        Icon(Icons.Filled.Bookmark,"fjern fra favoritter")
+                        Icon(Icons.Filled.Bookmark, "fjern fra favoritter")
                     }
-                } else{
+                } else {
                     val toastString = "${location.name} lagt til i favoritter"
                     // button for toggeling the location in favourites
                     Box(
@@ -256,11 +262,16 @@ fun SearchResults(
                                 val newLocation = DataHolder(location)
                                 newLocation.toggleInFavourites()
                                 PreferenceManager.saveFavourites(context, DataHolder.Favourites)
-                                Toast.makeText(context, toastString, Toast.LENGTH_SHORT).show()
+                                Toast
+                                    .makeText(context, toastString, Toast.LENGTH_SHORT)
+                                    .show()
                             }
                             .padding(10.dp)
                     ) {
-                        Icon(Icons.Filled.BookmarkBorder,"legg til sted i favoritter")
+                        Icon(
+                            Icons.Filled.BookmarkBorder,
+                            "legg til sted i favoritter"
+                        )
                     }
                 }
 
@@ -281,11 +292,18 @@ fun SearchBox(
     toggleSearching: (Boolean) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     OutlinedTextField(
         value = searchText,
-        onValueChange = { onSearchChange(it)},
-        modifier = Modifier.fillMaxWidth(),
+        onValueChange = { onSearchChange(it) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
         trailingIcon = {
             if (searchText.isNotEmpty()) {
@@ -294,7 +312,7 @@ fun SearchBox(
                     contentDescription = "Clear Text",
                     modifier = Modifier.clickable {
                         onSearchChange("")
-                        keyboardController?.hide()  // Optionally hide the keyboard when clearing text
+                        keyboardController?.hide()// Optionally hide the keyboard when clearing text
                     }
                 )
             }

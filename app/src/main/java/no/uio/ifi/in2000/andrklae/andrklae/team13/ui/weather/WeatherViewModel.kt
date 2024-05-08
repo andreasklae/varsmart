@@ -73,8 +73,19 @@ class WeatherViewModel(
         // to the location already loaded
         if (!isSame) {
             viewModelScope.launch {
-                // change the data to show in the screen
-                _data.value = dataHolder
+                if (dataHolder.location.name.uppercase().equals("MIN POSISJON")) {
+                    dataHolder.location = DataHolder.locRepo.coordsToCity(
+                        dataHolder.location.lat,
+                        dataHolder.location.lon
+                    )
+                        ?.let { customLocation ->
+                            customLocation
+                        } ?: dataHolder.location
+                    println(dataHolder.location.name)
+                    _data.value = dataHolder
+                } else {
+                    _data.value = dataHolder
+                }
 
                 // if data is not loaded previously
                 if (_data.value.weather == null) {
