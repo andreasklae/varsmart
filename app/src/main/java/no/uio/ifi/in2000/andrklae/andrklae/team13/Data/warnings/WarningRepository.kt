@@ -20,7 +20,8 @@ class WarningRepository() : WarningRepositoryInterface {
 
     }
 
-    // Turns the warnings into a list of Alert objects sorted by the distance to them
+    // Turns the warnings into a list of Alert objects sorted by the
+    // distance to them from a given location
     override suspend fun fetchAlertList(allWarnings: Warning, loc: CustomLocation): List<Alert> {
         val alerts = allWarnings.weatherAlert.features
         val alertList = mutableListOf<Alert>()
@@ -45,18 +46,18 @@ class WarningRepository() : WarningRepositoryInterface {
             } else {
                 // find the closest coordinate of the alert
                 val closestCoord = findClosestCoordinateOfAlert(polygonList, loc)
-                // finds the distance to the alert
+                // finds the distance to the closest coordinate
                 distanceToAlert = calculateDistance(closestCoord, LatLng(loc.lat, loc.lon))
             }
 
             alertList.add(Alert(alert, distanceToAlert, polygonList))
-            alertList.sortBy { it.distance }
         }
+        alertList.sortBy { it.distance }
         return alertList
     }
 
 
-    // mathematical function for calculating distance between two coodinates on earth
+    // mathematical function for calculating distance between two coordinates on earth
     override fun calculateDistance(coord1: LatLng, coord2: LatLng): Double {
         val earthRadius = 6371.0 // Radius of the Earth in kilometers
         val dLat = Math.toRadians(coord2.latitude - coord1.latitude)
@@ -87,7 +88,7 @@ class WarningRepository() : WarningRepositoryInterface {
             it.coordinates.forEach { coord ->
                 // calculates the distance to the coordinate
                 val distance = calculateDistance(coord, myCoord)
-                // if the coordinate is closer than all other thus far
+                // if the coordinate is the closest one thus far
                 if (distance < closestDist) {
                     closestDist = distance
                     closestCoord = coord
@@ -101,10 +102,9 @@ class WarningRepository() : WarningRepositoryInterface {
     // function looking for all polygons of an alert
     override fun findAllPolygons(list: List<*>): List<Polygon> {
         val polygonList = mutableListOf<Polygon>()
-        // nested list
+        // Api gives unnecessarily many layers of a nested list
         list.forEach {
             val coords = mutableListOf<LatLng>()
-
             // flattens the nested list
             val flattenedList = flatten((it as? List<*>)!!)
             // in the flattened list, every other item will shift between lat and lon
@@ -124,7 +124,8 @@ class WarningRepository() : WarningRepositoryInterface {
     }
 
     // functions to see if a coordinate is inside a polygon.
-    // the functions is not our own, got it from chat gpt. it passed the unittests, so it should work.
+    // the functions is not our own, got it from chat gpt.
+    // It passed the unittests, so it should work.
     override fun isPointInsidePolygon(polygon: List<LatLng>, point: LatLng): Boolean {
         var intersections = 0
         val rayEndPoint = LatLng(point.latitude, polygon.maxOf { it.longitude } + 1.0)

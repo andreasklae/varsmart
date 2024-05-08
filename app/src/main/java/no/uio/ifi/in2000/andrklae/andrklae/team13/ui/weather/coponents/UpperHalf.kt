@@ -42,16 +42,15 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ImageIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.MrPraktisk
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import java.time.LocalDateTime
 
+// the top components of the app
 @Composable
 fun UpperHalf(
     data: DataHolder,
@@ -65,6 +64,7 @@ fun UpperHalf(
 ) {
     val loc = data.location.name
     val context = LocalContext.current
+    // box to put the image behind the contents
     Box {
         // background image
         Image(
@@ -90,12 +90,7 @@ fun UpperHalf(
                 Row(
                     verticalAlignment = Alignment.Top,
                     modifier = Modifier
-                    //.padding(horizontal = 20.dp)
-                    //.glassEffect()
-                    //.padding(10.dp)
                 ) {
-                    //Spacer(modifier = Modifier.width(16.dp))
-
                     // location name
                     Column(Modifier.weight(20f)) {
                         Text(
@@ -103,6 +98,7 @@ fun UpperHalf(
                             fontSize = 30.sp,
                             textAlign = TextAlign.Left
                         )
+                        // finds the current time of the device
                         var current = LocalDateTime.now()
                         var currentYear = current.year.toString()
                         var currentMonth = current.monthValue.toString()
@@ -116,18 +112,21 @@ fun UpperHalf(
                             currentHour,
                             currentMinute
                         )
+                        // sets the correct description of the interval since last update
                         val interval = data.lastUpdate.getInterval(dt)
+
+                        // time since last update
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(imageVector = Icons.Filled.Restore, contentDescription = "sist oppdatert")
                             Text(text = interval)
-
                         }
                     }
 
                     Spacer(modifier = Modifier.weight(1f))
 
+                    // bookmark icon
                     // checks if the data is saved in favourites and gives correct icon
                     val iconId = {
                         if (DataHolder.Favourites.contains(data)) {
@@ -155,6 +154,7 @@ fun UpperHalf(
                         )
                     }
                     Spacer(modifier = Modifier.width(5.dp))
+
                     // Button for adding or removing from favourites
                     IconButton(
                         onClick = {
@@ -178,11 +178,8 @@ fun UpperHalf(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                    //.padding(horizontal = 20.dp)
-                    //.glassEffect()
-                    //.padding(horizontal = 10.dp)
                 ) {
-                    //Spacer(modifier = Modifier.weight(1f))
+
                     // temp and weather
                     Column(
                         verticalArrangement = Arrangement.Center,
@@ -194,9 +191,12 @@ fun UpperHalf(
                             textAlign = TextAlign.Start,
                             fontSize = 35.sp
                         )
+
+                        // highest and lowest temp of the day
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            // highest
                             Icon(
                                 imageVector = Icons.Filled.ArrowUpward,
                                 contentDescription = "Høyest",
@@ -204,6 +204,8 @@ fun UpperHalf(
                             )
                             Text(text = data.highest.toString() + "°C")
                             Spacer(modifier = Modifier.width(5.dp))
+
+                            // lowest
                             Icon(
                                 imageVector = Icons.Filled.ArrowDownward,
                                 contentDescription = "Lavest",
@@ -214,6 +216,7 @@ fun UpperHalf(
                     }
                     Spacer(modifier = Modifier.weight(1f))
 
+                    // weather symbol
                     DrawSymbol(symbol = data.currentWeather!!.symbolName, size = 100.dp)
 
                 }
@@ -221,13 +224,13 @@ fun UpperHalf(
 
 
             Spacer(modifier = Modifier.height(10.dp))
-
             Spacer(modifier = Modifier.height(10.dp))
             GPTBox(gptText, { updateMainGpt(age, hobbies) }, animation)
         }
     }
 }
 
+// Mr. Praktisk and a speech bubble
 @Composable
 fun GPTBox(
     content: String,
@@ -241,6 +244,7 @@ fun GPTBox(
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
+        // speech bubble
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -255,43 +259,10 @@ fun GPTBox(
                 lineHeight = 15.sp,
             )
         }
+
+        // arrow pointing the bubble to Mr. Praktisk
         ImageIcon(y = 0, x = -20, symbolId = R.drawable.arrowdown, width = 60, height = 25)
         MrPraktisk({ function() }, animation)
-    }
-}
-
-@Composable
-fun ActionRow(
-    updateAll: () -> Unit,
-    isInFavourites: Boolean,
-    toggleInFavourites: () -> Unit,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-    ) {
-        // if the location is in the favourites
-        val iconId = {
-            if (isInFavourites) {
-                Icons.Filled.Bookmark
-            } else Icons.Filled.BookmarkBorder
-        }
-        // Button for adding or removing from favourites
-        ActionButton(
-            icon = iconId(),
-            onClick = {toggleInFavourites()}
-        )
-
-        Spacer(modifier = Modifier.width(5.dp))
-
-        // button from refreshing the page
-        ActionButton(
-            icon = Icons.Filled.Refresh,
-            onClick = { updateAll() }
-        )
-        Spacer(modifier = Modifier.weight(1f))
     }
 }
 

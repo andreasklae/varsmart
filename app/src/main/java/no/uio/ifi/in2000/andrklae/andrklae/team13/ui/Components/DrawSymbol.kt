@@ -15,8 +15,10 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 
+// function for drawing weather symbols in the ui
 @Composable
 fun DrawSymbol(symbol: String?, size: Dp, modifier: Modifier = Modifier) {
+    // puts it in a box to ensure the images are the same sizes
     Box(modifier = modifier.size(size), contentAlignment = Alignment.Center) {
         val painter = rememberAsyncImagePainter(
             model = ImageRequest.Builder(LocalContext.current)

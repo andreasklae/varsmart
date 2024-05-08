@@ -37,6 +37,8 @@ fun Next24(
     Column {
         Header("Været det neste døgnet")
         Spacer(modifier = Modifier.height(10.dp))
+
+        // scrollable row containing weather data for each hour
         Row(
             horizontalArrangement = Arrangement.spacedBy(0.dp),
             modifier = Modifier
@@ -45,6 +47,8 @@ fun Next24(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.width(20.dp))
+
+            // for each hour
             next24.forEach {
                 HourlyForecast(it)
                 Spacer(modifier = Modifier.width(10.dp))
@@ -62,7 +66,6 @@ fun HourlyForecast(weather: WeatherTimeForecast) {
     Box(
         contentAlignment = Alignment.Center
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -75,11 +78,17 @@ fun HourlyForecast(weather: WeatherTimeForecast) {
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(10.dp)
             ) {
+
+                // time
                 Text(
                     text = weather.time.hour + ":00",
                     fontSize = 20.sp,
                 )
+
+                // symbol
                 DrawSymbol(symbol = weather.symbolName, size = 80.dp)
+
+                // temp
                 Text(
                     text = weather.temperature.toString() + "°C",
                     fontSize = 20.sp,

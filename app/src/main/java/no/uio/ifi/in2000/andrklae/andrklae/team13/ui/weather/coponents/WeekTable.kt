@@ -35,6 +35,8 @@ fun WeekTable(
     animation: MrPraktiskAnimations
 ) {
     val week = data.week
+
+    // table of the week
     Column {
         Header(header = "Været til uka")
         Spacer(modifier = Modifier.height(10.dp))
@@ -49,6 +51,7 @@ fun WeekTable(
         ) {
             Column(
             ) {
+                // headers
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -83,12 +86,15 @@ fun WeekTable(
                     color = Color.Black
                 )
 
+                // a row of info for each day in a week
                 week.forEach {
                     DayRow(it)
                 }
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
+
+        // Mr. praktisk with a speech bubble
         GptSpeechBubble(
             gptText,
             { updateWeekGpt(age, hobbies) },
@@ -107,17 +113,22 @@ fun DayRow(weather: WeatherTimeForecast) {
             .padding(vertical = 8.dp, horizontal = 15.dp)
             .fillMaxWidth()
     ) {
+        // day
         Text(
             text = weather.time.dayOfWeek.take(3),
             fontSize = 20.sp,
         )
         Spacer(modifier = Modifier.weight(1f))
+
+        // temp
         Text(
             text = weather.temperature.toString() + "°C",
             textAlign = TextAlign.Center,
             fontSize = 20.sp,
         )
         Spacer(modifier = Modifier.weight(1f))
+
+        // weather symbol
         DrawSymbol(weather.symbolName, 60.dp)
     }
 

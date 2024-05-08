@@ -80,6 +80,8 @@ fun SettingsScreen(
     val context = LocalContext.current
 
     val scrollState = rememberScrollState(age)
+
+    // scrollable column of the contents
     Column(
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
@@ -90,16 +92,19 @@ fun SettingsScreen(
             .glassEffect()
     ) {
         Spacer(modifier = Modifier.height(50.dp))
+
+        // header
         Text(
             text = "Innstillinger",
             fontSize = 40.sp
         )
         Spacer(modifier = Modifier.height(60.dp))
 
+        // info from Mr. Praktisk
         InfoBox()
         Spacer(modifier = Modifier.height(15.dp))
 
-
+        // setting age
         AgeSlider(
             age,
             sliderPosition,
@@ -110,6 +115,7 @@ fun SettingsScreen(
 
 
         var hobbyText by remember { mutableStateOf("") }
+        // adding or removing hobbies
         HobbyBox(
             hobbyText,
             hobbies,
@@ -121,7 +127,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(15.dp))
 
         var pickedBackgroundImage = background
-
+        // background chooser
         BackgroundImageChooser(
             onBackgroundChange = {
                 Toast.makeText(context, "Endrer bakgrunnsbilde...", Toast.LENGTH_SHORT).show()
@@ -153,6 +159,8 @@ fun BackgroundImageChooser(
             fontSize = 15.sp
         )
         var scrollState = rememberScrollState()
+
+        // scrollable row of each background the user can pick
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -166,17 +174,20 @@ fun BackgroundImageChooser(
                         .clip(RoundedCornerShape(16.dp))
                         .clickable {
                             coroutine.launch {
+                                // sets the background if the user clicks it
                                 onBackgroundChange(it)
+                                // scrolls the row to the start
                                 scrollState.animateScrollTo(
                                     value = 0,
                                     animationSpec = tween(
                                         durationMillis = 600,  // Duration of the animation
-                                        easing = LinearOutSlowInEasing // Easing
+                                        easing = LinearOutSlowInEasing
                                     )
                                 )
                             }
                         }
                         .then(
+                            // outlines the picked background
                             if (pickedBackground == it) {
                                 Modifier
                                     .background(Color.Blue)
@@ -220,10 +231,12 @@ fun HobbyBox(
             .background(Color(0xFFF5F5F5))
             .padding(10.dp)
     ) {
+        // header
         Text(
             text = "Har du noen hobbyer?",
             fontSize = 15.sp
         )
+        // info
         Text(
             text = "Mr. praktisk tar hensyn til hobbyene dine når han gir deg tips",
             fontSize = 10.sp
@@ -232,6 +245,7 @@ fun HobbyBox(
         val keyboardController = LocalSoftwareKeyboardController.current
         val focusManager = LocalFocusManager.current
 
+        // text-field for typing hobbies
         OutlinedTextField(
             value = hobbyText,
             onValueChange = onTextChange,
@@ -257,18 +271,25 @@ fun HobbyBox(
             ),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
+                // when clicking ok on the keyboard
                 onDone = {
                     focusManager.clearFocus()
                     keyboardController?.hide()
+                    // if the textfield has text
                     if (hobbyText.isNotEmpty()) {
+                        // adds the typed hobby to the list of hobbies
                         addToHobbies(hobbyText)
                     }
+                    // clears the text-field
                     onTextChange("")
                 }
             )
         )
         Spacer(modifier = Modifier.height(10.dp))
+
+        // if the list of hobbies is not empty
         if (hobbies.isNotEmpty()) {
+            // header
             Text(text = "Hobbyer:")
             HorizontalDivider(
                 modifier = Modifier
@@ -276,6 +297,8 @@ fun HobbyBox(
                     .background(Color.Black)
             )
             Spacer(modifier = Modifier.height(10.dp))
+
+            // flow row with boxes for each hobby
             FlowRow {
                 hobbies.forEach {
                     Row(
@@ -283,7 +306,10 @@ fun HobbyBox(
                         modifier = Modifier
                             .padding(vertical = 5.dp)
                             .clip(RoundedCornerShape(6.dp))
-                            .clickable { removeFromHobbies(it) }
+                            .clickable {
+                                // removes the hobby when clicking it
+                                removeFromHobbies(it)
+                            }
                             .background(Color.Red.copy(alpha = 0.5f))
                             .padding(5.dp)
                     ) {
@@ -296,7 +322,6 @@ fun HobbyBox(
                             imageVector = Icons.Filled.Close,
                             contentDescription = "fjern",
                         )
-
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                 }
@@ -340,15 +365,18 @@ fun AgeSlider(
             .background(Color(0xFFF5F5F5))
             .padding(10.dp)
     ) {
+        // header
         Text(
             text = "Hvor gammel er du?",
             fontSize = 15.sp
         )
+        // info
         Text(
             text = "Blir brukt for at Mr. praktisk skal gi deg tilpassede svar",
             fontSize = 10.sp
         )
 
+        // slider for changing age
         Slider(
             value = sliderPosition,
             onValueChange = onSliderChange,

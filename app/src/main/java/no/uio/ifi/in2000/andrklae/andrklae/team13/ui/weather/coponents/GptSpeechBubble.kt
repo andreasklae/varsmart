@@ -23,6 +23,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ImageIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.MrPraktisk
 
 
+// Mr. Praktisk with a speech bubble
 @Composable
 fun GptSpeechBubble(
     content: String,
@@ -34,6 +35,7 @@ fun GptSpeechBubble(
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
+        // speech bubble
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -52,7 +54,7 @@ fun GptSpeechBubble(
                         Text(
                             text = content,
                             fontSize = 15.sp,
-                            lineHeight = 15.sp, // Adjusted for visual consistency
+                            lineHeight = 15.sp,
                             modifier = Modifier.fillMaxWidth()
                         )
 
@@ -60,16 +62,17 @@ fun GptSpeechBubble(
 
                 }
             }
+            // triangle to make the speech bubble point to Mr. Praktisk
             ImageIcon(y = 0, x = 0, symbolId = R.drawable.arrowright, width = 30, height = 60)
         }
 
+        // Mr. Praktisk
         Box(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .offset(x = 30.dp)
-            ){
+        ){
             MrPraktisk({ function() }, animation)
-
         }
     }
 }

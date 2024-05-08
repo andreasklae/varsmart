@@ -3,18 +3,16 @@ package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.onboarding
 import android.content.Context
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
 
 class OnboardingViewModel(context: Context) {
+    // variables for completion of onboarding
     private val _onboardingCompleted = MutableStateFlow(false)
     val onboardingCompleted = _onboardingCompleted.asStateFlow()
-    init {
-        _onboardingCompleted.value = PreferenceManager.fetchOnboardingStatus(context)
-    }
 
-    fun startOnboarding(context: Context){
-        PreferenceManager.startOnboarding(context)
+    init {
         _onboardingCompleted.value = PreferenceManager.fetchOnboardingStatus(context)
     }
 

@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -59,7 +60,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Weather.DateTime
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ActionButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.DrawSymbol
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.Search
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Search.SearchViewModel
@@ -91,7 +92,7 @@ fun FavoriteScreen(
         }
 
     val showDialog by searchVm.showSearchDialog.collectAsState()
-    // column of all favourites
+    // column of each component
     Column(
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
@@ -107,8 +108,6 @@ fun FavoriteScreen(
 
 
     ) {
-        // spacer
-
         Spacer(modifier = Modifier.height(30.dp))
         // Row for refreshing favourites and searching for new places
         FunctionRow(
@@ -121,6 +120,7 @@ fun FavoriteScreen(
             navigateToHome = {page: Int -> navigateToHome(page)}
         )
         Spacer(modifier = Modifier.height(20.dp))
+
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -137,7 +137,13 @@ fun FavoriteScreen(
             modifier = Modifier.padding(horizontal = 20.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
-
+        if (favorites.isEmpty()){
+            Text(
+                text = "Ingen favoritter lagt til",
+                fontStyle = FontStyle.Italic,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+        }
         // boxes for each favourite
         favorites.forEach {
             FavoriteBox({ data -> setHomeLocation(data) }, it, pagerState)
@@ -169,6 +175,8 @@ fun FunctionRow(
     navigateToHome: (Int) -> Unit
 ) {
     val context = LocalContext.current
+
+    // seacrh dialog
     if (showDialog){
         Search(
             searchVm = searchVm,
@@ -178,10 +186,12 @@ fun FunctionRow(
         )
     }
 
+    // row of a search button and refresh button
     Row(
         modifier = Modifier.padding(horizontal = 20.dp)
     ) {
         Spacer(modifier = Modifier.weight(1f))
+        // refresh button
         ActionButton(
             icon = Icons.Filled.Refresh,
             onClick = {
@@ -191,6 +201,7 @@ fun FunctionRow(
         )
         Spacer(modifier = Modifier.width(10.dp))
 
+        // search button
         ActionButton(
             icon = Icons.Filled.Search,
             onClick = { toggleBottomSheet() }
@@ -321,6 +332,7 @@ fun FavoriteBox(
             modifier = Modifier
         ) {
             val status = data.weatherStatus
+            // keeps track of the status of the api call
             when (status.value) {
                 Status.LOADING -> {
                     Spacer(modifier = Modifier.weight(1f))
@@ -429,7 +441,6 @@ fun FavoriteBox(
                     ) {
                         Column {
                             Spacer(modifier = Modifier.weight(1f))
-                            val updateScope = rememberCoroutineScope()
                             Box(
                                 contentAlignment = Alignment.Center
                             ) {

@@ -40,7 +40,9 @@ val iconSize = 35.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BottomAppBar(weatherVM: WeatherViewModel, pagerState: PagerState) {
+fun BottomAppBar(pagerState: PagerState) {
+
+    // container for each button
     Column(verticalArrangement = Arrangement.Bottom) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -70,12 +72,15 @@ fun BottomAppBar(weatherVM: WeatherViewModel, pagerState: PagerState) {
 @Composable
 fun HomeButton(pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
+
+    // sets the icon according to whether its on that screen or another
     val icon = {
         if (pagerState.currentPage == 0) {
             Icons.Filled.Home
         } else Icons.Outlined.Home
     }
     IconButton(
+        // scrolls to the screen clicked on
         onClick = {
             coroutineScope.launch {
                 pagerState.animateScrollToPage(0)
@@ -99,6 +104,8 @@ fun HomeButton(pagerState: PagerState) {
 @Composable
 fun SearchButton(pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
+
+    // sets the icon according to whether its on that screen or another
     var color = {
         if (pagerState.currentPage == 1) {
             Color.Black
@@ -108,6 +115,7 @@ fun SearchButton(pagerState: PagerState) {
     }
     val icon = Icons.Outlined.Search
     IconButton(
+        // scrolls to the screen clicked on
         onClick = {
             coroutineScope.launch {
                 pagerState.animateScrollToPage(1)
@@ -131,12 +139,15 @@ fun SearchButton(pagerState: PagerState) {
 @Composable
 fun WarningButton(pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
+
+    // sets the icon according to whether its on that screen or another
     val icon = {
         if (pagerState.currentPage == 2) {
             Icons.Default.Warning
         } else Icons.Outlined.WarningAmber
     }
     IconButton(
+        // scrolls to the screen clicked on
         onClick = {
             coroutineScope.launch {
                 pagerState.animateScrollToPage(2)
@@ -159,12 +170,15 @@ fun WarningButton(pagerState: PagerState) {
 @Composable
 fun SettingsButton(pagerState: PagerState) {
     val coroutineScope = rememberCoroutineScope()
+
+    // sets the icon according to whether its on that screen or another
     val icon = {
         if (pagerState.currentPage == 3) {
             Icons.Filled.Settings
         } else Icons.Outlined.Settings
     }
     IconButton(
+        // scrolls to the screen clicked on
         onClick = {
             coroutineScope.launch {
                 pagerState.animateScrollToPage(3)

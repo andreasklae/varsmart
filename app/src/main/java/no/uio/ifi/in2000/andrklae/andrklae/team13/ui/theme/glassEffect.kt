@@ -12,9 +12,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+// custom modifier function for making composable components look like a glass box
 val alernative = 0.9f
 
-fun Modifier.glassEffect(color: Color = Color.White, alt: Boolean = false): Modifier {
+fun Modifier.glassEffect(
+    color: Color = Color.White,
+    alt: Boolean = false
+): Modifier {
     if (alt) {
         return this
             .clip(RoundedCornerShape(15.dp))

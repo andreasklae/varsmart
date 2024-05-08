@@ -5,15 +5,8 @@ import androidx.compose.material3.SliderPositions
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.CustomLocation
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
 
+// Managing long term storage
 object PreferenceManager {
-
-    // function to initialize onboarding
-    fun startOnboarding(context: Context){
-        context.getSharedPreferences("AppNamePrefs", Context.MODE_PRIVATE).edit().apply {
-            putBoolean("onboardingCompleted", false)
-            apply()
-        }
-    }
 
     // function to complete onboarding
     fun completeOnboarding(
@@ -40,6 +33,7 @@ object PreferenceManager {
         println("saving favourites")
         val formatedList = mutableListOf<String>()
         favourites.forEach {
+            // saves all variables of a favorite in a ";" separated string
             val location = it.location
             val name = location.name.toString()
             val fylke = location.fylke.toString()
@@ -50,6 +44,7 @@ object PreferenceManager {
             val locationString = "$name;$lat;$lon;$postSted;$fylke"
             formatedList.add(locationString)
         }
+        // saves the list as a comma-separated string
         val joinedString = formatedList.joinToString(",")
         context.getSharedPreferences("AppNamePrefs", Context.MODE_PRIVATE).edit().apply {
             putString("favourites", joinedString)
@@ -68,6 +63,7 @@ object PreferenceManager {
         )
             .getString("favourites", "")
 
+        // turns the string into a list of customlocation objects
         val formatedList = data?.split(",") ?: emptyList()
         formatedList.forEach {
             val location = it.split(";")

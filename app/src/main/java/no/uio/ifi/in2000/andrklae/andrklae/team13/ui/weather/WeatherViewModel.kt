@@ -25,28 +25,34 @@ class WeatherViewModel(
     private val _data = MutableStateFlow(dataHolder)
     val data = _data.asStateFlow()
 
+    // variables for GPT message for the current weather
     private val _GPTCurrent = MutableStateFlow("Trykk på meg for å spørre om praktiske tips!")
     val GPTCurrent = _GPTCurrent.asStateFlow()
     private val _GPTCurrentAnimation = MutableStateFlow(MrPraktiskAnimations.BLINK)
     val GPTCurrentAnimation = _GPTCurrentAnimation.asStateFlow()
 
-
+    // Variables for GPT message for the next 24 hours
     private val _GPT24h = MutableStateFlow("Trykk på meg for å spørre om været det neste døgnet")
     val GPT24h = _GPT24h.asStateFlow()
     private val _GPT24hAnimation = MutableStateFlow(MrPraktiskAnimations.BLINK)
     val GPT24hAnimation = _GPT24hAnimation.asStateFlow()
 
+    // Variables for GPT message for the next week
     private val _GPTWeek = MutableStateFlow("Trykk på meg for å spørre om været denne uka")
     val GPTWeek = _GPTWeek.asStateFlow()
     private val _GPTWeekAnimation = MutableStateFlow(MrPraktiskAnimations.BLINK)
     val GPTWeekAnimation = _GPTWeekAnimation.asStateFlow()
 
+    // variable for what warning is selected in the map
     private val _selectedWarning = MutableStateFlow(false)
     val selectedWarning = _selectedWarning.asStateFlow()
 
     fun updateAll() {
         viewModelScope.launch {
+            // updates all variables
             data.value.updateAll()
+
+            // resets Mr. Praktisk message
             _GPTCurrent.value = "Trykk på meg for å spørre om praktiske tips!"
             _GPT24h.value = "Trykk på meg for å spørre om været det neste døgnet"
             _GPTWeek.value = "Trykk på meg for å spørre om været denne uka"
@@ -59,11 +65,18 @@ class WeatherViewModel(
             "Changing location from ${_data.value.location.name}" +
                     " to ${dataHolder.location.name}"
         )
+
+        // sees if the data being navigated to is already loaded in the viewmodel
         val isSame = data.value.location == dataHolder.location
 
+        // if the location is changed, instead of navigating back
+        // to the location already loaded
         if (!isSame) {
             viewModelScope.launch {
+                // change the data to show in the screen
                 _data.value = dataHolder
+
+                // if data is not loaded previously
                 if (_data.value.weather == null) {
                     updateAll()
                 }
@@ -93,6 +106,8 @@ class WeatherViewModel(
             var loading = true
             _GPTCurrentAnimation.value = MrPraktiskAnimations.THINKING
             _GPTCurrent.value = ""
+
+            // show Mr. Praktisk thinking while the API is loading
             launch {
                 // simulates three dots loading
                 while (loading) {
@@ -100,17 +115,24 @@ class WeatherViewModel(
                     delay(200)
                 }
             }
+
             launch {
+                // fetches gpt message from api
                 data.value.updateGPTCurrent(age, hobbies)
                 // done loading
                 loading = false
                 _GPTCurrent.value = ""
+
+                // changes animation of avatar
                 _GPTCurrentAnimation.value = MrPraktiskAnimations.SPEAK
+
                 // simulates writing
                 data.value.gptCurrent.value.forEach {
                     _GPTCurrent.value += it
                     delay(1)
                 }
+
+                // changes animation of avatar
                 _GPTCurrentAnimation.value = MrPraktiskAnimations.BLINK
 
             }
@@ -122,8 +144,9 @@ class WeatherViewModel(
             // to keep track of loading status
             var loading = true
             _GPT24hAnimation.value = MrPraktiskAnimations.THINKING
-
             _GPT24h.value = ""
+
+            // show Mr. Praktisk thinking while the API is loading
             launch {
                 while (loading) {
                     _GPT24h.value = dotLoading(_GPT24h.value)
@@ -131,15 +154,22 @@ class WeatherViewModel(
                 }
             }
             launch {
+                // fetches gpt message from api
                 data.value.updateGPT24h(age)
                 // done loading
                 loading = false
                 _GPT24h.value = ""
+
+                // changes animation of avatar
                 _GPT24hAnimation.value = MrPraktiskAnimations.SPEAK
+
+                // simulates writing
                 data.value.gpt24h.value.forEach {
                     _GPT24h.value += it
                     delay(1)
                 }
+
+                // changes animation of avatar
                 _GPT24hAnimation.value = MrPraktiskAnimations.BLINK
             }
         }
@@ -151,6 +181,8 @@ class WeatherViewModel(
             // to keep track of loading status
             var loading = true
             _GPTWeek.value = ""
+
+            // show Mr. Praktisk thinking while the API is loading
             launch {
                 // simulates three dots loading
                 while (loading) {
@@ -159,21 +191,29 @@ class WeatherViewModel(
                 }
             }
             launch {
+                // fetches gpt message from api
                 data.value.updateGPTWeek(age, hobbies)
                 // done loading
                 loading = false
                 _GPTWeek.value = ""
+
+                // changes animation of avatar
                 _GPTWeekAnimation.value = MrPraktiskAnimations.SPEAK
+
+                // simulates writing
                 data.value.gptWeek.value.forEach {
                     _GPTWeek.value += it
                     delay(1)
                 }
+
+                // changes animation of avatar
                 _GPTWeekAnimation.value = MrPraktiskAnimations.BLINK
 
             }
         }
     }
 
+    // simulating three dots loading for GPT speech bubble while Mr. Praktisk is "thinking"
     fun dotLoading(input: String): String {
         var dots = input
         if (dots == "• • • ") {

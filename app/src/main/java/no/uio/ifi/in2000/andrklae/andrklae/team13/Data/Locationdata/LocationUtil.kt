@@ -13,6 +13,8 @@ import java.util.jar.Manifest
 
 object LocationUtil {
     val REQUEST_CODE = 1001
+
+    // function for checking if the user has given the app location permission
     fun hasLocationPermission(context: Context): Boolean {
         val hasFineLocationPermission = ContextCompat.checkSelfPermission(
             context,
@@ -27,6 +29,7 @@ object LocationUtil {
         return hasFineLocationPermission || hasCoarseLocationPermission
     }
 
+    // function for requesting location permission
     fun requestPermission(
         activity: Activity
     ) {
@@ -45,13 +48,16 @@ object LocationUtil {
         activity: Activity,
         callback: (CustomLocation?) -> Unit
     ) {
+        // if the user has given permission
         if (hasLocationPermission(activity)) {
             try {
                 val fusedLocationProviderClient: FusedLocationProviderClient =
                     LocationServices.getFusedLocationProviderClient(activity)
+
                 fusedLocationProviderClient.lastLocation
                     .addOnSuccessListener { location: Location? ->
                         location?.let {
+                            // success fetching location
                             callback(
                                 CustomLocation(
                                     "Min posisjon",
@@ -62,11 +68,11 @@ object LocationUtil {
                                 )
                             )
                         } ?: run {
-                            // Location was null, handle accordingly
+                            // Location was null
                             callback(null)
                         }
                     }.addOnFailureListener {
-                        // Failed to get location, handle accordingly
+                        // Failed to get location
                         callback(null)
                     }
             } catch (e: SecurityException) {
@@ -74,7 +80,7 @@ object LocationUtil {
                 callback(null)
             }
         } else {
-            // Permissions not granted, request initiated, handle as needed
+            // Permissions not granted
             callback(null)
         }
     }

@@ -1,8 +1,6 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning
 
 import android.content.Context
-import android.location.GnssAntennaInfo.Listener
-import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -12,7 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,10 +23,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Map
@@ -54,39 +49,34 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.google.android.gms.maps.GoogleMap.OnCameraMoveListener
-import com.google.android.gms.maps.UiSettings
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.currentCameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.compose.rememberMarkerState
-import com.google.maps.android.ktx.model.cameraPosition
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Status
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Geometry
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Polygon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Warning
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.ActionButton
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ActionButton
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.WarningIcon
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.getColorFromString
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.coponents.isoToReadable
 
 @Composable
 fun WarningScreen(warningViewModel: WarningViewModel, context: Context) {
     val warningStatus by warningViewModel.loadingStatus.collectAsState()
     val warnings by warningViewModel.warnings.collectAsState()
 
+    // keeps track of the warning api status
     when (warningStatus) {
         Status.LOADING -> {
             Column(
@@ -140,19 +130,10 @@ fun WarningScreen(warningViewModel: WarningViewModel, context: Context) {
                             .clip(RoundedCornerShape(13.dp))
                             .background(Color.White)
                             .clickable {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Tester internettforbindelsen...",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
                                 warningViewModel.loadWarnings()
-
                             }
                             .padding(10.dp)
                     ) {
-
                         Text(
                             text = "Last på nyt",
                             fontSize = 20.sp,
@@ -165,6 +146,7 @@ fun WarningScreen(warningViewModel: WarningViewModel, context: Context) {
     }
 }
 
+// showing all warnings on a map
 @Composable
 fun DisplayAllWarning(
     alerts: List<Feature>,
@@ -179,11 +161,16 @@ fun DisplayAllWarning(
             position = CameraPosition.fromLatLngZoom(LatLng(59.9, 10.7), 5f)
         }
     ) {
+        // draws a polygon for each alert
         alerts.forEach { feature ->
             var isPolygonSelected by remember { mutableStateOf(false) }
+
+            // colors the polygon accoring to risk level
             val polygonColor = feature.properties.riskMatrixColor
             val polygons = findAllPolygons(feature.geometry)
             val area = feature.properties.area
+
+            // for each polygon of an alert
             polygons.forEach { polygon ->
                 Polygon(
                     points = polygon.coordinates,
@@ -206,10 +193,12 @@ fun DisplayAllWarning(
                     }
                 )
             }
+            // deselects the polygon when the map moves
             if (currentCameraPositionState.isMoving) {
                 isPolygonSelected = false
             }
         }
+        // show no warning box when moving the map
         if (currentCameraPositionState.isMoving) {
             warningViewModel.resetPreview()
         }
@@ -226,9 +215,8 @@ fun LoadWarningScreen(
 ) {
     var showMap by remember { mutableStateOf(false) }
     val selected by warningViewModel.selectedWarning.collectAsState()
-    // sorts favorite list to put current location at the top of the list
 
-    // column of all favourites
+    // column of all warnings
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
@@ -243,7 +231,6 @@ fun LoadWarningScreen(
             )
 
     ) {
-        // spacer
         item {
             Spacer(modifier = Modifier.height(45.dp))
             Box(
@@ -251,13 +238,15 @@ fun LoadWarningScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)
             ) {
+                // header
                 Text(
                     text = "Alle farevarsler",
                     fontSize = 30.sp,
                     modifier = Modifier.align(Alignment.Center)
                 )
+                // refresh button
                 Box(modifier = Modifier.align(Alignment.CenterEnd)){
-                    ActionButton(icon = Icons.Filled.Refresh, onClick = {reload()})
+                    ActionButton(icon = Icons.Filled.Refresh, onClick = { reload() })
                 }
 
             }
@@ -265,6 +254,7 @@ fun LoadWarningScreen(
 
         }
         item {
+            // button for showing the warnings on a map
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -280,7 +270,7 @@ fun LoadWarningScreen(
             ) {
                 Icon(
                     Icons.Filled.Map,
-                    "show all in map",
+                    "se i kart",
                     modifier = Modifier
                         .clickable {
 
@@ -308,6 +298,7 @@ fun LoadWarningScreen(
 
     }
     if (showMap) {
+        // show map as a dialog
         Dialog(onDismissRequest = { showMap = false }) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -325,16 +316,16 @@ fun LoadWarningScreen(
                     Column(
                         modifier = Modifier
                             .clip(RoundedCornerShape(15.dp))
-                            //.padding(1.dp)
                             .fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top
                     )
                     {
+                        // shows all the polygons on a map
                         DisplayAllWarning(
                             warning.features,
                             { geometry: Geometry ->
-                                warningViewModel.warningRepositoryInterface.findAllPolygons(
+                                warningViewModel.warningRepo.findAllPolygons(
                                     geometry
                                         .coordinates
                                 )
@@ -342,6 +333,7 @@ fun LoadWarningScreen(
                             warningViewModel
                         )
                     }
+                    // show info of the selected polygon
                     if (!(selected == null)) {
                         Column(
                             modifier = Modifier
@@ -391,6 +383,7 @@ fun LoadWarningScreen(
     }
 }
 
+// box for displaying warning
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WarningBox(feature: Feature, forMap: Boolean = false) {
@@ -401,6 +394,9 @@ fun WarningBox(feature: Feature, forMap: Boolean = false) {
     val warningLevel = feature.properties.riskMatrixColor
     var expanded by remember { mutableStateOf(false) }
     val alpha = remember { Animatable(1f) }
+    val interval = feature.`when`.interval
+    val start = isoToReadable(interval[0])
+    val end = isoToReadable(interval[1])
 
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -412,11 +408,14 @@ fun WarningBox(feature: Feature, forMap: Boolean = false) {
             }
         )
         .glassEffect(
+            // sets the color to white when it is used for a map and yellow if not
+            color =
             if (forMap) {
                 Color.White
             } else {
                 Color(0xffffff8a)
             },
+            alt =
             if (forMap) {
                 true
             } else {
@@ -424,6 +423,7 @@ fun WarningBox(feature: Feature, forMap: Boolean = false) {
             }
         )
 
+        // animates expanding and retracting the box
         .animateContentSize(
             animationSpec = spring(
                 dampingRatio = Spring.DampingRatioLowBouncy,
@@ -464,17 +464,25 @@ fun WarningBox(feature: Feature, forMap: Boolean = false) {
                 color = Color.Black
             )
             if (expanded) {
+                // title
                 Text(
                     text = warningTitle,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
+                // when the warning is relevant
+                Text(
+                    text = "Gjelder fra $start til $end",
+                    fontWeight = FontWeight.Bold
+                )
+                // description
                 Text(
                     text = warningDescription,
                     fontSize = 18.sp
                 )
             } else {
                 var title = warningTitle
+                // shortens the title if it is more than 15 chars
                 if (title.length > 15) {
                     title = title.take(15) + "..."
                 }
@@ -486,6 +494,7 @@ fun WarningBox(feature: Feature, forMap: Boolean = false) {
         }
     }
 
+    // animates expanding and redacting
     LaunchedEffect(expanded) {
         if (expanded) {
             alpha.animateTo(
@@ -505,31 +514,5 @@ fun WarningBox(feature: Feature, forMap: Boolean = false) {
             )
         }
 
-    }
-}
-
-fun calculatePolygonCenter(polygon: List<LatLng>): LatLng {
-    var totalLat = 0.0
-    var totalLng = 0.0
-
-    for (point in polygon) {
-        totalLat += point.latitude
-        totalLng += point.longitude
-    }
-
-    val centerLat = totalLat / polygon.size
-    val centerLng = totalLng / polygon.size
-
-    return LatLng(centerLat, centerLng)
-}
-
-fun getColorFromString(colorString: String): Color {
-    return when (colorString.lowercase()) {
-        "yellow" -> Color.Yellow
-        "green" -> Color.Green
-        "orange" -> Color(0xFFFFA500)
-        "red" -> Color.Red
-        // Add more cases as needed
-        else -> Color.Black // Default color or any other color you prefer
     }
 }

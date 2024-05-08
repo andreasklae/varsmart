@@ -107,8 +107,7 @@ data class DataHolder(
         val templist = mutableListOf<Double>(current.temperature!!.toDouble())
         next24h.forEach {
             // makes sure that it only fetches the temperatures for this day and not tomorrow
-            // note: the api doesn't fetch data more than 2 hours in the past,
-            // so the highest and lowest will not include past temperatures
+            // note: will not check for temperatures in the past
             if (it.time.day.toInt() == currentDay.toInt()) {
                 templist.add(it.temperature!!.toDouble())
             }
@@ -124,7 +123,7 @@ data class DataHolder(
         // fetches weather data
         val newWeather = wRepo.getWeather(location)
 
-        // if api call is successfull
+        // if api call is successfully
         if (newWeather != null) {
             // sets last update to now
             lastUpdate = getCurrentTime()
@@ -148,6 +147,7 @@ data class DataHolder(
 
     suspend fun updateGPT24h(age: Int) {
         gpt24h.value = ""
+        // fetches from api
         gpt24h.value = gptRepo.fetch24h(next24h, age)
     }
 
@@ -164,8 +164,8 @@ data class DataHolder(
         val timelist = newWeather.properties.timeseries
         // finds the index of the current time in the datetime list
         val currentTime = timelist.first{
-            // matches the hour
-            it.time.split("T")[1].split(":")[0] == dt.hour
+            val hour = it.time.split("T")[1].split(":")[0]
+            hour == dt.hour
         }
         val startIndex = newWeather.properties.timeseries.indexOf(currentTime)
 
@@ -198,7 +198,7 @@ data class DataHolder(
         next24h = newList
     }
 
-    suspend fun updateWeek(newWeather: WeatherForecast) {
+    suspend fun updateWeek(weather: WeatherForecast) {
         // Creates a list of days for the week
         var weekDays = mutableListOf<DateTime>()
         var dayIterator = dt
@@ -209,9 +209,9 @@ data class DataHolder(
         }
 
         val newList = mutableListOf<WeatherTimeForecast>()
-        // add a weather object for each hour in a day
+        // add a weather object for each day of the week
         weekDays.forEach {
-            newList.add(WeatherTimeForecast(newWeather, it, location))
+            newList.add(WeatherTimeForecast(weather, it, location))
         }
         week = newList
 
@@ -234,7 +234,6 @@ data class DataHolder(
         // if api call fails
         else {
             sunStatus.value = Status.FAILED
-
         }
     }
 
