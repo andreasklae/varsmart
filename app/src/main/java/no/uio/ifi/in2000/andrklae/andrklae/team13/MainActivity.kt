@@ -27,14 +27,15 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningViewModel
 
 class MainActivity : ComponentActivity() {
 
+    // creates each viewmodel
     val weatherVM = WeatherViewModel(DataHolder.initLocation, this)
+    var onboardingVM: OnboardingViewModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // creates each viewmodel
         val favVM = FavoriteViewModel()
         val warningVM = WarningViewModel()
-        val onboardingVM = OnboardingViewModel(this)
+        onboardingVM = OnboardingViewModel(this)
         val settingsVM = SettingsViewModel(
             initAge = PreferenceManager.fetchAge(this),
             initHobbies = PreferenceManager.fetchHobbies(this),
@@ -56,7 +57,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             // sees if the onboarding is completed
-            val onboardingCompleted = onboardingVM.onboardingCompleted.collectAsState()
+            val onboardingCompleted = onboardingVM!!.onboardingCompleted.collectAsState()
 
             // if completed, show the regular ui
             if (onboardingCompleted.value){
@@ -73,7 +74,7 @@ class MainActivity : ComponentActivity() {
             else{
                 Onboarding(
                     this,
-                    onboardingVM,
+                    onboardingVM!!,
                     settingsVM
                 )
             }
@@ -98,7 +99,9 @@ class MainActivity : ComponentActivity() {
                     if (customLocation != null) {
                         val new = DataHolder(customLocation)
 
-                        // i data doesn't already exist
+                        onboardingVM!!.locPermissionGranted()
+
+                        // if data doesn't already exist
                         if (!DataHolder.Favourites.contains(new)) {
                             // add to favourites
                             new.toggleInFavourites()

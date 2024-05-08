@@ -114,7 +114,7 @@ fun FavoriteScreen(
 
     ) {
         Spacer(modifier = Modifier.height(30.dp))
-        // Row for refreshing favourites and searching for new places
+        // Row for searching for new places or adding current location
         FunctionRow(
             searchVm,
             showDialog,
@@ -136,15 +136,17 @@ fun FavoriteScreen(
             Spacer(modifier = Modifier.weight(1f))
             val context = LocalContext.current
 
-            // refresh button
-            ActionButton(
-                icon = Icons.Filled.Refresh,
-                onClick = {
-                    Toast.makeText(context, "Oppdaterte favoritter", Toast.LENGTH_SHORT).show()
-                    favVM.updateWeather()
-                }
-            )
-            Spacer(modifier = Modifier.width(20.dp))
+            // refresh button if there are any favourites
+            if (favorites.isNotEmpty()){
+                ActionButton(
+                    icon = Icons.Filled.Refresh,
+                    onClick = {
+                        Toast.makeText(context, "Oppdaterte favoritter", Toast.LENGTH_SHORT).show()
+                        favVM.updateWeather()
+                    }
+                )
+                Spacer(modifier = Modifier.width(20.dp))
+            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))

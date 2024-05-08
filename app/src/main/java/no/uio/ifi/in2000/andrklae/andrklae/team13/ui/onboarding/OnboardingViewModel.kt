@@ -12,13 +12,22 @@ class OnboardingViewModel(context: Context) {
     private val _onboardingCompleted = MutableStateFlow(false)
     val onboardingCompleted = _onboardingCompleted.asStateFlow()
 
+    // to keep track of location permission
+    private val _locationPermission = MutableStateFlow(false)
+    val locationPermission = _locationPermission.asStateFlow()
+
     init {
         _onboardingCompleted.value = PreferenceManager.fetchOnboardingStatus(context)
+        _locationPermission.value = LocationUtil.hasLocationPermission(context)
     }
 
     // function to complete onboarding
     fun completeOnboarding(context: Context){
         PreferenceManager.completeOnboarding(context)
         _onboardingCompleted.value = PreferenceManager.fetchOnboardingStatus(context)
+    }
+
+    fun locPermissionGranted() {
+        _locationPermission.value = true
     }
 }
