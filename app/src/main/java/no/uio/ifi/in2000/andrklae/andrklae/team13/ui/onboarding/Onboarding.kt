@@ -1,7 +1,5 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.onboarding
 
-import android.content.Context
-import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -27,12 +25,13 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PinDrop
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +45,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationUtil
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
@@ -70,6 +69,9 @@ fun Onboarding(
 
     // whether the user has consented to the terms and conditions
     var consented by remember { mutableStateOf(false) }
+
+    // location permission
+    val locPermission = onboardingViewModel.locationPermission.collectAsState()
 
     val pagerState = rememberPagerState(
         pageCount = { 5 },
@@ -106,7 +108,7 @@ fun Onboarding(
                     }
                 }
 
-                1 -> LocationPermission(context)
+                1 -> LocationPermission(context, locPermission.value)
 
                 2 -> {
                     AgeSlider(
@@ -137,6 +139,13 @@ fun Onboarding(
                 }
 
                 4 -> ConsentBox(consented, {consented = it})
+            }
+        }
+        // scrolls to next page when location permission is granted
+        if (locPermission.value){
+            LaunchedEffect(key1 = null){
+                delay(300)
+                pagerState.animateScrollToPage(2)
             }
         }
 
@@ -267,7 +276,7 @@ fun Onboarding(
 }
 
 @Composable
-fun LocationPermission(context: MainActivity) {
+fun LocationPermission(context: MainActivity, locPermission: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -281,7 +290,11 @@ fun LocationPermission(context: MainActivity) {
             fontSize = 12.sp
         )
         Spacer(modifier = Modifier.height(20.dp))
-
+        // different color based on whether location permission is granted
+        val color = {
+            if (!locPermission) Color.White
+            else Color(188, 255, 189, 255)
+        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -292,7 +305,7 @@ fun LocationPermission(context: MainActivity) {
                 .padding(2.dp)
                 .clickable {
                     // if permission is not given
-                    if (!LocationUtil.hasLocationPermission(context)) {
+                    if (!locPermission) {
                         // request permission
                         context.getCurrentLocation()
                     } else {
@@ -306,11 +319,28 @@ fun LocationPermission(context: MainActivity) {
                     }
                 }
                 .clip(CircleShape)
-                .background(Color.White)
+                .background(color())
                 .padding(10.dp)
         ) {
-            Icon(imageVector = Icons.Default.PinDrop, contentDescription ="neste")
-            Text(text = "gi tilgang")
+            // Different icon based on whether location permission is granted or not
+            val icon = {
+                if (!locPermission) Icons.Default.PinDrop
+                else Icons.Default.Check
+            }
+            val iconColor = {
+                if (!locPermission) Color.Black
+                else Color(0, 109, 3, 255)
+            }
+            Icon(
+                imageVector = icon(),
+                contentDescription ="neste",
+                tint = iconColor()
+                )
+            val text = {
+                if (locPermission) "Tilgang gitt"
+                else "Gi tilgang"
+            }
+            Text(text = text())
         }
     }
 }
