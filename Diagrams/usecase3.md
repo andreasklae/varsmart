@@ -1,0 +1,27 @@
+```mermaid
+    sequenceDiagram
+        actor U as User
+        U ->>App: User opens app
+        App ->> Met: fetchWeather(DefaultLocation)
+        Met -->> App: weatherData
+        App ->> U: Show weather data on homeScreen
+        U->>App: Navigate to search screen
+        App->>U: Show searchScreen
+        U->>App: Click on searchButton
+        App->>U: Show searchDialog
+        U->>App: Search cityName
+        App->>LocationApi: searchLocations(cityName)
+        LocationApi-->>App: list of locations that match search
+        App->> U: Show location list
+        alt checks weather first
+        U->>App: click on wanted location
+        App->>App: setLocation(wantedLocation)
+        App->>U:navigate to homeScreen with the loading indicator
+        App->>Met: fetchWeather(wantedLocation)
+        Met-->>App: weatherData
+        App ->>U: Show weather data      
+        end
+        U->>App: Click on bookmark-button on the wanted location
+        App->>App: toggleInFavourites()
+        App->>App: saveFavourites()
+```
