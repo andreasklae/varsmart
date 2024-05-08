@@ -46,12 +46,11 @@ class MainActivity : ComponentActivity() {
 
         // if favourite list is not empty
         if (DataHolder.Favourites.isNotEmpty()){
-
             // sets location to either the current position of the device
             // or the first favourite
             weatherVM.setLocation(
                 DataHolder.Favourites
-                    .sortedBy { it.location.name == "Min posisjon" }
+                    .sortedBy { it.location.name.contains("Min posisjon") }
                     .first())
         } else weatherVM.updateAll()
 
