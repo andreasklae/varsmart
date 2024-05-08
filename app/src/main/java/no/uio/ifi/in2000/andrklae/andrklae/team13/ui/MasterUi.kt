@@ -134,7 +134,7 @@ fun MasterUi(
             }
 
         }
-        BottomAppBar(weatherVM, pagerState)
+        BottomAppBar(pagerState)
     }
 
 }
