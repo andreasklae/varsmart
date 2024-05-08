@@ -59,7 +59,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Geometry
 import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components.ImageIcon
-import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.MapWithPolygon
+import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.map.WeatherScreenMap
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.DisplayAllWarning
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.warning.WarningBox
@@ -297,7 +297,7 @@ fun DisplayWarning(
                         verticalArrangement = Arrangement.Top
                     )
                     {
-                        MapWithPolygon(
+                        WeatherScreenMap(
                             alert,
                             setPreview = { setPreview() },
                             resetPreview = { resetPreview() },

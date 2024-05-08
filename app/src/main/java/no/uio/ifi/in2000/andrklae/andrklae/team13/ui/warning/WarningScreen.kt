@@ -507,29 +507,3 @@ fun WarningBox(feature: Feature, forMap: Boolean = false) {
 
     }
 }
-
-fun calculatePolygonCenter(polygon: List<LatLng>): LatLng {
-    var totalLat = 0.0
-    var totalLng = 0.0
-
-    for (point in polygon) {
-        totalLat += point.latitude
-        totalLng += point.longitude
-    }
-
-    val centerLat = totalLat / polygon.size
-    val centerLng = totalLng / polygon.size
-
-    return LatLng(centerLat, centerLng)
-}
-
-fun getColorFromString(colorString: String): Color {
-    return when (colorString.lowercase()) {
-        "yellow" -> Color.Yellow
-        "green" -> Color.Green
-        "orange" -> Color(0xFFFFA500)
-        "red" -> Color.Red
-        // Add more cases as needed
-        else -> Color.Black // Default color or any other color you prefer
-    }
-}
