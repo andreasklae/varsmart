@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Settings.Background
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Alert
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Geometry
@@ -77,7 +79,11 @@ fun WarningRow(
     selected: Boolean
 ) {
     val alerts = data.alertList
+
+    // filters the alerts to only show the ones nearby
     val filteredAlerts = alerts.filter { it.distance <= range }
+
+    // if there are one or more alerts nearby
     if (filteredAlerts.isNotEmpty()) {
         val pagerState = rememberPagerState(pageCount = { filteredAlerts.size })
 
@@ -86,6 +92,7 @@ fun WarningRow(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
+            // A pager so that the user can scroll to each warning
             HorizontalPager(
                 verticalAlignment = Alignment.Top,
                 state = pagerState,
@@ -96,10 +103,10 @@ fun WarningRow(
                             dampingRatio = Spring.DampingRatioLowBouncy,
                             stiffness = Spring.StiffnessLow
                         )
-
                     )
 
             ) {
+                // new alert for each page
                 val alert = filteredAlerts[pagerState.currentPage]
 
                 DisplayWarning(
@@ -120,12 +127,15 @@ fun WarningRow(
                         .glassEffect()
                         .padding(5.dp)
                 ) {
+                    // one dot for each page
                     filteredAlerts.forEach {
                         var dotModifier = Modifier
                             .padding(2.dp)
                             .clip(CircleShape)
                             .background(Color.Black.copy(alpha = 0.5f))
                             .size(10.dp)
+
+                        // highlights the dot of the warning in focus
                         if (pagerState.currentPage == filteredAlerts.indexOf(it)) {
                             dotModifier = Modifier
                                 .padding(2.dp)
@@ -140,7 +150,9 @@ fun WarningRow(
             }
 
         }
-    } else EmptyWarning(data.location.name)
+    }
+    // when there are no alerts nearby
+    else EmptyWarning(data.location.name)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -152,14 +164,24 @@ fun DisplayWarning(
     resetPreview: () -> Unit,
     selected: Boolean
 ) {
+    // description
     val warningDescription = "${alert.alert.properties.instruction}" +
             " \n${alert.alert.properties.description} ${alert.alert.properties.consequences}"
+
+    // when the warning is relevant
     val interval = alert.alert.`when`.interval
     val start = isoToReadable(interval[0])
     val end = isoToReadable(interval[1])
+
+    // title
     val warningTitle = alert.alert.properties.thing(alert.alert.properties.area)
+
+    // risk level
     val warningLevel = alert.alert.properties.riskMatrixColor
+
+    // distance to the warning area
     val distance = alert.distance
+
     var showDialog by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     val alpha = remember { Animatable(1f) }
@@ -189,16 +211,30 @@ fun DisplayWarning(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
+
+                // warning symbol based on the risk level
                 WarningIcon(warningLevel)
 
+                // header
                 Text(
                     text = "Farevarsel",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
+                Spacer(modifier = Modifier.width(15.dp))
+
+                // button to show the warning in map
                 IconButton(
                     onClick = { showDialog = true },
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier
+                        .size(50.dp)
+                        .shadow(
+                            elevation = 8.dp,
+                            shape = CircleShape
+                        )
+                        .padding(5.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFF1F1F1))
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Map,
@@ -210,49 +246,72 @@ fun DisplayWarning(
 
                 }
                 Spacer(Modifier.weight(1f))
+
+                // indicator for whether the waring is exposed or not
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded,
                 )
 
 
             }
+            Spacer(modifier = Modifier.height(5.dp))
+
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 5.dp),
                 thickness = 1.dp,
                 color = Color.Black
             )
+
+            // when the warning is expanded
             if (expanded) {
+
+                // title
                 Text(
                     text = warningTitle,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
+
+                // distance to warning area
                 Text(
                     text = distance.roundToInt().toString() + "km unna " + location,
                     fontWeight = FontWeight.Bold
                 )
+
+                // when the alert is active
                 Text(
                     text = "Gjelder fra $start til $end",
                     fontWeight = FontWeight.Bold
                 )
+
+                // description
                 Text(
                     text = warningDescription,
                     fontSize = 18.sp
                 )
-            } else {
+            }
+
+            // when not expanded
+            else {
+                // shortens the title if its more than 15 chars
                 var title = warningTitle
                 if (title.length > 15) {
                     title = title.take(15) + "..."
                 }
+
+                // title
                 Text(
                     text = title,
                     fontSize = 16.sp
                 )
+
+                // distance to warning area
                 Text(text = distance.roundToInt().toString() + "km unna " + location)
             }
         }
     }
 
+    // animates the expanding and minimizing
     LaunchedEffect(expanded) {
         if (expanded) {
             alpha.animateTo(
@@ -273,6 +332,8 @@ fun DisplayWarning(
         }
 
     }
+
+    // if the map should show
     if (showDialog) {
         Dialog(onDismissRequest = { showDialog = false }) {
             Column(
@@ -291,7 +352,6 @@ fun DisplayWarning(
                     Column(
                         modifier = Modifier
                             .clip(RoundedCornerShape(15.dp))
-                            //.padding(1.dp)
                             .fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top
@@ -304,6 +364,7 @@ fun DisplayWarning(
                             selected = selected
                         )
                     }
+                    // if a polygon is selected
                     if (selected) {
                         Column(
                             modifier = Modifier
@@ -322,6 +383,7 @@ fun DisplayWarning(
                             ) {
                                 LazyColumn() {
                                     item {
+                                        // show the info of the warning
                                         WarningBox(alert.alert, true)
                                     }
                                 }
@@ -331,6 +393,8 @@ fun DisplayWarning(
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
+
+                // button to hide the map
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
@@ -351,15 +415,20 @@ fun DisplayWarning(
     }
 }
 
+// function for turning ISO time format into regular text
 fun isoToReadable(iso: String): String {
+
+    // finds the day and month
     val date = iso.split("T").first().split("-")
     val month = date[1]
     val day = date[2]
 
+    // finds the time of day
     val time = iso.split("T")[1].split(":")
     val hour = time[0]
     val minute = time[1]
 
+    // turns month number into text
     val monthName = {
         when (month.toInt()) {
             1 -> "Januar"
@@ -380,6 +449,7 @@ fun isoToReadable(iso: String): String {
     return "$day. ${monthName()} $hour:$minute"
 }
 
+// what to show when there are no nearby alerts
 @Composable
 fun EmptyWarning(location: String) {
     val alpha = remember { Animatable(1f) }
@@ -402,6 +472,7 @@ fun EmptyWarning(location: String) {
                 .alpha(alpha.value)
                 .fillMaxSize()
         ) {
+            // header
             Row {
                 Text(
                     text = "Farevarsel",
@@ -427,7 +498,7 @@ fun EmptyWarning(location: String) {
                     modifier = Modifier
                         .width(300.dp)
                 ) {
-
+                    // description
                     Text(
                         text = "Ingen farevarsler i nærheten av $location",
                         fontSize = 16.sp,
@@ -446,6 +517,8 @@ fun EmptyWarning(location: String) {
 
 @Composable
 fun WarningIcon(warningLevel: String) {
+
+    // gives the correct warning icon based on the risk level of an alert
     when (warningLevel) {
         "Green" ->
             ImageIcon(

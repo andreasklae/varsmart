@@ -20,6 +20,7 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.R
 
 @Composable
 fun MrPraktisk(generateText: () -> Unit, animation: MrPraktiskAnimations) {
+    // crops the animation around the avatar
     val clipShape = GenericShape { size, _ ->
         // Start from the top left corner with an offset
         moveTo(size.width * 0.2f, size.height * 0.12f)
@@ -43,6 +44,7 @@ fun MrPraktisk(generateText: () -> Unit, animation: MrPraktiskAnimations) {
         LottieCompositionSpec.RawRes(R.raw.blink)
     )
 
+    // which animation should run
     val composition = {
         when (animation) {
             MrPraktiskAnimations.BLINK -> blink
@@ -60,7 +62,6 @@ fun MrPraktisk(generateText: () -> Unit, animation: MrPraktiskAnimations) {
                     animation != MrPraktiskAnimations.THINKING
                 ){
                     generateText()
-
                 }
             }
     ) {

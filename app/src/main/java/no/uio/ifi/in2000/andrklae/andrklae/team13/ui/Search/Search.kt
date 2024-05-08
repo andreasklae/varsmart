@@ -72,6 +72,7 @@ fun Search(
     val searchText by searchVm.searchText.collectAsState()
     val searchResults by searchVm.searchResults.collectAsState()
 
+    // search dialog pop up
     Dialog(onDismissRequest = {
         toggleDialog()
         searchVm.emptySearchresults()
@@ -98,6 +99,7 @@ fun Search(
                     verticalArrangement = Arrangement.Top
                 )
                 {
+                    // search box
                     SearchBox(
                         searchText = searchText,
                         onSearchChange = { text -> searchVm.changeSearchText(text) },
@@ -141,6 +143,7 @@ fun Search(
                                         )
                                     }
                             ) {
+                                // shows list of search results
                                 SearchResults(
                                     searchResults = searchResults,
                                     functionToPerform = { data -> functionToPerform(data) },
@@ -158,6 +161,7 @@ fun Search(
 
             }
             Spacer(modifier = Modifier.height(20.dp))
+            // dismiss button
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
@@ -177,6 +181,7 @@ fun Search(
 
 }
 
+// scrollable column of search results
 @Composable
 fun SearchResults(
     searchResults: List<CustomLocation>,
@@ -191,6 +196,7 @@ fun SearchResults(
         modifier = Modifier.verticalScroll(scrollState)
     ) {
         Spacer(modifier = Modifier.height(30.dp))
+        // for each location matching the search
         searchResults.forEach { location ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -225,6 +231,7 @@ fun SearchResults(
                 // if location allready exists
                 if (DataHolder.Favourites.any { it.location == location }) {
                     val toastString = "${location.name} fjernet fra favoritter"
+                    // button for toggeling the location in favourites
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
@@ -245,8 +252,8 @@ fun SearchResults(
                     }
                 } else {
                     val toastString = "${location.name} lagt til i favoritter"
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    // button for toggeling the location in favourites
+                    Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
                             .background(Color(0xFFE1E1E1))

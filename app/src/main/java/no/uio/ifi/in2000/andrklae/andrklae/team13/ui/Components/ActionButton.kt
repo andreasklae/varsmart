@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.andrklae.andrklae.team13.ui
+package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
+// making buttons look similar
 @Composable
 fun ActionButton(
     icon: ImageVector,

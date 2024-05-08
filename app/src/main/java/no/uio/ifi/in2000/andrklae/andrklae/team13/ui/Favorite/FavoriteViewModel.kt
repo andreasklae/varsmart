@@ -16,8 +16,6 @@ class FavoriteViewModel() : ViewModel() {
     val locationRepository: LocationRepositoryInterface = LocationRepository()
     var favourites = DataHolder.Favourites
 
-    // variables for searching
-
     // variables for bottom sheet
     val _showBottomSheet = MutableStateFlow(false)
     val showBottomSheet = _showBottomSheet.asStateFlow()
@@ -27,15 +25,18 @@ class FavoriteViewModel() : ViewModel() {
         _showBottomSheet.value = !showBottomSheet.value
     }
 
+    // loads the list of favourites from shared preferences
     fun loadFavourites(context: Context){
         viewModelScope.launch{
             DataHolder.setFavourites(PreferenceManager.fetchFavourites(context))
         }
     }
+
     fun updateFavouritesList(context: Context){
         PreferenceManager.saveFavourites(context, favourites)
     }
 
+    // loads the data for each favourite
     fun loadData() {
         viewModelScope.launch {
             favourites.forEach {
@@ -61,6 +62,7 @@ class FavoriteViewModel() : ViewModel() {
         }
     }
 
+    // updates the weather data for each favourite
     fun updateWeather() {
         favourites.forEach {
             viewModelScope.launch {

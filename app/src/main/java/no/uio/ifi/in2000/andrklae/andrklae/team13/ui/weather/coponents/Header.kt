@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.theme.glassEffect
 
+// template for headers
 @Composable
 fun Header(header: String) {
     Row(

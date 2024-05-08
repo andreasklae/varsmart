@@ -10,6 +10,7 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.collectAsState
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // creates each viewmodel
         val favVM = FavoriteViewModel()
         val warningVM = WarningViewModel()
         val onboardingVM = OnboardingViewModel(this)
@@ -39,10 +41,14 @@ class MainActivity : ComponentActivity() {
             initBackground = PreferenceManager.fetchBackgroundIndex(this)
         )
 
+        // loads the favourites from long term storage
         favVM.loadFavourites(this)
 
         // if favourite list is not empty
         if (DataHolder.Favourites.isNotEmpty()){
+
+            // sets location to either the current position of the device
+            // or the first favourite
             weatherVM.setLocation(
                 DataHolder.Favourites
                     .sortedBy { it.location.name == "Min posisjon" }
@@ -50,7 +56,10 @@ class MainActivity : ComponentActivity() {
         } else weatherVM.updateAll()
 
         setContent {
+            // sees if the onboarding is completed
             val onboardingCompleted = onboardingVM.onboardingCompleted.collectAsState()
+
+            // if completed, show the regular ui
             if (onboardingCompleted.value){
                 MasterUi(
                     activity = this,
@@ -60,8 +69,14 @@ class MainActivity : ComponentActivity() {
                     warningVM = warningVM
                 )
             }
+
+            // if not, show the onboarding
             else{
-                Onboarding(this, onboardingVM, settingsVM)
+                Onboarding(
+                    this,
+                    onboardingVM,
+                    settingsVM
+                )
             }
         }
     }
@@ -84,9 +99,11 @@ class MainActivity : ComponentActivity() {
                     if (customLocation != null) {
                         val new = DataHolder(customLocation)
 
-                        // i data doesnt exist
+                        // i data doesn't already exist
                         if (!DataHolder.Favourites.contains(new)) {
+                            // add to favourites
                             new.toggleInFavourites()
+                            // navigate to home-screen with current location
                             weatherVM.setLocation(new)
                         } else {
                             weatherVM.setLocation(
@@ -94,14 +111,20 @@ class MainActivity : ComponentActivity() {
                                 DataHolder.Favourites.find { it == new }!!
                             )
                         }
+
+                        // updates favourite list in long term memory
+                        PreferenceManager.saveFavourites(this, DataHolder.Favourites)
                     } else {
 
                     }
                 }
             } else {
-                // Permission was denied. You can show a message
-                // to the user or take appropriate action.
-                println("Permission denied by the user")
+                // Permission was denied.
+                Toast.makeText(
+                    this,
+                    "Loksjonstilgang ikke gitt",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -111,29 +134,37 @@ class MainActivity : ComponentActivity() {
         println("Henter nåværende lokasjon")
         val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        // Check if location data is enabled
+        // Check if location services is enabled on the device
         val locationEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (!locationEnabled
-        ) {
+
+        // if not enabled
+        if (!locationEnabled) {
             // Prompt the user to enable location from settings
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Handling kreves, posisjon kunne ikke hentes")
                 .setMessage("Venligst slå på posisjon for å hente været for din posisjon.")
+
+                // button for navigating to settings and turning on location services
                 .setPositiveButton("Instillinger") { dialog, which ->
                     // Open the device's location settings
                     val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     startActivity(intent)
                 }
-                .setNegativeButton("Cancel") { dialog, which ->
-                    // User canceled, handle accordingly
-                }
+                //  button for dismissing
+                .setNegativeButton("Cancel") { dialog, which -> }
                 .show()
-        } else {
+        }
+
+        // if location services is enabled on the device
+        else {
+            // If location permission is granted
             if (LocationUtil.hasLocationPermission(this)) {
-                // If permission is already granted, attempt to fetch the location immediately
+                // fetch the location
                 LocationUtil.fetchLocation(
                     this
                 ) { customLocation ->
+
+                    // if location was fetched successfully
                     if (customLocation != null) {
                         val new = DataHolder(customLocation)
 
@@ -148,37 +179,21 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         PreferenceManager.saveFavourites(this, DataHolder.Favourites)
+                    } else{
+                        Toast.makeText(
+                            this,
+                            "Fant ikke lokasjon",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
 
-            // request permission if not granted
+            // request permission if not already granted
             else {
                 LocationUtil.requestPermission(this)
             }
         }
 
-    }
-
-    // function for checking if the user as internet
-    fun isOnline(context: Context = this): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities =
-            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        if (capabilities != null) {
-            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-                return true
-            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
-                return true
-            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
-                return true
-            }
-        }
-        Log.i("Internet", "No internet connection detected")
-        return false
     }
 }

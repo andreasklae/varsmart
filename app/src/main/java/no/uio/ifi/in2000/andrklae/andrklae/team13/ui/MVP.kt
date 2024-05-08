@@ -41,9 +41,9 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.weather.WeatherViewModel
 
-/*
+/* Commented out because its outdated and causes running errors
 
-    Commented out because its outdated and causes running error
+
 
 @SuppressLint("SuspiciousIndentation")
 @Composable

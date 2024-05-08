@@ -99,6 +99,8 @@ fun WeatherScreen(
                 }
                 // success
                 Status.SUCCESS -> {
+
+                    // the top part of the screen
                     UpperHalf(
                         data = data,
                         background = background,
@@ -110,6 +112,7 @@ fun WeatherScreen(
                         animation = mainAnimation
                     )
 
+                    // warnings
                     if (data.alertStatus.value == Status.SUCCESS) {
                         WarningRow(
                             data,
@@ -119,6 +122,8 @@ fun WeatherScreen(
                             selected = selected
                         )
                     }
+
+                    // Row of the next 24 hours
                     Next24(
                         data = data,
                         age = age,
@@ -127,6 +132,7 @@ fun WeatherScreen(
                         animation = gpt24hAnimation
                     )
 
+                    // boxes for rain, wind and sunrise/set
                     RainSunWind(data)
                     WeekTable(
                         data = data,
@@ -159,6 +165,8 @@ fun WeatherScreen(
                                         .align(Alignment.Center)
                                         .width(180.dp)
                                 ) {
+
+                                    // location name
                                     Text(
                                         text = data.location.name,
                                         fontSize = 35.sp,
@@ -166,9 +174,9 @@ fun WeatherScreen(
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.height(70.dp))
+                            Spacer(modifier = Modifier.height(90.dp))
 
-                            Spacer(modifier = Modifier.height(20.dp))
+                            // error message
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
@@ -180,6 +188,8 @@ fun WeatherScreen(
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(text = "Sjekk internett tilkobling", fontSize = 15.sp)
                                 Spacer(modifier = Modifier.height(20.dp))
+
+                                // button for reloading
                                 Box(
                                     modifier = Modifier
                                         .shadow(3.dp, RoundedCornerShape(16.dp))
@@ -191,7 +201,6 @@ fun WeatherScreen(
                                         }
                                         .padding(10.dp)
                                 ) {
-
                                     Text(
                                         text = "Last på nyt",
                                         fontSize = 20.sp,
@@ -203,7 +212,7 @@ fun WeatherScreen(
 
                     }
 
-                    // if it has previous data
+                    // if it has previous data, show that data and an error message
                     else {
                         Toast.makeText(
                             context,

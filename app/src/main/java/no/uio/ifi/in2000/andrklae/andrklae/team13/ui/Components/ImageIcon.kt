@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
+// draws images from the drawable folder
 @Composable
 fun ImageIcon(y: Int, x: Int, symbolId: Int, width: Int, height: Int) {
     Box(

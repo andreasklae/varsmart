@@ -12,13 +12,13 @@ import kotlinx.serialization.json.Json
 
 
 class LocationDataSource() {
-
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
         }
     }
 
+    // function for searching for a location based on a text
     suspend fun searchLocations(search: String): List<CustomLocation> {
         val APIKey = "AIzaSyBofr2wZtjab3DBuYh46BDxeUWUit5l-sw"
         val path =
@@ -28,6 +28,9 @@ class LocationDataSource() {
         try {
             val response: Root = client.get(path).body()
             return response.results.map { result ->
+                // creates a location object based on the api response.
+                // Api response is not flawless in terms of the names it provides,
+                //so it needs a bit of formatting
                 CustomLocation(
                     name = result.formatted_address.split(", ").first(),
                     lon = result.geometry.location.lng,
@@ -41,12 +44,14 @@ class LocationDataSource() {
                     }!!.short_name
                 )
             }
-        } catch (e: Exception) {
+        }
+        // if the api fails
+        catch (e: Exception) {
             return emptyList()
         }
-
     }
 
+    // function for finding the name of a location based on coordinates
     suspend fun reverseGeocoding(lat: Double, lon: Double): CustomLocation? {
         val APIKey = "AIzaSyBofr2wZtjab3DBuYh46BDxeUWUit5l-sw"
         val path =

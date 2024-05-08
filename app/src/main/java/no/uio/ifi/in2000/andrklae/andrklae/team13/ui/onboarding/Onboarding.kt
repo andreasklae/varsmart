@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.ui.onboarding
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -44,7 +46,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata.LocationUtil
+import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.AgeSlider
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.HobbyBox
 import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.InfoBox
@@ -53,32 +58,38 @@ import no.uio.ifi.in2000.andrklae.andrklae.team13.ui.Settings.SettingsViewModel
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Onboarding(
-    context: Context,
+    context: MainActivity,
     onboardingViewModel: OnboardingViewModel,
     settingsVM: SettingsViewModel
 ){
+    // variables for the settings
     val age = settingsVM.age.collectAsState()
     val sliderPosition = settingsVM.sliderPosition.collectAsState()
     var hobbyText by remember { mutableStateOf("") }
     var hobbies = settingsVM.hobbies.collectAsState()
 
+    // whether the user has consented to the terms and conditions
     var consented by remember { mutableStateOf(false) }
 
     val pagerState = rememberPagerState(
-        pageCount = { 4 },
+        pageCount = { 5 },
     )
+
+    // column of the contents
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
         modifier = Modifier.fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(100.dp))
+        // header - app name
         Text(
             text = "Værsmart",
             fontSize = 20.sp
             )
         Spacer(modifier = Modifier.height(20.dp))
 
+        // pager of each step
         HorizontalPager(
             verticalAlignment = Alignment.Top,
             state = pagerState,
@@ -95,7 +106,9 @@ fun Onboarding(
                     }
                 }
 
-                1 -> {
+                1 -> LocationPermission(context)
+
+                2 -> {
                     AgeSlider(
                         age = age.value,
                         sliderPosition = sliderPosition.value,
@@ -111,11 +124,9 @@ fun Onboarding(
                             )
                         }
                     )
-
-
                 }
 
-                2 -> {
+                3 -> {
                     HobbyBox(
                         hobbyText = hobbyText,
                         hobbies = hobbies.value,
@@ -125,9 +136,11 @@ fun Onboarding(
                     )
                 }
 
-                3 -> ConsentBox(consented, {consented = it})
+                4 -> ConsentBox(consented, {consented = it})
             }
         }
+
+        // page indicator
         Row {
             for (i in 1..pagerState.pageCount){
                 Box(
@@ -146,8 +159,12 @@ fun Onboarding(
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
+
+        // buttons for going back or fourth
         Row {
             val coroutine = rememberCoroutineScope()
+
+            // if its not the first page
             if(pagerState.currentPage != 0){
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -171,7 +188,9 @@ fun Onboarding(
                     Text(text = "Forige")
                 }
             }
-            if (pagerState.currentPage != 3){
+
+            // if its not the last page
+            if (pagerState.currentPage != 4){
                 Spacer(modifier = Modifier.width(20.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -193,9 +212,9 @@ fun Onboarding(
                 ) {
                     Text(text = "Neste")
                     Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription ="neste")
-
                 }
             }
+            // if its the last page
             else{
                 Spacer(modifier = Modifier.width(20.dp))
                 Row(
@@ -213,7 +232,7 @@ fun Onboarding(
                                 Toast
                                     .makeText(
                                         context,
-                                        "Du må samtykke for å gå videre",
+                                        "Du må gi samtykke for å gå videre",
                                         Toast.LENGTH_SHORT
                                     )
                                     .show()
@@ -236,7 +255,7 @@ fun Onboarding(
                     )
                     Icon(
                         imageVector = Icons.Default.Check,
-                        contentDescription ="neste",
+                        contentDescription ="Ferdig",
                         tint = color()
                     )
                 }
@@ -244,6 +263,55 @@ fun Onboarding(
 
         }
 
+    }
+}
+
+@Composable
+fun LocationPermission(context: MainActivity) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFFF5F5F5))
+            .padding(10.dp)
+    ) {
+        Text(
+            text = "Ønsker du å gi appen tilgang til posisjonen din? " +
+                    "Tilgang kan også gis senere",
+            fontSize = 12.sp
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .shadow(
+                    elevation = 5.dp,
+                    shape = CircleShape
+                )
+                .padding(2.dp)
+                .clickable {
+                    // if permission is not given
+                    if (!LocationUtil.hasLocationPermission(context)) {
+                        // request permission
+                        context.getCurrentLocation()
+                    } else {
+                        Toast
+                            .makeText(
+                                context,
+                                "Tilgang allerede gitt",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                    }
+                }
+                .clip(CircleShape)
+                .background(Color.White)
+                .padding(10.dp)
+        ) {
+            Icon(imageVector = Icons.Default.PinDrop, contentDescription ="neste")
+            Text(text = "gi tilgang")
+        }
     }
 }
 
@@ -261,8 +329,7 @@ fun ConsentBox(
         Text(
             text = "Ved bruk av Mr. Praktisk sender du alderen din, hobbyene dine og værdata " +
                     "(inludert stedsnavn) til Open AI. Annen personopplysninger blir " +
-                    "ikke lagret."
-                    ,
+                    "ikke lagret.",
             fontSize = 12.sp
         )
         Spacer(modifier = Modifier.height(20.dp))
@@ -270,8 +337,7 @@ fun ConsentBox(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                //modifier = Modifier.clickable { consented = !consented }
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
                     checked = consented,
@@ -283,7 +349,7 @@ fun ConsentBox(
                     )
                 )
             }
-            Text(text = "Jeg samtykker")
+            Text(text = "Jeg forstår")
         }
     }
 }

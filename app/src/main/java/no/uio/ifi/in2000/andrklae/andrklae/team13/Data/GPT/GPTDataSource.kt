@@ -28,8 +28,8 @@ class GPTDataSource {
         ignoreUnknownKeys = true
     }
 
+    // function for generating ai response from a prompt
     @OptIn(InternalAPI::class)
-    // function for generating ai response to a prompt
     suspend fun getGPTResponse(prompt: String): String {
         val client = HttpClient(CIO) {
             install(ContentNegotiation) {
@@ -42,11 +42,12 @@ class GPTDataSource {
             "https://gpt-ifi-in2000-swe-1.openai.azure.com" +
                     "/openai/deployments/$deploymentId/chat/completions" +
                     "?api-version=2024-02-15-preview"
+        // api key
         val key = "06e1dffe13824c2a9c110d462397bdf3"
         try {
             client.use { httpClient ->
-                // variables for the api
                 val request = ChatRequest(
+                    // variables for the api
                     messages = listOf(Message("user", prompt)),
                     max_tokens = 4000,
                     temperature = 0.7,
@@ -63,8 +64,6 @@ class GPTDataSource {
                     body = json.encodeToString(request)
                 }
 
-                println(response)
-
                 // serializes the Json response
                 val responseBody = response.bodyAsText()
                 println("Gpt response: $responseBody")
@@ -74,7 +73,7 @@ class GPTDataSource {
                 return gptResponse.choices.first().message.content.trim()
             }
         }
-        // failed getting response from api
+        // if the api fails
         catch (e: Exception) {
             return "Kunne ikke generere tekst. Er du koblet til internett?"
         }
