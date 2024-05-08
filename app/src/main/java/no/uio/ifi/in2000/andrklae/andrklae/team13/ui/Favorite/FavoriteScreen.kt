@@ -29,6 +29,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.InsertDriveFile
 import androidx.compose.material.icons.filled.AddLocationAlt
+import androidx.compose.material.icons.filled.NearMe
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Restore
@@ -51,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -114,26 +116,38 @@ fun FavoriteScreen(
         Spacer(modifier = Modifier.height(30.dp))
         // Row for refreshing favourites and searching for new places
         FunctionRow(
-            favVM,
             searchVm,
             showDialog,
             toggleDialog = { searchVm.toggleSearchDialog() },
             setLocation = { data -> setHomeLocation(data) },
-            toggleBottomSheet = { favVM.toggleBottomSheet() },
             navigateToHome = { page: Int -> navigateToHome(page) },
             activity = activity
         )
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Bottom
         ) {
             Text(
                 text = "Favoritter:",
                 fontSize = 30.sp,
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
+            Spacer(modifier = Modifier.weight(1f))
+            val context = LocalContext.current
+
+            // refresh button
+            ActionButton(
+                icon = Icons.Filled.Refresh,
+                onClick = {
+                    Toast.makeText(context, "Oppdaterte favoritter", Toast.LENGTH_SHORT).show()
+                    favVM.updateWeather()
+                }
+            )
+            Spacer(modifier = Modifier.width(20.dp))
         }
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         HorizontalDivider(
             thickness = 1.dp,
@@ -153,16 +167,7 @@ fun FavoriteScreen(
             FavoriteBox({ data -> setHomeLocation(data) }, it, pagerState)
             Spacer(modifier = Modifier.height(20.dp))
         }
-        Spacer(modifier = Modifier.height(12.dp))
-
-        val showBottomSheet by favVM.showBottomSheet.collectAsState()
-
-        if (showBottomSheet) {
-            BottomSheet(favVM, activity, searchVm)
-        }
-
-
-        Spacer(modifier = Modifier.fillMaxHeight())
+        Spacer(modifier = Modifier.height(70.dp))
 
     }
 }
@@ -170,16 +175,13 @@ fun FavoriteScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FunctionRow(
-    favVM: FavoriteViewModel,
     searchVm: SearchViewModel,
     showDialog: Boolean,
     toggleDialog: () -> Unit,
-    toggleBottomSheet: () -> Unit,
     setLocation: (DataHolder) -> Unit,
     navigateToHome: (Int) -> Unit,
     activity: MainActivity
 ) {
-    val context = LocalContext.current
 
     // search dialog
     if (showDialog){
@@ -191,47 +193,73 @@ fun FunctionRow(
         )
     }
 
-    // row of a search button and refresh button
-    Row(
+    // column of a search button and current location
+    Column(
         modifier = Modifier.padding(horizontal = 20.dp)
     ) {
-        Box(modifier = Modifier
-            .size(220.dp, 50.dp).clip(RoundedCornerShape(12.dp))
-            //.background(Color.White)
-            .coloredGlassEffect(Color(233, 237, 233)).padding(5.dp)
-            .clickable { searchVm.toggleSearchDialog() }) {
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .shadow(
+                    elevation = 15.dp,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .clickable {
+                    toggleDialog()
+                }
+                .padding(15.dp)
+
+
+        ) {
+            Icon(Icons.Filled.Search, "Søk etter sted")
+            Spacer(modifier = Modifier.width(20.dp))
             Text(
-                text = "Søk etter byer:",
-                modifier = Modifier.align(Alignment.CenterStart)
-                    .padding(start = 20.dp),
-                color = Color.Black,
-                fontSize = 16.sp,
-                fontStyle = FontStyle.Italic
+                text = "Søk etter sted...",
+                fontSize = 20.sp
             )
-            Spacer(modifier = Modifier.height(20.dp))
+
         }
-        Spacer(modifier = Modifier.weight(1f))
-        // refresh button
-        ActionButton(
-            icon = Icons.Filled.Refresh,
-            onClick = {
-                Toast.makeText(context, "Oppdaterte favoritter", Toast.LENGTH_SHORT).show()
-                favVM.updateWeather()
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Give option to add current location if the user hasn't done it already
+        if (!DataHolder.Favourites.any { it.location.name.contains("Min posisjon") }) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .shadow(
+                        elevation = 15.dp,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.White)
+                    .clickable {
+                        activity.getCurrentLocation()
+                    }
+                    .padding(15.dp)
+
+
+            ) {
+                Icon(Icons.Filled.NearMe, "legg til posisjon")
+                Spacer(modifier = Modifier.width(20.dp))
+                Text(
+                    text = "Nåværende posisjon",
+                    fontSize = 20.sp
+                )
+
             }
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-
-        // search button
-        ActionButton(
-            icon = Icons.Filled.AddLocationAlt,
-            onClick = { activity.getCurrentLocation() }
-        )
-
-
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+/*@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheet(
     favVM: FavoriteViewModel,
@@ -257,7 +285,6 @@ fun BottomSheet(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.weight(1f))
-
             }
             Spacer(modifier = Modifier.height(10.dp))
             HorizontalDivider()
@@ -315,7 +342,7 @@ fun BottomSheet(
             }
         }
     }
-}
+}*/
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

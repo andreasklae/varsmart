@@ -16,15 +16,6 @@ class FavoriteViewModel() : ViewModel() {
     val locationRepository: LocationRepositoryInterface = LocationRepository()
     var favourites = DataHolder.Favourites
 
-    // variables for bottom sheet
-    val _showBottomSheet = MutableStateFlow(false)
-    val showBottomSheet = _showBottomSheet.asStateFlow()
-
-    fun toggleBottomSheet() {
-        // hides / shows bottom sheet
-        _showBottomSheet.value = !showBottomSheet.value
-    }
-
     // loads the list of favourites from shared preferences
     fun loadFavourites(context: Context){
         viewModelScope.launch{
