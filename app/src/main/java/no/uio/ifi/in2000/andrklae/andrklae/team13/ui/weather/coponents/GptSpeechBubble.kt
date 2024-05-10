@@ -63,7 +63,13 @@ fun GptSpeechBubble(
                 }
             }
             // triangle to make the speech bubble point to Mr. Praktisk
-            ImageIcon(y = 0, x = 0, symbolId = R.drawable.arrowright, width = 30, height = 60)
+            ImageIcon(
+                y = 0,
+                x = 0,
+                symbolId = R.drawable.arrowright,
+                width = 30, height = 60,
+                "snakkeboble"
+                )
         }
 
         // Mr. Praktisk

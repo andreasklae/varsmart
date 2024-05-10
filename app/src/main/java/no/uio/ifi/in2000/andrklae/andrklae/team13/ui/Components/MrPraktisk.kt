@@ -10,6 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -54,7 +56,10 @@ fun MrPraktisk(generateText: () -> Unit, animation: MrPraktiskAnimations) {
     }
     Box(
         modifier = Modifier
-            .clickable {
+            .clickable(
+                // for Universal design
+                onClickLabel = "Mr. Praktisk. trykk for å generere tekst"
+            ) {
                 // only allow one prompt at a time
                 if (
                     animation != MrPraktiskAnimations.SPEAK
@@ -71,6 +76,9 @@ fun MrPraktisk(generateText: () -> Unit, animation: MrPraktiskAnimations) {
             modifier = Modifier
                 .size(120.dp)
                 .clip(clipShape)
+                .semantics {
+                    contentDescription = "This is the label for screen readers"
+                }
         )
 
     }

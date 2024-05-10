@@ -40,7 +40,7 @@ fun ActionButton(
     ) {
         Icon(
             icon,
-            "refresh",
+            "",
             Modifier.size(35.dp)
         )
     }

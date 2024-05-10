@@ -12,7 +12,13 @@ import androidx.compose.ui.unit.dp
 
 // draws images from the drawable folder
 @Composable
-fun ImageIcon(y: Int, x: Int, symbolId: Int, width: Int, height: Int) {
+fun ImageIcon(
+    y: Int, x: Int,
+    symbolId: Int,
+    width: Int,
+    height: Int,
+    contentDescription: String // for content description for screen readers
+) {
     Box(
         modifier = Modifier
             .offset(y = (y).dp, x = x.dp)
@@ -20,7 +26,7 @@ fun ImageIcon(y: Int, x: Int, symbolId: Int, width: Int, height: Int) {
     ) {
         Image(
             painter = painterResource(id = symbolId),
-            contentDescription = "Symbol",
+            contentDescription = contentDescription,
             modifier = Modifier
                 .width(width.dp)
                 .height(height.dp)

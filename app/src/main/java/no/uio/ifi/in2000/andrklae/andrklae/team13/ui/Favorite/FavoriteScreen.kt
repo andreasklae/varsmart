@@ -93,7 +93,7 @@ fun FavoriteScreen(
     val favorites = DataHolder
         .Favourites
         .sortedBy {
-            if (it.location.name.equals("Min posisjon")) 0 else 1
+            if (it.location.name.contains("Min posisjon")) 0 else 1
         }
 
     val showDialog by searchVm.showSearchDialog.collectAsState()

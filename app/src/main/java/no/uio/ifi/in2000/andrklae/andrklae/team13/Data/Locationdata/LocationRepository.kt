@@ -17,14 +17,11 @@ class LocationRepository() : LocationRepositoryInterface {
     }
 
     // function for finding the name of a location based on coordinates
-    override suspend fun coordsToCity(lat: Double, lon: Double): CustomLocation? {
+    override suspend fun coordsToCity(lat: Double, lon: Double): String {
         val dataSource = LocationDataSource()
-        val data = dataSource.reverseGeocoding(lat, lon)
+        val locName = dataSource.reverseGeocoding(lat, lon)
 
-        if (!(data == null)) {
-            return data
-        } else {
-            return CustomLocation("Min posisjon", lat, lon, "", "")
-        }
+        return locName
+
     }
 }

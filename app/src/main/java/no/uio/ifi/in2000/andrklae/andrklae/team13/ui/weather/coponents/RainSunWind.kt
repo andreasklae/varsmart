@@ -159,7 +159,14 @@ fun Sun(data: DataHolder, rise: String, set: String) {
             fontSize = fontSize,
         )
         Spacer(modifier = Modifier.height(15.dp))
-        ImageIcon(y = 0, x = 0, symbolId = icon(), width = 200, height = iconHeight)
+        ImageIcon(
+            y = 0,
+            x = 0,
+            symbolId = icon(),
+            width = 200,
+            height = iconHeight,
+            "sol ikon"
+        )
         Spacer(modifier = Modifier.height(10.dp))
         Text(text = riseOrSet())
         Text(
@@ -190,7 +197,7 @@ fun Rain(data: DataHolder) {
             fontSize = fontSize,
         )
         Spacer(modifier = Modifier.height(15.dp))
-        RainSymbol(weather.precipitation, rainOrSnow())
+        RainSymbol(weather.precipitation, rainOrSnow(), "regn ikon")
         Text(
             text = "${weather.precipitation}mm",
             fontSize = fontSize,
@@ -304,12 +311,23 @@ fun Compass(direction: Double){
 }
 
 @Composable
-private fun RainSymbol(precipitation: Double, rainOrSnow: String) {
+private fun RainSymbol(
+    precipitation: Double,
+    rainOrSnow: String,
+    contentDescription: String
+) {
     // checks the precipitation to set the correct symbol and description
     when {
         // light rain
         precipitation > 0 && precipitation <= 2.5 -> {
-            ImageIcon(y = 0, x = 0, symbolId = R.drawable.light, width = 200, height = iconHeight)
+            ImageIcon(
+                y = 0,
+                x = 0,
+                symbolId = R.drawable.light,
+                width = 200,
+                height = iconHeight,
+                contentDescription
+            )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Lett ${rainOrSnow.lowercase()}"
@@ -317,7 +335,14 @@ private fun RainSymbol(precipitation: Double, rainOrSnow: String) {
         }
         // moderate
         precipitation > 2.5 && precipitation <= 7.6 -> {
-            ImageIcon(y = 0, x = 0, symbolId = R.drawable.moderate, width = 200, height = iconHeight)
+            ImageIcon(
+                y = 0,
+                x = 0,
+                symbolId = R.drawable.moderate,
+                width = 200,
+                height = iconHeight,
+                contentDescription
+            )
             Spacer(modifier = Modifier.height(10.dp))
 
             // gets the verb version of rainOrSnow
@@ -329,7 +354,14 @@ private fun RainSymbol(precipitation: Double, rainOrSnow: String) {
 
         // Heavy
         precipitation > 7.6 -> {
-            ImageIcon(y = 0, x = 0, symbolId = R.drawable.heavy, width = 200, height = iconHeight)
+            ImageIcon(
+                y = 0,
+                x = 0,
+                symbolId = R.drawable.heavy,
+                width = 200,
+                height = iconHeight,
+                contentDescription
+            )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Det bøtter ned!"
@@ -338,7 +370,13 @@ private fun RainSymbol(precipitation: Double, rainOrSnow: String) {
 
         // No rain
         else -> {
-            ImageIcon(y = 0, x = 0, symbolId = R.drawable.no, width = 200, height = iconHeight)
+            ImageIcon(y = 0,
+                x = 0,
+                symbolId = R.drawable.no,
+                width = 200,
+                height = iconHeight,
+                contentDescription
+            )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Ingen ${rainOrSnow.lowercase()}"
@@ -354,7 +392,12 @@ fun WindSymbol(windSpeed: Double) {
         // Light wind
         windSpeed <= 5.5 -> {
             ImageIcon(
-                y = 0, x = 0, symbolId = R.drawable.lightwind, width = windIconSize, height = windIconSize
+                y = 0,
+                x = 0,
+                symbolId = R.drawable.lightwind,
+                width = windIconSize,
+                height = windIconSize,
+                contentDescription = "vind ikon"
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -364,7 +407,12 @@ fun WindSymbol(windSpeed: Double) {
         // moderate Wind
         windSpeed > 5.5 && windSpeed <= 10.7 -> {
             ImageIcon(
-                y = 0, x = 0, symbolId = R.drawable.moderatewind, width = windIconSize, height = windIconSize
+                y = 0,
+                x = 0,
+                symbolId = R.drawable.moderatewind,
+                width = windIconSize,
+                height = windIconSize,
+                contentDescription = "vind ikon"
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -374,7 +422,12 @@ fun WindSymbol(windSpeed: Double) {
         // strong wind
         windSpeed > 10.7 && windSpeed <= 17.1 -> {
             ImageIcon(
-                y = 0, x = 0, symbolId = R.drawable.strongwind, width = windIconSize, height = windIconSize
+                y = 0,
+                x = 0,
+                symbolId = R.drawable.strongwind,
+                width = windIconSize,
+                height = windIconSize,
+                contentDescription = "vind ikon"
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -384,7 +437,12 @@ fun WindSymbol(windSpeed: Double) {
         // extreme wind
         windSpeed > 17.1 -> {
             ImageIcon(
-                y = 0, x = 0, symbolId = R.drawable.extremewind, width = windIconSize, height = windIconSize
+                y = 0,
+                x = 0,
+                symbolId = R.drawable.extremewind,
+                width = windIconSize,
+                height = windIconSize,
+                contentDescription = "vind ikon"
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
@@ -394,7 +452,12 @@ fun WindSymbol(windSpeed: Double) {
         // no wind
         else -> {
             ImageIcon(
-                y = 0, x = 0, symbolId = R.drawable.nowind, width = windIconSize, height = windIconSize
+                y = 0,
+                x = 0,
+                symbolId = R.drawable.nowind,
+                width = windIconSize,
+                height = windIconSize,
+                contentDescription = "vind ikon"
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(

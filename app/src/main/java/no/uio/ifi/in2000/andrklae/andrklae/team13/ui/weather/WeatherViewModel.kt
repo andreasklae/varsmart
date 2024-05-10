@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.DataHolder
 import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.GPT.MrPraktiskAnimations
-import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.warnings.Feature
+import no.uio.ifi.in2000.andrklae.andrklae.team13.Data.PreferenceManager
 import no.uio.ifi.in2000.andrklae.andrklae.team13.MainActivity
 
 class WeatherViewModel(
@@ -60,31 +60,34 @@ class WeatherViewModel(
     }
 
     @OptIn(ExperimentalFoundationApi::class)
-    fun setLocation(dataHolder: DataHolder) {
+    fun setLocation(newLoc: DataHolder) {
         print(
             "Changing location from ${_data.value.location.name}" +
-                    " to ${dataHolder.location.name}"
+                    " to ${newLoc.location.name}"
         )
 
         // sees if the data being navigated to is already loaded in the viewmodel
-        val isSame = data.value.location == dataHolder.location
+        val isSame = data.value.location == newLoc.location
 
         // if the location is changed, instead of navigating back
         // to the location already loaded
         if (!isSame) {
             viewModelScope.launch {
-                if (dataHolder.location.name.uppercase().equals("MIN POSISJON")) {
-                    dataHolder.location = DataHolder.locRepo.coordsToCity(
-                        dataHolder.location.lat,
-                        dataHolder.location.lon
+                if (newLoc.location.name.uppercase().equals("MIN POSISJON")) {
+                    newLoc.changeName(
+                        newLoc.location.name +
+                                ": " +
+                                DataHolder.locRepo.coordsToCity(
+                                    newLoc.location.lat,
+                                    newLoc.location.lon
+                                )
                     )
-                        ?.let { customLocation ->
-                            customLocation
-                        } ?: dataHolder.location
-                    println(dataHolder.location.name)
-                    _data.value = dataHolder
+                    println(newLoc.location.name)
+                    _data.value = newLoc
+
+                    PreferenceManager.saveFavourites(activity, DataHolder.Favourites)
                 } else {
-                    _data.value = dataHolder
+                    _data.value = newLoc
                 }
 
                 // if data is not loaded previously
