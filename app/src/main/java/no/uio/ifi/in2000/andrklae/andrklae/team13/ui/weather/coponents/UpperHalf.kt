@@ -137,6 +137,8 @@ fun UpperHalf(
                         // different by the time the ui loads. the code below makes an exception
                         // for when the location is the devices location
                         else if (
+                            data.location.name.contains("Min posisjon")
+                            &&
                             DataHolder.Favourites
                                 .filter { it.location.name.contains("Min posisjon") }
                                 .isNotEmpty()
