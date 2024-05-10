@@ -5,6 +5,6 @@ interface LocationRepositoryInterface {
     suspend fun getLocations(search: String): List<CustomLocation>
 
     // function for finding the name of a location based on coordinates
-    suspend fun coordsToCity(lat: Double, lon: Double): CustomLocation?
+    suspend fun coordsToCity(lat: Double, lon: Double): String
 
 }

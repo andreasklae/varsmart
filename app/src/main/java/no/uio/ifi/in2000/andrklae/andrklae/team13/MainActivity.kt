@@ -52,7 +52,8 @@ class MainActivity : ComponentActivity() {
             weatherVM.setLocation(
                 DataHolder.Favourites
                     .sortedBy { it.location.name.contains("Min posisjon") }
-                    .first())
+                    .first()
+            )
         } else weatherVM.updateAll()
 
         setContent {
@@ -105,6 +106,7 @@ class MainActivity : ComponentActivity() {
                         if (!DataHolder.Favourites.contains(new)) {
                             // add to favourites
                             new.toggleInFavourites()
+                            PreferenceManager.saveFavourites(this, DataHolder.Favourites)
                             // navigate to home-screen with current location
                             weatherVM.setLocation(new)
                         } else {
@@ -172,15 +174,15 @@ class MainActivity : ComponentActivity() {
 
                         // i data doesnt exist
                         if (!DataHolder.Favourites.contains(new)) {
-                            weatherVM.setLocation(new)
                             new.toggleInFavourites()
+                            PreferenceManager.saveFavourites(this, DataHolder.Favourites)
+                            weatherVM.setLocation(new)
                         } else {
                             weatherVM.setLocation(
                                 // will never be null because of the if statement above
                                 DataHolder.Favourites.find { it == new }!!
                             )
                         }
-                        PreferenceManager.saveFavourites(this, DataHolder.Favourites)
                     } else{
                         Toast.makeText(
                             this,

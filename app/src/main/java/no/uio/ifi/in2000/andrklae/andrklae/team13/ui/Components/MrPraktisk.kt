@@ -54,7 +54,10 @@ fun MrPraktisk(generateText: () -> Unit, animation: MrPraktiskAnimations) {
     }
     Box(
         modifier = Modifier
-            .clickable {
+            .clickable(
+                // for Universal design
+                onClickLabel = "Mr. Praktisk. trykk for å generere tekst"
+            ) {
                 // only allow one prompt at a time
                 if (
                     animation != MrPraktiskAnimations.SPEAK

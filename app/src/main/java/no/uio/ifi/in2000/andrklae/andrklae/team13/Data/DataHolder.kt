@@ -87,15 +87,7 @@ data class DataHolder(
         val Favourites = mutableStateListOf<DataHolder>()
         suspend fun setFavourites(favorites: List<DataHolder>) {
             favorites.forEach {
-                if (it.location.name.uppercase().equals("MIN POSISJON")) {
-                    it.location = locRepo.coordsToCity(it.location.lat, it.location.lon)
-                        ?.let { customLocation ->
-                            customLocation
-                        } ?: it.location
-                    Favourites.add(it)
-                } else {
-                    Favourites.add(it)
-                }
+                Favourites.add(it)
             }
         }
 
@@ -286,5 +278,9 @@ data class DataHolder(
             currentMinute
         )
         return dt
+    }
+
+    fun changeName(newName: String) {
+        location.name = newName
     }
 }

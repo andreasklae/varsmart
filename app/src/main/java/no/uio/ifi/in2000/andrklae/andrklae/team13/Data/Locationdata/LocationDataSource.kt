@@ -52,7 +52,7 @@ class LocationDataSource() {
     }
 
     // function for finding the name of a location based on coordinates
-    suspend fun reverseGeocoding(lat: Double, lon: Double): CustomLocation? {
+    suspend fun reverseGeocoding(lat: Double, lon: Double): String {
         val APIKey = "AIzaSyBofr2wZtjab3DBuYh46BDxeUWUit5l-sw"
         val path =
             "https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}\n" +
@@ -60,11 +60,11 @@ class LocationDataSource() {
         try {
             val response: GeocodingResponse = client.get(path).body()
 
-            return CustomLocation("Min posisjon: " + extractName(response), lat, lon, "", "")
+            return extractName(response)
 
         } catch (e: Exception) {
             println("fant ikke response")
-            return null
+            return ""
         }
     }
 
@@ -80,12 +80,12 @@ class LocationDataSource() {
             println("forsøker å returnere country backup")
             val words = geocodingResponse.plus_code.compound_code.split(" ")
             if (words.size <= 1) {
-                return "Min posisjon på havet"
+                return " på havet"
             } else {
                 return words.subList(1, words.size - 1).joinToString(" ").replace(",", "")
             }
         }
-        return "Min posisjon"
+        return ""
     }
 }
 

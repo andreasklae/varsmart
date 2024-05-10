@@ -43,29 +43,27 @@ val iconSize = 35.dp
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomAppBar(pagerState: PagerState) {
-    // container for each button
-    Column(verticalArrangement = Arrangement.Bottom) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(75.dp)
-                .background(Color.White)
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(75.dp)
+            .background(Color.White)
 
-        ) {
-            Spacer(modifier = Modifier.weight(0.5f))
-            HomeButton(pagerState)
-            Spacer(modifier = Modifier.weight(1f))
-            SearchButton(pagerState)
-            Spacer(modifier = Modifier.weight(1f))
-            WarningButton(pagerState)
-            Spacer(modifier = Modifier.weight(1f))
-            SettingsButton(pagerState)
-            Spacer(modifier = Modifier.weight(0.5f))
+    ) {
+        Spacer(modifier = Modifier.weight(0.5f))
+        HomeButton(pagerState)
+        Spacer(modifier = Modifier.weight(1f))
+        SearchButton(pagerState)
+        Spacer(modifier = Modifier.weight(1f))
+        WarningButton(pagerState)
+        Spacer(modifier = Modifier.weight(1f))
+        SettingsButton(pagerState)
+        Spacer(modifier = Modifier.weight(0.5f))
 
-        }
     }
+
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -93,7 +91,7 @@ fun HomeButton(pagerState: PagerState) {
     ) {
         Icon(
             imageVector = icon(),
-            contentDescription = "Vær skjerm",
+            contentDescription = "Hjem skjerm",
             modifier = Modifier.size(iconSize + 6.dp)
         )
 
@@ -127,7 +125,7 @@ fun SearchButton(pagerState: PagerState) {
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = "Vær skjerm",
+            contentDescription = "Søk",
             modifier = Modifier.size(iconSize),
             tint = color()
         )
@@ -159,7 +157,7 @@ fun WarningButton(pagerState: PagerState) {
     ) {
         Icon(
             imageVector = icon(),
-            contentDescription = "Kart skjerm",
+            contentDescription = "farevarsler",
             modifier = Modifier.size(iconSize)
         )
 
@@ -190,7 +188,7 @@ fun SettingsButton(pagerState: PagerState) {
     ) {
         Icon(
             imageVector = icon(),
-            contentDescription = "Innstillinger skjerm",
+            contentDescription = "Innstillinger",
             modifier = Modifier.size(iconSize)
         )
 

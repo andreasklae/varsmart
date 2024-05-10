@@ -131,6 +131,17 @@ fun UpperHalf(
                     val iconId = {
                         if (DataHolder.Favourites.contains(data)) {
                             Icons.Filled.Bookmark
+                        }
+                        // current location of device will not be true on the if check above
+                        // because reverse geocoding a running async, making the date somewhat
+                        // different by the time the ui loads. the code below makes an exception
+                        // for when the location is the devices location
+                        else if (
+                            DataHolder.Favourites
+                                .filter { it.location.name.contains("Min posisjon") }
+                                .isNotEmpty()
+                        ) {
+                            Icons.Filled.Bookmark
                         } else Icons.Filled.BookmarkBorder
                     }
                     // checks if the data is saved in favourites and gives correct toast message
@@ -200,7 +211,7 @@ fun UpperHalf(
                             Icon(
                                 imageVector = Icons.Filled.ArrowUpward,
                                 contentDescription = "Høyest",
-                                tint = Color(0xFFFD755D)
+                                tint = Color(0xFFFC2600)
                             )
                             Text(text = data.highest.toString() + "°C")
                             Spacer(modifier = Modifier.width(5.dp))
@@ -209,7 +220,7 @@ fun UpperHalf(
                             Icon(
                                 imageVector = Icons.Filled.ArrowDownward,
                                 contentDescription = "Lavest",
-                                tint = Color(0xFF64A3F0)
+                                tint = Color(0xFF093CF7)
                             )
                             Text(data.lowest.toString() + "°C")
                         }
