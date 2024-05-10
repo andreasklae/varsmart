@@ -202,7 +202,7 @@ fun BackgroundImageChooser(
                 ) {
                     Image(
                         painter = painterResource(it.imageId),
-                        contentDescription = "Background",
+                        contentDescription = it.name,
                         modifier = Modifier
                             .width(120.dp)
                             .height(200.dp),

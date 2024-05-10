@@ -526,7 +526,8 @@ fun WarningIcon(warningLevel: String) {
                 x = 0,
                 symbolId = R.drawable.warningiconyellow,
                 40,
-                40
+                40,
+                "lav risiko"
             )
 
         "Yellow" ->
@@ -535,7 +536,8 @@ fun WarningIcon(warningLevel: String) {
                 x = 0,
                 symbolId = R.drawable.warningiconorange,
                 40,
-                40
+                40,
+                "moderat risiko"
             )
 
         "Red" ->
@@ -544,7 +546,8 @@ fun WarningIcon(warningLevel: String) {
                 x = 0,
                 symbolId = R.drawable.warningiconred,
                 40,
-                40
+                40,
+                "høy risiko"
             )
 
         else ->
@@ -553,7 +556,8 @@ fun WarningIcon(warningLevel: String) {
                 x = 0,
                 symbolId = R.drawable.warningiconyellow,
                 40,
-                40
+                40,
+                "risiko"
             )
 
     }

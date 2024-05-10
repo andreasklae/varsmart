@@ -272,7 +272,13 @@ fun GPTBox(
         }
 
         // arrow pointing the bubble to Mr. Praktisk
-        ImageIcon(y = 0, x = -20, symbolId = R.drawable.arrowdown, width = 60, height = 25)
+        ImageIcon(
+            y = 0,
+            x = -20,
+            symbolId = R.drawable.arrowdown,
+            width = 60, height = 25,
+            "snakkeboble"
+        )
         MrPraktisk({ function() }, animation)
     }
 }

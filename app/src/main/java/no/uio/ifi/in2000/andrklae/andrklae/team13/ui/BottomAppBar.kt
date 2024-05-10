@@ -188,7 +188,7 @@ fun SettingsButton(pagerState: PagerState) {
     ) {
         Icon(
             imageVector = icon(),
-            contentDescription = "Innstillinger",
+            contentDescription = "Innstillinger skjerm",
             modifier = Modifier.size(iconSize)
         )
 
