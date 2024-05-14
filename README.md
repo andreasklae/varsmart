@@ -33,7 +33,11 @@ Connectivity:
 The project can be downloaded or cloned from
 our [GitHub Repository](https://github.uio.no/IN2000-V24/team-13)
 
-The API-keys can be FOUND AT
+By instructions from Sondre (sjefsgruppelærer), the API-keys are written in clear text in the code,
+and not included in the gitignore. We ask for your discretion when handling this code and testing
+the app, as these API-keys are paid and costs money each time they are used. You may of course test
+the app as much as you please, but we ask that you do not share the source code nor the git
+repository.
 
 To run the app;
 
