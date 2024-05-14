@@ -43,7 +43,7 @@ To run the app;
 
 1. Unpack if it's a .zip file
 2. Open the project in Android Studio
-3. Select a simulator or device to run the app on
+3. Select a emulator or device to run the app on
 4. Click run 'app' or run unitTests
 
 ## Dependencies, libraries and repositories
