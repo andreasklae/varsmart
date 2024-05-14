@@ -1,10 +1,10 @@
 package no.uio.ifi.in2000.andrklae.andrklae.team13.Data.Locationdata
 
 class LocationRepository() : LocationRepositoryInterface {
+    val dataSource = LocationDataSource()
     // function for finding coordinates based on a location name
     override suspend fun getLocations(search: String): List<CustomLocation> {
         println("Searching for $search")
-        val dataSource = LocationDataSource()
         // Replacing space and norwegian letters
         val newString = search
             .lowercase()
@@ -18,7 +18,6 @@ class LocationRepository() : LocationRepositoryInterface {
 
     // function for finding the name of a location based on coordinates
     override suspend fun coordsToCity(lat: Double, lon: Double): String {
-        val dataSource = LocationDataSource()
         val locName = dataSource.reverseGeocoding(lat, lon)
 
         return locName
