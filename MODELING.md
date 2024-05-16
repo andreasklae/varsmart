@@ -25,7 +25,7 @@ Post-condition: Weather-data is displayed on the Home-screen <br>
 5. The user clicks on the city option.
 6. The system provides weather-data for the city on the home-screen
 
-Check Diagrams/sequenceDiagram1CheckWeatherForLocation.md for the sequence diagram
+See Diagrams/sequenceDiagram1CheckWeatherForLocation.md for the sequence diagram
 
 
 -----------------------
@@ -49,7 +49,7 @@ Alternative flow: Checks weather-data first <br>
 5.1 The user clicks on the city option <br>
 5.2 The system provides weather-data for the city on the home-screen <br>
 
-Check Diagrams/sequenceDiagram2AddFavourite.md for the sequence diagram
+See Diagrams/sequenceDiagram2AddFavourite.md for the sequence diagram
 
 ----------------------
 
@@ -63,7 +63,7 @@ Post-condition: Mr.Practical gives a weather-related tip <br>
 1. The user clicks on Mr.Practical for a tip
 2. Mr.practical generates and displays a message on the screen
 
-Check Diagrams/sequenceDiagram3Mr.PraktisTips.md for the sequence diagram
+See Diagrams/sequenceDiagram3Mr.PraktisTips.md for the sequence diagram
 
 
 
@@ -76,7 +76,7 @@ Post-condition: The user gets alerts or message about no alerts nearby <br>
 - Description:
 1. The home-screen displays a dropdown-box with the nearest alert(s), or a msg about no alert.
 
-Check Diagrams/sequenceDiagram4AlertsNearBy.md for the sequence diagram
+See Diagrams/sequenceDiagram4AlertsNearBy.md for the sequence diagram
 
 ### USE CASE- DIAGRAM
 -->These use cases are represented in a use-case-diagram: <br>
@@ -89,5 +89,9 @@ Check Diagrams/sequenceDiagram4AlertsNearBy.md for the sequence diagram
 Activity: User opens the app for the first time and goes through onboarding
 
 
-Check Diagrams/OpenAppFlowChart.md for the flowchart
+See Diagrams/OpenAppFlowChart.md for the flowchart
+
+### Class diagram
+
+See Diaframs/ClassDiagram.svg
 
