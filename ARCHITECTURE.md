@@ -38,7 +38,7 @@ In the data layer, we have made a class called DataHolder. Dataholder is a singl
 for all the data for a location. For example, if the user want to see the weather for Bergen, a
 DataHolder object will be created, and manage each of the api calls. The DataHolder object contains
 location data (name, coordinates etc.), as well as all data from the apis. It also has a companion
-object called Favourites, which is a list of DataHolder object. The reason for this is that both
+object called Favourites, which is a list of DataHolder object. We have created this class because
 the favourite screen and the home screen needs access to the data, which will avoid unnecessary
 api calls. It also simplifies the viewmodels. 
 
@@ -47,11 +47,12 @@ One api failing will not affect the others, even though its all stored in one pl
 the sunrise api fails, the home screen will still show the weather data. The only exception is that
 the gpt api is dependent on both the weather and the warning api, as the gpt is supposed to give
 information and tips based on the weather and warnings. The favourite screen will also be able to
-show the name of each location if the api fails.
+show the name of each location even if the apis fails.
 
-For storing long term memory, we are using shared preferences. For managing the data, we have
-created an object called PreferenceManager. This objects holds all function for saving and fetching
-the data. The data we chose to store are all settings and the location data for the favourite list.
+For storing data in the long term memory, we are using shared preferences. For managing the data,
+we have created an object called PreferenceManager. This objects holds all function for saving and
+fetching the data. The data we chose to store are all of the settings, and the location data for the
+favourite list.
 
 
 **Api-level:**
