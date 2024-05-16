@@ -10,7 +10,7 @@ Important functions in our app:
 - Add a city to favorite list
 - Check alerts nearby you
 
-##USE-CASES
+## USE-CASES
 
 Use-case 1: Check the weather for a location
 Actor: User
