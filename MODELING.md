@@ -1,6 +1,6 @@
-#MODELING
+# MODELING
 
-##Functional requirements
+## Functional requirements
 In this section the most important functional requirements from our requirement specification
 are represented with use-cases and a sequence diagram.
 
@@ -71,7 +71,7 @@ Post-condition: The user gets alerts or message about no alerts nearby
 
 
 
-###USE CASE- DIAGRAM
+### USE CASE- DIAGRAM
 -->These use cases are represented in a use-case-diagram:
 ![img_1.png](usecaseDiagram.png)
 
