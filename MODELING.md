@@ -93,5 +93,5 @@ See Diagrams/OpenAppFlowChart.md for the flowchart
 
 ### Class diagram
 
-See Diaframs/ClassDiagram.svg
+See Diagrams/ClassDiagram.svg
 
