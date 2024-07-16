@@ -1,4 +1,5 @@
 # Værsmart
+NB! As of july 2024 the Api-keys have been deactivated, meaning AI, Maps, and Geocoding will not work. 
 
 *Contributors:*
 
